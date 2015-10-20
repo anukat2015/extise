@@ -8,3 +8,11 @@
 
 .~lock.*
 *.*~
+
+/bin
+/log
+/tmp
+
+/data
+/docs
+/tags

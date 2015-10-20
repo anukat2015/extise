@@ -1,0 +1,10 @@
+.bundle
+.idea
+.launches
+.metadata
+.settings
+.sources
+.tags
+
+.~lock.*
+*.*~

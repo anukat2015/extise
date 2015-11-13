@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
-
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-
-require 'autocolor'
-require 'optbind'
+require_relative 'common'
 require 'nokogiri'
 
 c, s, t, p = true, false, 80, nil

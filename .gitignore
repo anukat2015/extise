@@ -9,10 +9,9 @@
 .~lock.*
 *.*~
 
-/bin
-/log
-/tmp
-
 /data
 /docs
 /tags
+
+/log
+/tmp

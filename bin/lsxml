@@ -12,7 +12,7 @@ ARGV.bind! to: self do
   arg 'p [<path>]'
 end
 
-AutoColor::disable on: self unless c
+AutoColor.disable on: self unless c
 
 def text(e, o, i = 0, s = e.text)
   k = [o[:trim] - (2 * i + e.name.size + 1), 1].max

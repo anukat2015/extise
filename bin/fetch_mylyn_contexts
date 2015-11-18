@@ -11,7 +11,7 @@ ARGV.bind! to: self do
   arg 'p [<path>]'
 end
 
-AutoColor::enable on: self, colored: c, colorings: {
+AutoColor.enable on: self, colored: c, colorings: {
   /bug \d*/ => [:blue, :bold],
   /attachment \d*/ => -> (s, r) { s.sub(r) { |p| p.yellow.bold }},
 }

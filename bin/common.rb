@@ -4,10 +4,13 @@ abort 'common: internals only' if $0 == __FILE__
 $LOAD_PATH.unshift File.expand_path '../../lib', __FILE__
 
 require 'auto_color'
+require 'colored_defaults'
 require 'fileutils'
 require 'optbind'
 require 'nokogiri'
 require 'yaml'
+
+Colored.colorize_defaults = { extra: :bold }
 
 trap(:SIGINT) { abort }
 

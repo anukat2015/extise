@@ -15,8 +15,8 @@ module AutoColor
     attr_accessor :colored
     attr_accessor :colorings
 
-    alias default_print print
-    alias default_puts puts
+    alias_method :default_print, :print
+    alias_method :default_puts, :puts
 
     def puts(*args)
       default_puts *enrich(args)

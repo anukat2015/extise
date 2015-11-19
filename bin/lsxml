@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require_relative 'common'
-require 'nokogiri'
 
 c, s, t, p = true, false, 80, nil
 

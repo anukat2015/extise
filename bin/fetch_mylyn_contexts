@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require_relative 'common'
-require 'nokogiri'
 
 c, o, p = true, nil, nil
 
@@ -17,11 +16,11 @@ AutoColor.enable on: self, colored: c, colorings: {
 }
 
 o ||= File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__)
-bugs = p ? File.open(p) { |f| Nokogiri::XML f } : Nokogiri::XML(STDIN)
+d = p ? File.open(p) { |f| Nokogiri::XML f } : Nokogiri::XML(STDIN)
 
 FileUtils.mkpath o
 
-bugs.css('bug').each do |bug|
+d.css('bug').each do |bug|
   bug_id = bug.css('bug_id').text.strip
 
   puts "bug #{bug_id}"

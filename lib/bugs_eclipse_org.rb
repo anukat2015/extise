@@ -1,6 +1,7 @@
 require 'active_record'
 require 'active_support'
 
+require 'database'
 require 'bugs_eclipse_org/version'
 
 module BugsEclipseOrg

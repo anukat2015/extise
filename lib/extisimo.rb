@@ -1,6 +1,7 @@
 require 'active_record'
 require 'active_support'
 
+require 'database'
 require 'extisimo/version'
 
 module Extisimo

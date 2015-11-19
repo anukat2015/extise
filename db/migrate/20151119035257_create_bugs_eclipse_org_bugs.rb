@@ -43,7 +43,7 @@ class CreateBugsEclipseOrgBugs < ActiveRecord::Migration
     add_index :bugs_eclipse_org_bugs, :author_id
     add_index :bugs_eclipse_org_bugs, :assignee_id
 
-    add_index :bugs_eclipse_org_bugs, :bugid
+    add_index :bugs_eclipse_org_bugs, :bugid, unique: true
     add_index :bugs_eclipse_org_bugs, :creation_ts
     add_index :bugs_eclipse_org_bugs, :delta_ts
     add_index :bugs_eclipse_org_bugs, :classificationid

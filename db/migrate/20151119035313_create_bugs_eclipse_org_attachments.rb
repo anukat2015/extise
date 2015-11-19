@@ -23,7 +23,7 @@ class CreateBugsEclipseOrgAttachments < ActiveRecord::Migration
     add_index :bugs_eclipse_org_attachments, :bug_id
     add_index :bugs_eclipse_org_attachments, :submitter_id
 
-    add_index :bugs_eclipse_org_attachments, :attachid
+    add_index :bugs_eclipse_org_attachments, :attachid, unique: true
     add_index :bugs_eclipse_org_attachments, :date
     add_index :bugs_eclipse_org_attachments, :delta_ts
     add_index :bugs_eclipse_org_attachments, :filename

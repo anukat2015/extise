@@ -80,6 +80,8 @@ ALTER SEQUENCE bugs_eclipse_org_attachments_id_seq OWNED BY bugs_eclipse_org_att
 CREATE TABLE bugs_eclipse_org_bugs (
     id integer NOT NULL,
     bugzilla_id integer NOT NULL,
+    author_id integer NOT NULL,
+    assignee_id integer NOT NULL,
     bugid integer NOT NULL,
     creation_ts timestamp without time zone NOT NULL,
     short_desc text NOT NULL,
@@ -397,7 +399,7 @@ CREATE INDEX index_bugs_eclipse_org_attachments_on_attacher_name ON bugs_eclipse
 -- Name: index_bugs_eclipse_org_attachments_on_attachid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_bugs_eclipse_org_attachments_on_attachid ON bugs_eclipse_org_attachments USING btree (attachid);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_attachments_on_attachid ON bugs_eclipse_org_attachments USING btree (attachid);
 
 
 --
@@ -464,6 +466,20 @@ CREATE INDEX index_bugs_eclipse_org_bugs_on_assigned_to_name ON bugs_eclipse_org
 
 
 --
+-- Name: index_bugs_eclipse_org_bugs_on_assignee_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bugs_eclipse_org_bugs_on_assignee_id ON bugs_eclipse_org_bugs USING btree (assignee_id);
+
+
+--
+-- Name: index_bugs_eclipse_org_bugs_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bugs_eclipse_org_bugs_on_author_id ON bugs_eclipse_org_bugs USING btree (author_id);
+
+
+--
 -- Name: index_bugs_eclipse_org_bugs_on_bug_severity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -481,7 +497,7 @@ CREATE INDEX index_bugs_eclipse_org_bugs_on_bug_status ON bugs_eclipse_org_bugs 
 -- Name: index_bugs_eclipse_org_bugs_on_bugid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_bugs_eclipse_org_bugs_on_bugid ON bugs_eclipse_org_bugs USING btree (bugid);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_bugs_on_bugid ON bugs_eclipse_org_bugs USING btree (bugid);
 
 
 --
@@ -649,7 +665,7 @@ CREATE INDEX index_bugs_eclipse_org_comments_on_bug_when ON bugs_eclipse_org_com
 -- Name: index_bugs_eclipse_org_comments_on_commentid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_bugs_eclipse_org_comments_on_commentid ON bugs_eclipse_org_comments USING btree (commentid);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_comments_on_commentid ON bugs_eclipse_org_comments USING btree (commentid);
 
 
 --
@@ -733,7 +749,7 @@ CREATE UNIQUE INDEX index_bugs_eclipse_org_users_on_login_name ON bugs_eclipse_o
 -- Name: index_bugs_eclipse_org_users_on_realname; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_bugs_eclipse_org_users_on_realname ON bugs_eclipse_org_users USING btree (realname);
+CREATE INDEX index_bugs_eclipse_org_users_on_realname ON bugs_eclipse_org_users USING btree (realname);
 
 
 --

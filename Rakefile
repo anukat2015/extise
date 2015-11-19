@@ -1,8 +1,5 @@
-root = File.expand_path '..', __FILE__
-
-$LOAD_PATH.unshift File.join root, 'lib'
+$LOAD_PATH.unshift File.join File.expand_path '../lib', __FILE__
 
 require 'exrec'
-require 'exrec/tasks/db'
 
-Exrec.root = root
+Exrec.load_tasks

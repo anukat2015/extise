@@ -30,10 +30,10 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: org_eclipse_bugs_attachments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_attachments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE org_eclipse_bugs_attachments (
+CREATE TABLE bugs_eclipse_org_attachments (
     id integer NOT NULL,
     bug_id integer NOT NULL,
     submitter_id integer NOT NULL,
@@ -55,10 +55,10 @@ CREATE TABLE org_eclipse_bugs_attachments (
 
 
 --
--- Name: org_eclipse_bugs_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE org_eclipse_bugs_attachments_id_seq
+CREATE SEQUENCE bugs_eclipse_org_attachments_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -67,17 +67,17 @@ CREATE SEQUENCE org_eclipse_bugs_attachments_id_seq
 
 
 --
--- Name: org_eclipse_bugs_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE org_eclipse_bugs_attachments_id_seq OWNED BY org_eclipse_bugs_attachments.id;
+ALTER SEQUENCE bugs_eclipse_org_attachments_id_seq OWNED BY bugs_eclipse_org_attachments.id;
 
 
 --
--- Name: org_eclipse_bugs_bugs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE org_eclipse_bugs_bugs (
+CREATE TABLE bugs_eclipse_org_bugs (
     id integer NOT NULL,
     bugzilla_id integer NOT NULL,
     bugid integer NOT NULL,
@@ -116,10 +116,10 @@ CREATE TABLE org_eclipse_bugs_bugs (
 
 
 --
--- Name: org_eclipse_bugs_bugs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_bugs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE org_eclipse_bugs_bugs_id_seq
+CREATE SEQUENCE bugs_eclipse_org_bugs_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -128,17 +128,17 @@ CREATE SEQUENCE org_eclipse_bugs_bugs_id_seq
 
 
 --
--- Name: org_eclipse_bugs_bugs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_bugs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE org_eclipse_bugs_bugs_id_seq OWNED BY org_eclipse_bugs_bugs.id;
+ALTER SEQUENCE bugs_eclipse_org_bugs_id_seq OWNED BY bugs_eclipse_org_bugs.id;
 
 
 --
--- Name: org_eclipse_bugs_bugzillas; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugzillas; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE org_eclipse_bugs_bugzillas (
+CREATE TABLE bugs_eclipse_org_bugzillas (
     id integer NOT NULL,
     version character varying NOT NULL,
     urlbase character varying(2048) NOT NULL,
@@ -149,10 +149,10 @@ CREATE TABLE org_eclipse_bugs_bugzillas (
 
 
 --
--- Name: org_eclipse_bugs_bugzillas_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_bugzillas_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE org_eclipse_bugs_bugzillas_id_seq
+CREATE SEQUENCE bugs_eclipse_org_bugzillas_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -161,17 +161,17 @@ CREATE SEQUENCE org_eclipse_bugs_bugzillas_id_seq
 
 
 --
--- Name: org_eclipse_bugs_bugzillas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_bugzillas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE org_eclipse_bugs_bugzillas_id_seq OWNED BY org_eclipse_bugs_bugzillas.id;
+ALTER SEQUENCE bugs_eclipse_org_bugzillas_id_seq OWNED BY bugs_eclipse_org_bugzillas.id;
 
 
 --
--- Name: org_eclipse_bugs_comments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_comments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE org_eclipse_bugs_comments (
+CREATE TABLE bugs_eclipse_org_comments (
     id integer NOT NULL,
     bug_id integer NOT NULL,
     author_id integer NOT NULL,
@@ -188,10 +188,10 @@ CREATE TABLE org_eclipse_bugs_comments (
 
 
 --
--- Name: org_eclipse_bugs_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE org_eclipse_bugs_comments_id_seq
+CREATE SEQUENCE bugs_eclipse_org_comments_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -200,17 +200,17 @@ CREATE SEQUENCE org_eclipse_bugs_comments_id_seq
 
 
 --
--- Name: org_eclipse_bugs_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE org_eclipse_bugs_comments_id_seq OWNED BY org_eclipse_bugs_comments.id;
+ALTER SEQUENCE bugs_eclipse_org_comments_id_seq OWNED BY bugs_eclipse_org_comments.id;
 
 
 --
--- Name: org_eclipse_bugs_interactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_interactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE org_eclipse_bugs_interactions (
+CREATE TABLE bugs_eclipse_org_interactions (
     id integer NOT NULL,
     attachment_id integer NOT NULL,
     bug_url character varying(2048) NOT NULL,
@@ -230,10 +230,10 @@ CREATE TABLE org_eclipse_bugs_interactions (
 
 
 --
--- Name: org_eclipse_bugs_interactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_interactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE org_eclipse_bugs_interactions_id_seq
+CREATE SEQUENCE bugs_eclipse_org_interactions_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -242,17 +242,17 @@ CREATE SEQUENCE org_eclipse_bugs_interactions_id_seq
 
 
 --
--- Name: org_eclipse_bugs_interactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_interactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE org_eclipse_bugs_interactions_id_seq OWNED BY org_eclipse_bugs_interactions.id;
+ALTER SEQUENCE bugs_eclipse_org_interactions_id_seq OWNED BY bugs_eclipse_org_interactions.id;
 
 
 --
--- Name: org_eclipse_bugs_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE org_eclipse_bugs_users (
+CREATE TABLE bugs_eclipse_org_users (
     id integer NOT NULL,
     login_name character varying NOT NULL,
     realname character varying NOT NULL,
@@ -262,10 +262,10 @@ CREATE TABLE org_eclipse_bugs_users (
 
 
 --
--- Name: org_eclipse_bugs_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE org_eclipse_bugs_users_id_seq
+CREATE SEQUENCE bugs_eclipse_org_users_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -274,10 +274,10 @@ CREATE SEQUENCE org_eclipse_bugs_users_id_seq
 
 
 --
--- Name: org_eclipse_bugs_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bugs_eclipse_org_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE org_eclipse_bugs_users_id_seq OWNED BY org_eclipse_bugs_users.id;
+ALTER SEQUENCE bugs_eclipse_org_users_id_seq OWNED BY bugs_eclipse_org_users.id;
 
 
 --
@@ -293,447 +293,447 @@ CREATE TABLE schema_migrations (
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_attachments ALTER COLUMN id SET DEFAULT nextval('org_eclipse_bugs_attachments_id_seq'::regclass);
+ALTER TABLE ONLY bugs_eclipse_org_attachments ALTER COLUMN id SET DEFAULT nextval('bugs_eclipse_org_attachments_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_bugs ALTER COLUMN id SET DEFAULT nextval('org_eclipse_bugs_bugs_id_seq'::regclass);
+ALTER TABLE ONLY bugs_eclipse_org_bugs ALTER COLUMN id SET DEFAULT nextval('bugs_eclipse_org_bugs_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_bugzillas ALTER COLUMN id SET DEFAULT nextval('org_eclipse_bugs_bugzillas_id_seq'::regclass);
+ALTER TABLE ONLY bugs_eclipse_org_bugzillas ALTER COLUMN id SET DEFAULT nextval('bugs_eclipse_org_bugzillas_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_comments ALTER COLUMN id SET DEFAULT nextval('org_eclipse_bugs_comments_id_seq'::regclass);
+ALTER TABLE ONLY bugs_eclipse_org_comments ALTER COLUMN id SET DEFAULT nextval('bugs_eclipse_org_comments_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_interactions ALTER COLUMN id SET DEFAULT nextval('org_eclipse_bugs_interactions_id_seq'::regclass);
+ALTER TABLE ONLY bugs_eclipse_org_interactions ALTER COLUMN id SET DEFAULT nextval('bugs_eclipse_org_interactions_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_users ALTER COLUMN id SET DEFAULT nextval('org_eclipse_bugs_users_id_seq'::regclass);
+ALTER TABLE ONLY bugs_eclipse_org_users ALTER COLUMN id SET DEFAULT nextval('bugs_eclipse_org_users_id_seq'::regclass);
 
 
 --
--- Name: org_eclipse_bugs_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_attachments
-    ADD CONSTRAINT org_eclipse_bugs_attachments_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY bugs_eclipse_org_attachments
+    ADD CONSTRAINT bugs_eclipse_org_attachments_pkey PRIMARY KEY (id);
 
 
 --
--- Name: org_eclipse_bugs_bugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_bugs
-    ADD CONSTRAINT org_eclipse_bugs_bugs_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY bugs_eclipse_org_bugs
+    ADD CONSTRAINT bugs_eclipse_org_bugs_pkey PRIMARY KEY (id);
 
 
 --
--- Name: org_eclipse_bugs_bugzillas_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugzillas_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_bugzillas
-    ADD CONSTRAINT org_eclipse_bugs_bugzillas_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY bugs_eclipse_org_bugzillas
+    ADD CONSTRAINT bugs_eclipse_org_bugzillas_pkey PRIMARY KEY (id);
 
 
 --
--- Name: org_eclipse_bugs_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_comments
-    ADD CONSTRAINT org_eclipse_bugs_comments_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY bugs_eclipse_org_comments
+    ADD CONSTRAINT bugs_eclipse_org_comments_pkey PRIMARY KEY (id);
 
 
 --
--- Name: org_eclipse_bugs_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_interactions
-    ADD CONSTRAINT org_eclipse_bugs_interactions_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY bugs_eclipse_org_interactions
+    ADD CONSTRAINT bugs_eclipse_org_interactions_pkey PRIMARY KEY (id);
 
 
 --
--- Name: org_eclipse_bugs_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY org_eclipse_bugs_users
-    ADD CONSTRAINT org_eclipse_bugs_users_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY bugs_eclipse_org_users
+    ADD CONSTRAINT bugs_eclipse_org_users_pkey PRIMARY KEY (id);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_attacher; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_attacher; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_attacher ON org_eclipse_bugs_attachments USING btree (attacher);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_attacher ON bugs_eclipse_org_attachments USING btree (attacher);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_attacher_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_attacher_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_attacher_name ON org_eclipse_bugs_attachments USING btree (attacher_name);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_attacher_name ON bugs_eclipse_org_attachments USING btree (attacher_name);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_attachid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_attachid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_attachid ON org_eclipse_bugs_attachments USING btree (attachid);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_attachid ON bugs_eclipse_org_attachments USING btree (attachid);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_bug_id ON org_eclipse_bugs_attachments USING btree (bug_id);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_bug_id ON bugs_eclipse_org_attachments USING btree (bug_id);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_date ON org_eclipse_bugs_attachments USING btree (date);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_date ON bugs_eclipse_org_attachments USING btree (date);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_delta_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_delta_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_delta_ts ON org_eclipse_bugs_attachments USING btree (delta_ts);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_delta_ts ON bugs_eclipse_org_attachments USING btree (delta_ts);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_filename; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_filename; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_filename ON org_eclipse_bugs_attachments USING btree (filename);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_filename ON bugs_eclipse_org_attachments USING btree (filename);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_size; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_size; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_size ON org_eclipse_bugs_attachments USING btree (size);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_size ON bugs_eclipse_org_attachments USING btree (size);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_submitter_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_submitter_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_submitter_id ON org_eclipse_bugs_attachments USING btree (submitter_id);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_submitter_id ON bugs_eclipse_org_attachments USING btree (submitter_id);
 
 
 --
--- Name: index_org_eclipse_bugs_attachments_on_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_attachments_on_type ON org_eclipse_bugs_attachments USING btree (type);
+CREATE INDEX index_bugs_eclipse_org_attachments_on_type ON bugs_eclipse_org_attachments USING btree (type);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_assigned_to; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_assigned_to; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_assigned_to ON org_eclipse_bugs_bugs USING btree (assigned_to);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_assigned_to ON bugs_eclipse_org_bugs USING btree (assigned_to);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_assigned_to_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_assigned_to_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_assigned_to_name ON org_eclipse_bugs_bugs USING btree (assigned_to_name);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_assigned_to_name ON bugs_eclipse_org_bugs USING btree (assigned_to_name);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_bug_severity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_bug_severity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_bug_severity ON org_eclipse_bugs_bugs USING btree (bug_severity);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_bug_severity ON bugs_eclipse_org_bugs USING btree (bug_severity);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_bug_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_bug_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_bug_status ON org_eclipse_bugs_bugs USING btree (bug_status);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_bug_status ON bugs_eclipse_org_bugs USING btree (bug_status);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_bugid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_bugid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_bugid ON org_eclipse_bugs_bugs USING btree (bugid);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_bugid ON bugs_eclipse_org_bugs USING btree (bugid);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_bugzilla_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_bugzilla_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_bugzilla_id ON org_eclipse_bugs_bugs USING btree (bugzilla_id);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_bugzilla_id ON bugs_eclipse_org_bugs USING btree (bugzilla_id);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_classification; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_classification; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_classification ON org_eclipse_bugs_bugs USING btree (classification);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_classification ON bugs_eclipse_org_bugs USING btree (classification);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_classificationid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_classificationid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_classificationid ON org_eclipse_bugs_bugs USING btree (classificationid);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_classificationid ON bugs_eclipse_org_bugs USING btree (classificationid);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_component; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_component; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_component ON org_eclipse_bugs_bugs USING btree (component);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_component ON bugs_eclipse_org_bugs USING btree (component);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_creation_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_creation_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_creation_ts ON org_eclipse_bugs_bugs USING btree (creation_ts);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_creation_ts ON bugs_eclipse_org_bugs USING btree (creation_ts);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_delta_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_delta_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_delta_ts ON org_eclipse_bugs_bugs USING btree (delta_ts);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_delta_ts ON bugs_eclipse_org_bugs USING btree (delta_ts);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_everconfirmed; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_everconfirmed; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_everconfirmed ON org_eclipse_bugs_bugs USING btree (everconfirmed);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_everconfirmed ON bugs_eclipse_org_bugs USING btree (everconfirmed);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_op_sys; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_op_sys; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_op_sys ON org_eclipse_bugs_bugs USING btree (op_sys);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_op_sys ON bugs_eclipse_org_bugs USING btree (op_sys);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_priority ON org_eclipse_bugs_bugs USING btree (priority);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_priority ON bugs_eclipse_org_bugs USING btree (priority);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_product; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_product; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_product ON org_eclipse_bugs_bugs USING btree (product);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_product ON bugs_eclipse_org_bugs USING btree (product);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_rep_platform; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_rep_platform; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_rep_platform ON org_eclipse_bugs_bugs USING btree (rep_platform);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_rep_platform ON bugs_eclipse_org_bugs USING btree (rep_platform);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_reporter; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_reporter; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_reporter ON org_eclipse_bugs_bugs USING btree (reporter);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_reporter ON bugs_eclipse_org_bugs USING btree (reporter);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_reporter_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_reporter_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_reporter_name ON org_eclipse_bugs_bugs USING btree (reporter_name);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_reporter_name ON bugs_eclipse_org_bugs USING btree (reporter_name);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_resolution; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_resolution; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_resolution ON org_eclipse_bugs_bugs USING btree (resolution);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_resolution ON bugs_eclipse_org_bugs USING btree (resolution);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_target_milestone; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_target_milestone; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_target_milestone ON org_eclipse_bugs_bugs USING btree (target_milestone);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_target_milestone ON bugs_eclipse_org_bugs USING btree (target_milestone);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_version ON org_eclipse_bugs_bugs USING btree (version);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_version ON bugs_eclipse_org_bugs USING btree (version);
 
 
 --
--- Name: index_org_eclipse_bugs_bugs_on_votes; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_votes; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugs_on_votes ON org_eclipse_bugs_bugs USING btree (votes);
+CREATE INDEX index_bugs_eclipse_org_bugs_on_votes ON bugs_eclipse_org_bugs USING btree (votes);
 
 
 --
--- Name: index_org_eclipse_bugs_bugzillas_on_maintainer; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugzillas_on_maintainer; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugzillas_on_maintainer ON org_eclipse_bugs_bugzillas USING btree (maintainer);
+CREATE INDEX index_bugs_eclipse_org_bugzillas_on_maintainer ON bugs_eclipse_org_bugzillas USING btree (maintainer);
 
 
 --
--- Name: index_org_eclipse_bugs_bugzillas_on_urlbase; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugzillas_on_urlbase; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_org_eclipse_bugs_bugzillas_on_urlbase ON org_eclipse_bugs_bugzillas USING btree (urlbase);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_bugzillas_on_urlbase ON bugs_eclipse_org_bugzillas USING btree (urlbase);
 
 
 --
--- Name: index_org_eclipse_bugs_bugzillas_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugzillas_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_bugzillas_on_version ON org_eclipse_bugs_bugzillas USING btree (version);
+CREATE INDEX index_bugs_eclipse_org_bugzillas_on_version ON bugs_eclipse_org_bugzillas USING btree (version);
 
 
 --
--- Name: index_org_eclipse_bugs_comments_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_comments_on_author_id ON org_eclipse_bugs_comments USING btree (author_id);
+CREATE INDEX index_bugs_eclipse_org_comments_on_author_id ON bugs_eclipse_org_comments USING btree (author_id);
 
 
 --
--- Name: index_org_eclipse_bugs_comments_on_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_comments_on_bug_id ON org_eclipse_bugs_comments USING btree (bug_id);
+CREATE INDEX index_bugs_eclipse_org_comments_on_bug_id ON bugs_eclipse_org_comments USING btree (bug_id);
 
 
 --
--- Name: index_org_eclipse_bugs_comments_on_bug_when; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_bug_when; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_comments_on_bug_when ON org_eclipse_bugs_comments USING btree (bug_when);
+CREATE INDEX index_bugs_eclipse_org_comments_on_bug_when ON bugs_eclipse_org_comments USING btree (bug_when);
 
 
 --
--- Name: index_org_eclipse_bugs_comments_on_commentid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_commentid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_comments_on_commentid ON org_eclipse_bugs_comments USING btree (commentid);
+CREATE INDEX index_bugs_eclipse_org_comments_on_commentid ON bugs_eclipse_org_comments USING btree (commentid);
 
 
 --
--- Name: index_org_eclipse_bugs_comments_on_who; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_who; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_comments_on_who ON org_eclipse_bugs_comments USING btree (who);
+CREATE INDEX index_bugs_eclipse_org_comments_on_who ON bugs_eclipse_org_comments USING btree (who);
 
 
 --
--- Name: index_org_eclipse_bugs_comments_on_who_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_who_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_comments_on_who_name ON org_eclipse_bugs_comments USING btree (who_name);
+CREATE INDEX index_bugs_eclipse_org_comments_on_who_name ON bugs_eclipse_org_comments USING btree (who_name);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_attachment_id ON org_eclipse_bugs_interactions USING btree (attachment_id);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_attachment_id ON bugs_eclipse_org_interactions USING btree (attachment_id);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_bug_url; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_bug_url; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_bug_url ON org_eclipse_bugs_interactions USING btree (bug_url);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_bug_url ON bugs_eclipse_org_interactions USING btree (bug_url);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_end_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_end_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_end_date ON org_eclipse_bugs_interactions USING btree (end_date);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_end_date ON bugs_eclipse_org_interactions USING btree (end_date);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_kind ON org_eclipse_bugs_interactions USING btree (kind);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_kind ON bugs_eclipse_org_interactions USING btree (kind);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_originid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_originid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_originid ON org_eclipse_bugs_interactions USING btree (originid);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_originid ON bugs_eclipse_org_interactions USING btree (originid);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_start_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_start_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_start_date ON org_eclipse_bugs_interactions USING btree (start_date);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_start_date ON bugs_eclipse_org_interactions USING btree (start_date);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_structure_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_structure_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_structure_kind ON org_eclipse_bugs_interactions USING btree (structure_kind);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_structure_kind ON bugs_eclipse_org_interactions USING btree (structure_kind);
 
 
 --
--- Name: index_org_eclipse_bugs_interactions_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_org_eclipse_bugs_interactions_on_version ON org_eclipse_bugs_interactions USING btree (version);
+CREATE INDEX index_bugs_eclipse_org_interactions_on_version ON bugs_eclipse_org_interactions USING btree (version);
 
 
 --
--- Name: index_org_eclipse_bugs_users_on_login_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_users_on_login_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_org_eclipse_bugs_users_on_login_name ON org_eclipse_bugs_users USING btree (login_name);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_users_on_login_name ON bugs_eclipse_org_users USING btree (login_name);
 
 
 --
--- Name: index_org_eclipse_bugs_users_on_realname; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_users_on_realname; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_org_eclipse_bugs_users_on_realname ON org_eclipse_bugs_users USING btree (realname);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_users_on_realname ON bugs_eclipse_org_users USING btree (realname);
 
 
 --

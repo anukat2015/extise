@@ -4,7 +4,7 @@
   <g>
     <rect style="fill: #ffffff" x="0" y="280" width="217.9" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="0" y="280" width="217.9" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="108.95" y="296">org_eclipse_bugs::bugzillas</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="108.95" y="296">bugs_eclipse_org::bugzillas</text>
     <rect style="fill: #ffffff" x="0" y="304" width="217.9" height="100"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="0" y="304" width="217.9" height="100"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3" y="318">+id: integer</text>
@@ -17,7 +17,7 @@
   <g>
     <rect style="fill: #ffffff" x="300" y="0" width="233.3" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="300" y="0" width="233.3" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="416.65" y="16">org_eclipse_bugs::bugs</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="416.65" y="16">bugs_eclipse_org::bugs</text>
     <rect style="fill: #ffffff" x="300" y="24" width="233.3" height="580"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="300" y="24" width="233.3" height="580"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="38">+id: integer</text>
@@ -60,7 +60,7 @@
   <g>
     <rect style="fill: #ffffff" x="660" y="0" width="210.2" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="0" width="210.2" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="765.1" y="16">org_eclipse_bugs::comments</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="765.1" y="16">bugs_eclipse_org::comments</text>
     <rect style="fill: #ffffff" x="660" y="24" width="210.2" height="196"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="24" width="210.2" height="196"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="38">+id: integer</text>
@@ -79,7 +79,7 @@
   <g>
     <rect style="fill: #ffffff" x="660" y="280" width="187.1" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="280" width="187.1" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="753.55" y="296">org_eclipse_bugs::users</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="753.55" y="296">bugs_eclipse_org::users</text>
     <rect style="fill: #ffffff" x="660" y="304" width="187.1" height="84"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="304" width="187.1" height="84"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="318">+id: integer</text>
@@ -91,7 +91,7 @@
   <g>
     <rect style="fill: #ffffff" x="660" y="440" width="233.3" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="440" width="233.3" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="776.65" y="456">org_eclipse_bugs::attachments</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="776.65" y="456">bugs_eclipse_org::attachments</text>
     <rect style="fill: #ffffff" x="660" y="464" width="233.3" height="276"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="464" width="233.3" height="276"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="478">+id: integer</text>
@@ -115,7 +115,7 @@
   <g>
     <rect style="fill: #ffffff" x="0" y="440" width="241" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="0" y="440" width="241" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="120.5" y="456">org_eclipse_bugs::interactions</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="120.5" y="456">bugs_eclipse_org::interactions</text>
     <rect style="fill: #ffffff" x="0" y="464" width="241" height="244"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="0" y="464" width="241" height="244"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3" y="478">+id: integer</text>
@@ -208,7 +208,7 @@
   <g>
     <rect style="fill: #ffffff" x="1060" y="0" width="171.7" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1060" y="0" width="171.7" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="1145.85" y="16">developers</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="1145.85" y="16">extisimo::developers</text>
     <rect style="fill: #ffffff" x="1060" y="24" width="171.7" height="52"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1060" y="24" width="171.7" height="52"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1063" y="38">+id: integer</text>
@@ -218,7 +218,7 @@
   <g>
     <rect style="fill: #ffffff" x="1060" y="100" width="171.7" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1060" y="100" width="171.7" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="1145.85" y="116">topics</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="1145.85" y="116">extisimo::topics</text>
     <rect style="fill: #ffffff" x="1060" y="124" width="171.7" height="52"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1060" y="124" width="171.7" height="52"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1063" y="138">+id: integer</text>
@@ -228,7 +228,7 @@
   <g>
     <rect style="fill: #ffffff" x="1060" y="220" width="171.7" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1060" y="220" width="171.7" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="1145.85" y="236">expertises</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="1145.85" y="236">extisimo::expertises</text>
     <rect style="fill: #ffffff" x="1060" y="244" width="171.7" height="52"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1060" y="244" width="171.7" height="52"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1063" y="258">+id: integer</text>

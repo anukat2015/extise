@@ -1,6 +1,6 @@
-class CreateOrgEclipseBugsInteractions < ActiveRecord::Migration
+class CreateBugsEclipseOrgInteractions < ActiveRecord::Migration
   def change
-    create_table :org_eclipse_bugs_interactions do |t|
+    create_table :bugs_eclipse_org_interactions do |t|
       t.references :attachment, null: false
 
       t.string :bug_url, null: false, limit: 2048
@@ -18,14 +18,14 @@ class CreateOrgEclipseBugsInteractions < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :org_eclipse_bugs_interactions, :attachment_id
+    add_index :bugs_eclipse_org_interactions, :attachment_id
 
-    add_index :org_eclipse_bugs_interactions, :bug_url
-    add_index :org_eclipse_bugs_interactions, :version
-    add_index :org_eclipse_bugs_interactions, :kind
-    add_index :org_eclipse_bugs_interactions, :start_date
-    add_index :org_eclipse_bugs_interactions, :end_date
-    add_index :org_eclipse_bugs_interactions, :originid
-    add_index :org_eclipse_bugs_interactions, :structure_kind
+    add_index :bugs_eclipse_org_interactions, :bug_url
+    add_index :bugs_eclipse_org_interactions, :version
+    add_index :bugs_eclipse_org_interactions, :kind
+    add_index :bugs_eclipse_org_interactions, :start_date
+    add_index :bugs_eclipse_org_interactions, :end_date
+    add_index :bugs_eclipse_org_interactions, :originid
+    add_index :bugs_eclipse_org_interactions, :structure_kind
   end
 end

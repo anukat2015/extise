@@ -1,5 +1,5 @@
-$LOAD_PATH.unshift File.join File.expand_path '../lib', __FILE__
+$LOAD_PATH.unshift File.expand_path '../lib', __FILE__
 
-require 'exrec'
+require 'database'
 
-Exrec.load_tasks
+Database.load_tasks

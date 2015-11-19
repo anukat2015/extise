@@ -1,6 +1,7 @@
 require 'active_record'
 require 'active_record/tasks/database_tasks'
 require 'active_support/core_ext/string/inflections'
+
 require 'fileutils'
 
 namespace :db do

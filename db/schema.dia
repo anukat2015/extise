@@ -80,7 +80,7 @@
         <dia:real val="6.2000000000000002"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#org_eclipse_bugs::bugzillas#</dia:string>
+        <dia:string>#bugs_eclipse_org::bugzillas#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -329,7 +329,7 @@
         <dia:real val="30.200000000000017"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#org_eclipse_bugs::bugs#</dia:string>
+        <dia:string>#bugs_eclipse_org::bugs#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -1268,7 +1268,7 @@
         <dia:real val="11"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#org_eclipse_bugs::comments#</dia:string>
+        <dia:string>#bugs_eclipse_org::comments#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -1655,7 +1655,7 @@
         <dia:real val="5.4000000000000004"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#org_eclipse_bugs::users#</dia:string>
+        <dia:string>#bugs_eclipse_org::users#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -1881,7 +1881,7 @@
         <dia:real val="15.000000000000004"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#org_eclipse_bugs::attachments#</dia:string>
+        <dia:string>#bugs_eclipse_org::attachments#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -2383,7 +2383,7 @@
         <dia:real val="13.400000000000002"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#org_eclipse_bugs::interactions#</dia:string>
+        <dia:string>#bugs_eclipse_org::interactions#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -3401,7 +3401,7 @@ bug, comment or attachment#</dia:string>
         <dia:real val="3.8000000000000003"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#developers#</dia:string>
+        <dia:string>#extisimo::developers#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -3581,7 +3581,7 @@ bug, comment or attachment#</dia:string>
         <dia:real val="3.8000000000000003"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#topics#</dia:string>
+        <dia:string>#extisimo::topics#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -3761,7 +3761,7 @@ bug, comment or attachment#</dia:string>
         <dia:real val="3.8000000000000003"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#expertises#</dia:string>
+        <dia:string>#extisimo::expertises#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>

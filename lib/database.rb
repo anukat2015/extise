@@ -2,9 +2,9 @@ require 'active_record'
 require 'active_record/tasks/database_tasks'
 require 'yaml'
 
-require 'exrec/version'
+require 'database/version'
 
-module Exrec
+module Database
   extend self
   include ActiveRecord::Tasks
 
@@ -25,8 +25,8 @@ module Exrec
 
   def load_tasks(options = {})
     load 'active_record/railties/databases.rake'
-    load 'exrec/tasks/environment.rake'
-    load 'exrec/tasks/databases.rake'
+    load 'database/tasks/environment.rake'
+    load 'database/tasks/databases.rake'
 
     ActiveRecord::Base.configurations = options[:configurations] || configurations
     ActiveRecord::Base.schema_format = :sql

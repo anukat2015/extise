@@ -11,8 +11,8 @@ ARGV.bind! to: self do
 end
 
 AutoColor.enable on: self, colored: c, colorings: {
-  /bug \d*/ => [:blue, :bold],
-  /attachment \d*/ => -> (s, r) { s.sub(r) { |p| p.yellow.bold }},
+  /bug \d*/ => :blue,
+  /attachment \d*/ => -> (s, r) { s.sub(r) { |p| p.yellow }},
 }
 
 o ||= File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__)

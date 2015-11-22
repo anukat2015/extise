@@ -13,27 +13,27 @@ end
 
 AutoColor.disable on: self unless c
 
-def text(e, o, i = 0, s = e.text)
-  k = [o[:trim] - (2 * i + e.name.size + 1), 1].max
+def text(e, s, i = 0, o = options.bound)
+  k = [o[:t] - (2 * i + e.name.size + 1), 1].max
   s = s.strip.gsub(/\r|\r?\n/, '↵')
   s[k - 1] = '…' if s.size >= k
   s[0..k - 1]
 end
 
-def structure(e, o, i = 0)
+def structure(e, i = 0, o = options.bound)
   s = e.children.to_a.select { |x| x.name == 'text' }.map { |x| x.to_s.strip }.join "\n"
 
-  puts "#{'  ' * i}#{e.name.bold.blue} #{text e, o, i, s unless s.empty?}"
+  puts "#{'  ' * i}#{e.name.blue} #{text e, s, i, o unless s.empty?}"
 
-  e.attributes.to_h.tap { |h| h.sort if o[:sort] }.each do |_, a|
-    puts "#{'  ' * i}  #{a.name.bold.yellow} #{text a, o, i + 2}"
+  e.attributes.to_h.tap { |h| h.sort if o[:s] }.each do |_, a|
+    puts "#{'  ' * i}  #{a.name.yellow} #{text a, a.value, i + 2, o}"
   end
 
-  e.children.to_a.tap { |a| a.sort_by! &:name if o[:sort] }.each do |x|
-    structure x, o, i + 1 unless x.name == 'text'
+  e.children.to_a.tap { |a| a.sort_by! &:name if o[:s] }.each do |x|
+    structure x, i + 1, o unless x.name == 'text'
   end
 end
 
 d = p ? File.open(p) { |f| Nokogiri::XML f } : Nokogiri::XML(STDIN)
 
-structure d.xpath('/*').first, sort: s, trim: t
+structure d.xpath('/*').first

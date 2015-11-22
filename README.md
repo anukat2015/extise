@@ -28,10 +28,14 @@ A collection of tools to estimate developers' expertise
     spec                    RSpec test suite
     tmp                     Temporary files
 
-## Usage
+## Commands
 
-    bin/fetch_mylyn_contexts ../data/bugs.eclipse.org/all-with-mylyn-context-20151020-201230.xml
-    bin/lsxml -s ../data/bugs.eclipse.org/ajdt-with-mylyn-context-20151020-214105.xml
+    import_eclipse_bugs
+    fetch_mylyn_contexts
+
+## Utilities
+
+    lsxml
 
 ## Contributing
 

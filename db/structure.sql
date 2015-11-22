@@ -96,7 +96,7 @@ CREATE TABLE bugs_eclipse_org_bugs (
     rep_platform character varying NOT NULL,
     op_sys character varying NOT NULL,
     bug_status character varying NOT NULL,
-    resolution character varying NOT NULL,
+    resolution character varying,
     bug_file_loc character varying,
     status_whiteboard character varying,
     keywords character varying[] NOT NULL,
@@ -257,7 +257,7 @@ ALTER SEQUENCE bugs_eclipse_org_interactions_id_seq OWNED BY bugs_eclipse_org_in
 CREATE TABLE bugs_eclipse_org_users (
     id integer NOT NULL,
     login_name character varying NOT NULL,
-    realname character varying NOT NULL,
+    realnames character varying[] NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -743,13 +743,6 @@ CREATE INDEX index_bugs_eclipse_org_interactions_on_version ON bugs_eclipse_org_
 --
 
 CREATE UNIQUE INDEX index_bugs_eclipse_org_users_on_login_name ON bugs_eclipse_org_users USING btree (login_name);
-
-
---
--- Name: index_bugs_eclipse_org_users_on_realname; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_bugs_eclipse_org_users_on_realname ON bugs_eclipse_org_users USING btree (realname);
 
 
 --

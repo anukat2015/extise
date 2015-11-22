@@ -19,7 +19,7 @@ class CreateBugsEclipseOrgBugs < ActiveRecord::Migration
       t.string :rep_platform, null: false
       t.string :op_sys, null: false
       t.string :bug_status, null: false
-      t.string :resolution, null: false
+      t.string :resolution, null: true
       t.string :bug_file_loc, null: true
       t.string :status_whiteboard, null: true
       t.string :keywords, null: false, array: true

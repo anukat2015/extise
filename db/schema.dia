@@ -62,7 +62,7 @@
       </dia:composite>
     </dia:attribute>
   </dia:diagramdata>
-  <dia:layer name="bugs.eclipse.org" visible="true">
+  <dia:layer name="bugs.eclipse.org" visible="true" active="true">
     <dia:object type="UML - Class" version="0" id="O0">
       <dia:attribute name="obj_pos">
         <dia:point val="0,14"/>
@@ -1643,13 +1643,13 @@
         <dia:point val="33,14"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="32.95,13.95;42.405,19.45"/>
+        <dia:rectangle val="32.95,13.95;43.945,19.45"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="33,14"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.3550000000000004"/>
+        <dia:real val="10.895"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="5.4000000000000004"/>
@@ -1790,10 +1790,10 @@
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#realname#</dia:string>
+            <dia:string>#realnames#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
-            <dia:string>#string#</dia:string>
+            <dia:string>#array of string#</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
             <dia:string>##</dia:string>
@@ -3075,16 +3075,16 @@
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="42.355,14.6"/>
+        <dia:point val="43.895,14.6"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="42.305,2.55;47.1,15.45"/>
+        <dia:rectangle val="43.46,2.55;47.1,15.45"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="42.355,14.6"/>
+        <dia:point val="43.895,14.6"/>
         <dia:point val="47,14.6"/>
         <dia:point val="47,3.3"/>
         <dia:point val="43.51,3.3"/>
@@ -3217,16 +3217,16 @@
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="42.355,14.6"/>
+        <dia:point val="43.895,14.6"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="42.305,13.85;47.1,26.15"/>
+        <dia:rectangle val="43.845,13.85;47.1,26.15"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="42.355,14.6"/>
+        <dia:point val="43.895,14.6"/>
         <dia:point val="47,14.6"/>
         <dia:point val="47,25.3"/>
         <dia:point val="44.665,25.3"/>
@@ -3358,7 +3358,7 @@
 
 Field names are matching
 elements or attributes of
-source XML file, except
+source XML files, except
 id, *_id, and *_at 
 
 Each user has at least one
@@ -3383,7 +3383,7 @@ bug, comment or attachment#</dia:string>
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="sk.stuba.fiit.extise" visible="true" active="true">
+  <dia:layer name="sk.stuba.fiit.extise" visible="true">
     <dia:object type="UML - Class" version="0" id="O14">
       <dia:attribute name="obj_pos">
         <dia:point val="53,0"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
-<svg width="62cm" height="39cm" viewBox="-1 -3 1234 775" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="62cm" height="39cm" viewBox="-1 -4 1234 775" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <g>
     <rect style="fill: #ffffff" x="0" y="280" width="217.9" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="0" y="280" width="217.9" height="24"/>
@@ -77,14 +77,14 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="214">+updated_at: datetime</text>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="660" y="280" width="187.1" height="24"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="280" width="187.1" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="753.55" y="296">bugs_eclipse_org::users</text>
-    <rect style="fill: #ffffff" x="660" y="304" width="187.1" height="84"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="304" width="187.1" height="84"/>
+    <rect style="fill: #ffffff" x="660" y="280" width="217.9" height="24"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="280" width="217.9" height="24"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="768.95" y="296">bugs_eclipse_org::users</text>
+    <rect style="fill: #ffffff" x="660" y="304" width="217.9" height="84"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="304" width="217.9" height="84"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="318">+id: integer</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="334">+login_name: string</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="350">+realname: string</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="350">+realnames: array of string</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="366">+created_at: datetime</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="382">+updated_at: datetime</text>
   </g>
@@ -159,10 +159,10 @@
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="537.3" y="79"></text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="847.1,292 940,292 940,66 870.2,66 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="877.9,292 940,292 940,66 870.2,66 "/>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="942" y="176"></text>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="851.1" y="289"> 1</text>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="851.1" y="305"></text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="881.9" y="289"> 1</text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="881.9" y="305"></text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="874.2" y="63"> 0..*</text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="874.2" y="79"></text>
   </g>
@@ -175,9 +175,9 @@
     <text font-size="12.7998" style="fill: #000000;text-anchor:end;font-family:monospace;font-style:normal;font-weight:normal" x="656" y="63"></text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="847.1,292 940,292 940,506 893.3,506 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="877.9,292 940,292 940,506 893.3,506 "/>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="942" y="396"></text>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="851.1" y="289"></text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="881.9" y="289"></text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="897.3" y="503"> 0..*</text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="897.3" y="519"></text>
   </g>
@@ -198,7 +198,7 @@
       <tspan x="7" y="40.9"></tspan>
       <tspan x="7" y="56.9">Field names are matching</tspan>
       <tspan x="7" y="72.9">elements or attributes of</tspan>
-      <tspan x="7" y="88.9">source XML file, except</tspan>
+      <tspan x="7" y="88.9">source XML files, except</tspan>
       <tspan x="7" y="104.9">id, *_id, and *_at </tspan>
       <tspan x="7" y="120.9"></tspan>
       <tspan x="7" y="136.9">Each user has at least one</tspan>

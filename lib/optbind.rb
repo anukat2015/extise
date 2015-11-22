@@ -2,12 +2,14 @@ require 'optparse'
 
 module OptionBinder
   module Binding
-    def bind_to_argument(*args)
-      var, args = (args * ' ').split /\s+/, 2
-      (@arguments ||= {})[var] = args =~ /\A\[.*\]\z/ ? [:optional] : []
+    def bind_to_argument(*args, &block)
+      v, args = (args * ' ').split /\s+/, 2
+      (@arguments ||= {})[v] = { block: block, flags: args =~ /\A\[.*\]\z/ ? [:optional] : [] }
+      (@bound ||= []) << v.to_sym
+      self
     end
 
-    def bind_to_option(*args)
+    def bind_to_option(*args, &block)
       args = (args * ' ').split /\s+/, 4
       v, desc, args = args[0], args[3], args[1..2].reverse
       args.delete '--'
@@ -15,18 +17,23 @@ module OptionBinder
       args << "#{desc}#{desc ? ', d' : 'D'}#{"efault #{[d] * ','}" unless d.nil?}"
       a.sub!(/:\w+>/i) { |m| args << Object.const_get(m[1..-2].capitalize); '>' }
       args << $~.to_s[2..-2].split('|') if a =~ /=\(.*\)/
+      (@bound ||= []) << v.to_sym
       on(*args) do |x|
         abort "missing argument: #{a.sub(/=.*/, '')}=" if a =~ /\w=/ && (!x || (x.respond_to?(:empty?) && x.empty?))
-        options_binding.local_variable_set v, x == nil ? d : x
+        options_binding.local_variable_set v, (block || -> (_) { x }).call(x == nil ? d : x)
       end
+    end
+
+    def bound
+      @bound ? Hash[@bound.map { |v| [v, options_binding.local_variable_get(v)] }] : {}
     end
 
     def parse!(argv = default_argv)
       super
       (@arguments || {}).each do |v, args|
         x = argv.shift
-        abort('missing arguments') unless args.include? :optional
-        options_binding.local_variable_set v, x
+        abort('missing arguments') unless args[:flags].include? :optional
+        options_binding.local_variable_set v, args[:block] ? args[:block].call(x) : x
       end
       abort 'too many arguments' unless argv.shift.nil?
     end
@@ -51,14 +58,14 @@ module OptionBinder
 
     alias usage use
 
-    def opt(*args)
-      options.bind_to_option *args
+    def opt(*args, &block)
+      options.bind_to_option *args, &block
     end
 
     alias option opt
 
-    def arg(*args)
-      options.bind_to_argument *args
+    def arg(*args, &block)
+      options.bind_to_argument *args, &block
     end
 
     alias argument arg

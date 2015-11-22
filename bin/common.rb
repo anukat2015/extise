@@ -6,6 +6,7 @@ $LOAD_PATH.unshift File.expand_path '../../lib', __FILE__
 require 'auto_color'
 require 'colored_defaults'
 require 'fileutils'
+require 'open3'
 require 'optbind'
 require 'nokogiri'
 require 'yaml'

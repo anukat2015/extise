@@ -1,0 +1,144 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+m, c, s, t, v, p = false, true, false, 80, true, nil
+
+ARGV.bind! to: self do
+  use '[<options>] [<file>]'
+  opt 'm -m --mylyn[=<path>]' # TODO implement
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:integer>]'
+  opt 'v -v --[no-]verbose'
+  arg 'p [<path>]'
+end
+
+AutoColor.disable on: self unless c
+
+def dump(r, n = nil, i = 0, o = options.bound)
+  puts "#{'  ' * i}#{"#{n.to_s.blue}: " if n}#{r.class.name.green}#{":#{r.id.to_s.yellow}" unless o[:v]}"
+  r.attributes.to_a.tap { |a| a.sort_by! { |p| p[0] } if o[:s] }.each do |k, v|
+    v = v.to_s.strip.gsub(/\r|\r?\n/, '↵').truncate [o[:t] - (2 * i + k.to_s.size + 1), 1].max, omission: '…'
+    puts "#{'  ' * (i + 1)}#{k.to_s.blue}: #{v == nil ? 'nil'.black : v.yellow}"
+  end if o[:v]
+end
+
+def persist(c, k)
+  x = k.delete :xml
+  c.find_or_initialize_by(k).tap do |r|
+     yield r
+     r.save!
+  end
+rescue => e
+  Open3.popen2(File.expand_path 'lsxml', __dir__) do |i, o|
+    i.puts x
+    i.close
+    puts "\nXML-DEBUG:\n\n#{o.read}\n"
+  end if x
+  e.is_a?(ActiveRecord::ActiveRecordError) ? abort(e.message) : raise(e)
+end
+
+def persist_user(l, r = [])
+  persist(User, login_name: l) do |u|
+    u.realnames = (u.realnames.to_a + [r]).flat_map(&:presence).compact.uniq
+  end
+end
+
+include BugsEclipseOrg
+
+d = p ? File.open(p) { |f| Nokogiri::XML f } : Nokogiri::XML(STDIN)
+
+bugzilla = persist(Bugzilla, urlbase: d.root.attributes['urlbase'].text.presence) do |r|
+  r.version = d.root.attributes['version'].text.presence
+  r.maintainer = d.root.attributes['maintainer'].text.presence
+end
+
+dump bugzilla, :bugzilla
+
+d.css('bug').each do |b|
+  bug = persist(Bug, bugid: b.css('bug_id').text.presence, xml: b) do |r|
+    raise if b.css('reporter').count != 1
+    raise if b.css('assigned_to').count != 1
+
+    r.bugzilla = bugzilla
+    r.author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].text.presence
+    r.assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].text.presence
+
+    r.creation_ts = b.css('creation_ts').text.presence
+    r.short_desc = b.css('short_desc').text.presence
+    r.delta_ts = b.css('delta_ts').text.presence
+    r.reporter_accessible = b.css('reporter_accessible').text.presence
+    r.cclist_accessible = b.css('cclist_accessible').text.presence
+    r.classificationid = b.css('classification_id').text.presence
+    r.classification = b.css('classification').text.presence
+    r.product = b.css('product').text.presence
+    r.component = b.css('component').text.presence
+    r.version = b.css('version').text.presence
+    r.rep_platform = b.css('rep_platform').text.presence
+    r.op_sys = b.css('op_sys').text.presence
+    r.bug_status = b.css('bug_status').text.presence
+    r.resolution = b.css('resolution').text.presence
+    r.bug_file_loc = b.css('bug_file_loc').text.presence
+    r.status_whiteboard = b.css('status_whiteboard').text.presence
+    r.keywords = b.css('keywords').map { |v| v.text.presence }.compact
+    r.priority = b.css('priority').text.presence
+    r.bug_severity = b.css('bug_severity').text.presence
+    r.target_milestone = b.css('target_milestone').text.presence
+    r.dependson = b.css('dependson').map { |v| v.text.presence }.compact
+    r.everconfirmed = b.css('everconfirmed').text.presence
+    r.reporter = b.css('reporter').text.presence
+    r.reporter_name = b.css('reporter')[0].attributes['name'].text.presence
+    r.assigned_to = b.css('assigned_to').text.presence
+    r.assigned_to_name = b.css('assigned_to')[0].attributes['name'].text.presence
+    r.cc = b.css('cc').map { |v| v.text.presence }.compact
+    r.votes = b.css('votes').text.presence
+    r.comment_sort_order = b.css('comment_sort_order').text.presence
+  end
+
+  dump bug, :bug, 1
+  dump bug.author, :author, 2
+  dump bug.assignee, :assignee, 3
+
+  b.css('long_desc').each do |c|
+    comment = persist(Comment, commentid: c.css('commentid').text.presence, xml: c) do |r|
+      raise if c.css('who').count != 1
+
+      r.bug = bug
+      r.author = persist_user c.css('who').text.presence, c.css('who')[0].attributes['name'].text.presence
+
+      r.comment_count = c.css('comment_count').text.presence
+      r.who = c.css('who').text.presence
+      r.who_name = c.css('who')[0].attributes['name'].text.presence
+      r.bug_when = c.css('bug_when').text.presence
+      r.thetext = c.css('thetext').text.presence
+      r.isprivate = c.attributes['isprivate'].text.presence
+    end
+
+    dump comment, :comment, 2
+    dump comment.author, :author, 3
+  end
+
+  b.css('attachment').each do |a|
+    attachment = persist(Attachment, attachid: a.css('attachid').text.presence, xml: a) do |r|
+      raise if a.css('attacher').count != 1
+
+      r.bug = bug
+      r.submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].text.presence
+
+      r.date = a.css('date').text.presence
+      r.delta_ts = a.css('delta_ts').text.presence
+      r.desc = a.css('desc').text.presence
+      r.filename = a.css('filename').text.presence
+      r.type = a.css('type').text.presence
+      r.size = a.css('size').text.presence
+      r.attacher = a.css('attacher').text.presence
+      r.attacher_name = a.css('attacher')[0].attributes['name'].text.presence
+      r.isobsolete = a.attributes['isobsolete'].text.presence
+      r.ispatch = a.attributes['ispatch'].text.presence
+      r.isprivate = a.attributes['isprivate'].text.presence
+    end
+
+    dump attachment, :attachment, 2
+    dump attachment.submitter, :submitter, 3
+  end
+end

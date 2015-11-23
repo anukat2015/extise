@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-m, c, s, t, v, p = false, true, false, 80, true, nil
+m, c, s, t, v, q, z, p = false, true, false, 80, true, false, false, nil
 
 ARGV.bind! to: self do
   use '[<options>] [<file>]'
@@ -10,12 +10,15 @@ ARGV.bind! to: self do
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:integer>]'
   opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  opt 'z -- --stat'
   arg 'p [<path>]'
 end
 
 AutoColor.disable on: self unless c
 
 def dump(r, n = nil, i = 0, o = options.bound)
+  return if o[:q]
   puts "#{'  ' * i}#{"#{n.to_s.blue}: " if n}#{r.class.name.green}#{":#{r.id.to_s.yellow}" unless o[:v]}"
   r.attributes.to_a.tap { |a| a.sort_by! { |p| p[0] } if o[:s] }.each do |k, v|
     v = v.to_s.strip.gsub(/\r|\r?\n/, '↵').truncate [o[:t] - (2 * i + k.to_s.size + 1), 1].max, omission: '…'
@@ -47,6 +50,14 @@ end
 include BugsEclipseOrg
 
 d = p ? File.open(p) { |f| Nokogiri::XML f } : Nokogiri::XML(STDIN)
+
+if z
+  puts "bugzilla @ #{d.root.attributes['urlbase']}"
+  puts "  bugs: #{d.css('bug').count}"
+  puts "  comments: #{d.css('long_desc').count}"
+  puts "  attachments: #{d.css('attachment').count}"
+  abort
+end
 
 bugzilla = persist(Bugzilla, urlbase: d.root.attributes['urlbase'].text.presence) do |r|
   r.version = d.root.attributes['version'].text.presence

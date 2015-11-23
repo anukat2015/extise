@@ -14,7 +14,7 @@ module OptionBinder
       v, desc, args = args[0], args[3], args[1..2].reverse
       args.delete '--'
       a, d = args.first, options_binding.local_variable_get(v)
-      args << "#{desc}#{desc ? ', d' : 'D'}#{"efault #{[d] * ','}" unless d.nil?}"
+      args << "#{desc}#{desc ? ', ' : ''}#{"Default #{[d] * ','}" unless d.nil?}"
       a.sub!(/:\w+>/i) { |m| args << Object.const_get(m[1..-2].capitalize); '>' }
       args << $~.to_s[2..-2].split('|') if a =~ /=\(.*\)/
       (@bound ||= []) << v.to_sym
@@ -47,7 +47,7 @@ module OptionBinder
     end
 
     def usage(*args)
-      @usage ||= [] << args * ' '
+      (@usage ||= []) << args * ' '
     end
   end
 

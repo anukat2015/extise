@@ -19,6 +19,7 @@ module Database
   end
 
   def establish_connection(options = {})
+    ActiveRecord::Base.default_timezone = :utc
     ActiveRecord::Base.configurations = options[:configurations] || configurations
     ActiveRecord::Base.establish_connection (options[:environment] || environment).to_sym
   end
@@ -28,6 +29,7 @@ module Database
     load 'database/tasks/environment.rake'
     load 'database/tasks/databases.rake'
 
+    ActiveRecord::Base.default_timezone = :utc
     ActiveRecord::Base.configurations = options[:configurations] || configurations
     ActiveRecord::Base.schema_format = :sql
 

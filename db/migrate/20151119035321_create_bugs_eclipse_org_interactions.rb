@@ -10,7 +10,7 @@ class CreateBugsEclipseOrgInteractions < ActiveRecord::Migration
       t.datetime :end_date, null: false
       t.string :originid, null: false
       t.string :structure_kind, null: false
-      t.text :structure_handle, null: false
+      t.text :structure_handle, null: true
       t.string :navigation, null: true
       t.string :delta, null: true
       t.decimal :interest, null: false, precision: 12, scale: 8

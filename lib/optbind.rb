@@ -6,7 +6,7 @@ module OptionBinder
       v, args, f = (args * ' ').split(/\s+/, 2) << []
       f << :optional if args =~ /\A\[.*\]\z/
       f << :multiple if args =~ /\.\.\.\]?\z/
-      (@arguments ||= {})[v] = { block: block, flags: f }
+      (@arguments ||= {})[v] = { block: block, flags: f, default: options_binding.local_variable_get(v) }
       (@bound ||= []) << v.to_sym
       self
     end
@@ -34,6 +34,7 @@ module OptionBinder
       super
       (@arguments || {}).each do |v, args|
         x = args[:flags].include?(:multiple) ? argv : argv.shift
+        x = args[:default] unless [x].flatten[0]
         abort('missing arguments') if x.nil? && !args[:flags].include?(:optional)
         options_binding.local_variable_set v, args[:block] ? args[:block].call(x) : x
         return if x.is_a? Array

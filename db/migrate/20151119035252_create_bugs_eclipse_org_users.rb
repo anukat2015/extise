@@ -7,6 +7,6 @@ class CreateBugsEclipseOrgUsers < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :bugs_eclipse_org_users, :login_name, unique: true
+    add_index :bugs_eclipse_org_users, :login_name, unique: true, name: 'index_bugs_eclipse_org_users_as_unique'
   end
 end

@@ -9,7 +9,7 @@ class CreateBugsEclipseOrgBugzillas < ActiveRecord::Migration
     end
 
     add_index :bugs_eclipse_org_bugzillas, :version
-    add_index :bugs_eclipse_org_bugzillas, :urlbase, unique: true
+    add_index :bugs_eclipse_org_bugzillas, :urlbase, unique: true, name: 'index_bugs_eclipse_org_bugzillas_as_unique'
     add_index :bugs_eclipse_org_bugzillas, :maintainer
   end
 end

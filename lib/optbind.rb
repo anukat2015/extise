@@ -33,8 +33,8 @@ module OptionBinder
     def parse!(argv = default_argv)
       super
       (@arguments || {}).each do |v, args|
-        x = args[:flags].include?(:multiple) ? argv : argv.shift
-        x = args[:default] unless [x].flatten[0]
+        x = argv[0] ? argv.shift : args[:default]
+        x = ([x] + argv).flatten if args[:flags].include?(:multiple)
         abort('missing arguments') if x.nil? && !args[:flags].include?(:optional)
         options_binding.local_variable_set v, args[:block] ? args[:block].call(x) : x
         return if x.is_a? Array

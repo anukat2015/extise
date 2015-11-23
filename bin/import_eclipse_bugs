@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-m, c, s, t, v, q, z, p = false, true, false, 80, true, false, false, [STDIN]
+m, c, s, t, v, q, z, p = nil, true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind! to: self do
   use '[<options>] [<file>...]'
-  opt 'm -m --mylyn[=<path>]' # TODO implement
+  opt 'm -m --mylyn[=<path>]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:integer>]'
@@ -18,6 +18,21 @@ end
 AutoColor.disable on: self unless c
 
 include BugsEclipseOrg
+
+def import_mylyn_context(x, i = 0, o = options.bound)
+  file = File.join o[:m], "#{x}.xml"
+  args = [file, "-t#{o[:t] - 2 * i}"]
+  %w(verbose sort color).each { |x| o[x[0].to_sym] ? (args << "-#{x[0]}") : (args << "--no-#{x}") }
+  args << '-q' if o[:q]
+  cmd = "import_mylyn_contexts #{args.reverse * ' '}"
+  puts "#{'  ' * i}#{cmd.cyan}" if o[:v] unless o[:q]
+  Open3.popen3(File.expand_path cmd, __dir__) do |_, out, error, status|
+    out.readlines.each do |l|
+      puts "#{'  ' * i}#{l}"
+    end unless o[:q]
+    abort error.read unless status.value.to_i.zero?
+  end
+end
 
 i = v && !options.default?(:p) ? 1 : 0
 
@@ -114,7 +129,7 @@ p.each do |f|
 
     b.css('attachment').each do |a|
       attachment = persist(Attachment, attachid: a.css('attachid').text.presence, xml: a) do |r|
-        abort "#{Comment}:#{r.commentid} too many attachers".red if a.css('attacher').count != 1
+        abort "#{Attachment}:#{r.attachid} too many attachers".red if a.css('attacher').count != 1
 
         r.bug = bug
         r.submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].try(&:text).presence
@@ -134,6 +149,8 @@ p.each do |f|
 
       dump attachment, :attachment, i + 2
       dump attachment.submitter, :submitter, i + 3
+
+      import_mylyn_context attachment.attachid, i + 3 if m && attachment.filename == 'mylyn-context.zip'
     end
   end
 end

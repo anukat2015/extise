@@ -65,7 +65,7 @@ d.css('bug').each do |b|
     r.assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
 
     r.creation_ts = b.css('creation_ts').text.presence
-    r.short_desc = b.css('short_desc').text.presence
+    r.short_desc = b.css('short_desc').text
     r.delta_ts = b.css('delta_ts').text.presence
     r.reporter_accessible = b.css('reporter_accessible').text
     r.cclist_accessible = b.css('cclist_accessible').text
@@ -110,7 +110,7 @@ d.css('bug').each do |b|
       r.who = c.css('who').text.presence
       r.who_name = c.css('who')[0].attributes['name'].try(&:text).presence
       r.bug_when = c.css('bug_when').text.presence
-      r.thetext = c.css('thetext').text.presence
+      r.thetext = c.css('thetext').text
       r.isprivate = c.attributes['isprivate'].text
     end
 
@@ -127,7 +127,7 @@ d.css('bug').each do |b|
 
       r.date = a.css('date').text.presence
       r.delta_ts = a.css('delta_ts').text.presence
-      r.desc = a.css('desc').text.presence
+      r.desc = a.css('desc').text
       r.filename = a.css('filename').text.presence
       r.type = a.css('type').text.presence
       r.size = a.css('size').text.presence

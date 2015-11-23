@@ -32,14 +32,14 @@ p.each do |f|
   end
 
   bug_url = d.root.attributes['Id'].text.strip
-  bug_id = bug_url.match(/\d+\z/)[0]
+  bugid = bug_url.match(/\d+\z/)[0]
   version = d.root.attributes['Version'].text.strip
 
   abort "Invalid URL: #{bug_url}".red if bug_url !~ /\Ahttps:\/\/bugs\.eclipse\.org\/bugs-\d+\z/
   abort "Invalid version: #{version}".red if version != '1'
 
-  bug = Bug.where(id: bug_id).first
-  contexts = Attachment.where(bug_id: bug_id, filename: 'mylyn-context.zip')
+  bug = Bug.where(bugid: bugid).first
+  contexts = Attachment.where(bug: bug, filename: 'mylyn-context.zip')
   context = contexts.first
 
   abort "#{Bug}:#{bug_id} not found".red if bug.nil?
@@ -47,21 +47,22 @@ p.each do |f|
   abort "#{Bug}:#{bug_id} various contexts" if contexts.count > 1
 
   d.css('InteractionEvent').each do |e|
-    interaction = persist(Interaction, attachment: context, start_date: e.css('StartDate').text.presence, xml: e) do |r|
+    time = Time.parse(e.attributes['StartDate'].text).utc
+
+    interaction = persist(Interaction, attachment_id: context.id, start_date: time, xml: e) do |r|
       r.bug_url = bug_url
       r.version = version
 
-      r.kind = e.css('Kind').text.presence
-      r.start_date = e.css('StartDate').text.presence
-      r.end_date = e.css('EndDate').text.presence
-      r.originid = e.css('OriginId').text.presence
-      r.structure_kind = e.css('StructureKind').text.presence
-      r.structure_handle = e.css('StructureHandle').text.presence
-      r.navigation = e.css('Navigation').text.presence
-      r.delta = e.css('Delta').text.presence
-      r.interest = e.css('Interest').text.presence
+      r.kind = e.attributes['Kind'].text.presence
+      r.end_date = e.attributes['EndDate'].text.presence
+      r.originid = e.attributes['OriginId'].text.presence
+      r.structure_kind = e.attributes['StructureKind'].text.presence
+      r.structure_handle = e.attributes['StructureHandle'].text.presence
+      r.navigation = e.attributes['Navigation'].text.presence
+      r.delta = e.attributes['Delta'].text.presence
+      r.interest = e.attributes['Interest'].text.presence
     end
 
-    dump interaction, i
+    dump interaction, :interaction, i
   end
 end

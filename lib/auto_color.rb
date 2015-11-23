@@ -2,9 +2,10 @@ require 'colored'
 
 module AutoColor
   def self.enable(options = {})
-    options[:on].extend self::IO
-    options[:on].colored = options[:colored] != nil ? !!options[:colored] : true
-    options[:on].colorings = options[:colorings].to_h || {}
+    target = options[:on].extend self::IO
+    target.colored = options[:colored] != nil ? !!options[:colored] : true
+    target.colorings = options[:colorings].to_h || {}
+    target
   end
 
   def self.disable(options = {})

@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-c, o, p = true, nil, nil
+o, c, v, q, p = nil, true, true, false, nil
 
 ARGV.bind! to: self do
-  use '[<options>] [<file>]'
+  use '[<options>] [<file>...]'
+  opt 'o -o --output=<path>'
   opt 'c -c --[no-]color'
-  opt 'o -o --output'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
   arg 'p [<path>]'
 end
 
@@ -23,18 +25,18 @@ FileUtils.mkpath o
 d.css('bug').each do |bug|
   bug_id = bug.css('bug_id').text.strip
 
-  puts "bug #{bug_id}"
+  puts "bug #{bug_id}" unless q
 
   bug.css('attachment').each do |attachment|
     attachment_id = attachment.css('attachid').text.strip
     attachment_filename = attachment.css('filename').text.strip
 
-    puts "  attachment #{attachment_id} #{attachment_filename}"
+    puts "  attachment #{attachment_id} #{attachment_filename}" unless q
 
     file = File.join o, "#{attachment_id}.xml"
 
     if attachment_filename == 'mylyn-context.zip' && !File.exist?(file)
-      system "curl -sS https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"
+      system "curl -#{'s' if !v || q}S https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"
     end
   end
 end

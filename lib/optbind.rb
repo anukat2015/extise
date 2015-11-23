@@ -4,42 +4,54 @@ module OptionBinder
   module Binding
     def bind_to_argument(*args, &block)
       v, args, f = (args * ' ').split(/\s+/, 2) << []
+      d = options_binding.local_variable_get(v)
       f << :optional if args =~ /\A\[.*\]\z/
       f << :multiple if args =~ /\.\.\.\]?\z/
-      (@arguments ||= {})[v] = { block: block, flags: f, default: options_binding.local_variable_get(v) }
-      (@bound ||= []) << v.to_sym
+      (@arguments_definitions ||= {})[v] = { block: block, flags: f, default: d }
+      (@bounded_locals_with_defaults ||= {})[v.to_sym] = d
       self
     end
 
     def bind_to_option(*args, &block)
       args = (args * ' ').split /\s+/, 4
       v, desc, args = args[0], args[3], args[1..2].reverse
-      args.delete '--'
       a, d = args.first, options_binding.local_variable_get(v)
+      args.delete '--'
       args << "#{desc}#{desc ? ', ' : ''}#{"Default #{[d] * ','}" unless d.nil?}"
       a.sub!(/:\w+>/i) { |m| args << Object.const_get(m[1..-2].capitalize); '>' }
       args << $~.to_s[2..-2].split('|') if a =~ /=\(.*\)/
-      (@bound ||= []) << v.to_sym
+      (@bounded_locals_with_defaults ||= {})[v.to_sym] = d
       on(*args) do |x|
         abort "missing argument: #{a.sub(/=.*/, '')}=" if a =~ /\w=/ && (!x || (x.respond_to?(:empty?) && x.empty?))
         options_binding.local_variable_set v, (block || -> (_) { x }).call(x == nil ? d : x)
       end
     end
 
-    def bound
-      @bound ? Hash[@bound.map { |v| [v, options_binding.local_variable_get(v)] }] : {}
+    def bound_locals
+      return {} unless @bounded_locals_with_defaults
+      Hash[@bounded_locals_with_defaults.keys.map { |v| [v, options_binding.local_variable_get(v)] }]
+    end
+
+    def bound_defaults
+      @bounded_locals_with_defaults ? @bounded_locals_with_defaults.dup : {}
+    end
+
+    alias bound bound_locals
+
+    def default?(v)
+      bound_defaults[v] ? bound_defaults[v] == options_binding.local_variable_get(v) : nil
     end
 
     def parse!(argv = default_argv)
       super
-      (@arguments || {}).each do |v, args|
+      (@arguments_definitions || {}).each do |v, args|
         x = argv[0] ? argv.shift : args[:default]
         x = ([x] + argv).flatten if args[:flags].include?(:multiple)
         abort('missing arguments') if x.nil? && !args[:flags].include?(:optional)
         options_binding.local_variable_set v, args[:block] ? args[:block].call(x) : x
         return if x.is_a? Array
       end
-      abort 'too many arguments' if @arguments && argv.shift
+      abort 'too many arguments' if @arguments_definitions && argv.shift
     end
   end
 

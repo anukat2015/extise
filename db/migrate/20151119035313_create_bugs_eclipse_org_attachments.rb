@@ -12,7 +12,7 @@ class CreateBugsEclipseOrgAttachments < ActiveRecord::Migration
       t.string :type, null: false
       t.integer :size, null: false
       t.string :attacher, null: false
-      t.string :attacher_name, null: false
+      t.string :attacher_name, null: true
       t.boolean :isobsolete, null: false
       t.boolean :ispatch, null: false
       t.boolean :isprivate, null: false

@@ -7,7 +7,7 @@ class CreateBugsEclipseOrgComments < ActiveRecord::Migration
       t.integer :commentid, null: false
       t.integer :comment_count, null: false
       t.string :who, null: false
-      t.string :who_name, null: false
+      t.string :who_name, null: true
       t.datetime :bug_when, null: false
       t.text :thetext, null: false
       t.boolean :isprivate, null: false

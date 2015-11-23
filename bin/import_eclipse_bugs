@@ -61,8 +61,8 @@ d.css('bug').each do |b|
     raise if b.css('assigned_to').count != 1
 
     r.bugzilla = bugzilla
-    r.author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].text.presence
-    r.assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].text.presence
+    r.author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].try(&:text).presence
+    r.assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
 
     r.creation_ts = b.css('creation_ts').text.presence
     r.short_desc = b.css('short_desc').text.presence
@@ -87,9 +87,9 @@ d.css('bug').each do |b|
     r.dependson = b.css('dependson').map { |v| v.text.presence }.compact
     r.everconfirmed = b.css('everconfirmed').text.presence
     r.reporter = b.css('reporter').text.presence
-    r.reporter_name = b.css('reporter')[0].attributes['name'].text.presence
+    r.reporter_name = b.css('reporter')[0].attributes['name'].try(&:text).presence
     r.assigned_to = b.css('assigned_to').text.presence
-    r.assigned_to_name = b.css('assigned_to')[0].attributes['name'].text.presence
+    r.assigned_to_name = b.css('assigned_to')[0].attributes['name'].try(&:text).presence
     r.cc = b.css('cc').map { |v| v.text.presence }.compact
     r.votes = b.css('votes').text.presence
     r.comment_sort_order = b.css('comment_sort_order').text.presence
@@ -104,11 +104,11 @@ d.css('bug').each do |b|
       raise if c.css('who').count != 1
 
       r.bug = bug
-      r.author = persist_user c.css('who').text.presence, c.css('who')[0].attributes['name'].text.presence
+      r.author = persist_user c.css('who').text.presence, c.css('who')[0].attributes['name'].try(&:text).presence
 
       r.comment_count = c.css('comment_count').text.presence
       r.who = c.css('who').text.presence
-      r.who_name = c.css('who')[0].attributes['name'].text.presence
+      r.who_name = c.css('who')[0].attributes['name'].try(&:text).presence
       r.bug_when = c.css('bug_when').text.presence
       r.thetext = c.css('thetext').text.presence
       r.isprivate = c.attributes['isprivate'].text.presence
@@ -123,7 +123,7 @@ d.css('bug').each do |b|
       raise if a.css('attacher').count != 1
 
       r.bug = bug
-      r.submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].text.presence
+      r.submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].try(&:text).presence
 
       r.date = a.css('date').text.presence
       r.delta_ts = a.css('delta_ts').text.presence
@@ -132,7 +132,7 @@ d.css('bug').each do |b|
       r.type = a.css('type').text.presence
       r.size = a.css('size').text.presence
       r.attacher = a.css('attacher').text.presence
-      r.attacher_name = a.css('attacher')[0].attributes['name'].text.presence
+      r.attacher_name = a.css('attacher')[0].attributes['name'].try(&:text).presence
       r.isobsolete = a.attributes['isobsolete'].text.presence
       r.ispatch = a.attributes['ispatch'].text.presence
       r.isprivate = a.attributes['isprivate'].text.presence

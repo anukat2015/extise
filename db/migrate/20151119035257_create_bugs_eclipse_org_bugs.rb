@@ -29,9 +29,9 @@ class CreateBugsEclipseOrgBugs < ActiveRecord::Migration
       t.integer :dependson, null: false, array: true
       t.boolean :everconfirmed, null: false
       t.string :reporter, null: false
-      t.string :reporter_name, null: false
+      t.string :reporter_name, null: true
       t.string :assigned_to, null: false
-      t.string :assigned_to_name, null: false
+      t.string :assigned_to_name, null: true
       t.string :cc, null: false, array: true
       t.integer :votes, null: false
       t.string :comment_sort_order, null: false

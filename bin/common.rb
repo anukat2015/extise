@@ -48,9 +48,9 @@ def load_extise!
     Open3.popen2(File.expand_path 'lsxml', __dir__) do |i, o|
       i.puts x
       i.close
-      puts "\nXML-DEBUG:\n\n#{o.read}\n"
+      puts "\n--#{'XML-DEBUG'.red}--\n\n#{o.read}\n--#{'XML-DEBUG'.red}--\n\n"
     end if x
-    e.is_a?(ActiveRecord::ActiveRecordError) ? abort(e.message) : raise(e)
+    e.is_a?(ActiveRecord::ActiveRecordError) ? abort(e.message.to_s.red) : raise(e)
   end
 
   def persist_user(l, r = [])

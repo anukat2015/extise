@@ -3,8 +3,10 @@ require 'optparse'
 module OptionBinder
   module Binding
     def bind_to_argument(*args, &block)
-      v, args = (args * ' ').split /\s+/, 2
-      (@arguments ||= {})[v] = { block: block, flags: args =~ /\A\[.*\]\z/ ? [:optional] : [] }
+      v, args, f = (args * ' ').split(/\s+/, 2) << []
+      f << :optional if args =~ /\A\[.*\]\z/
+      f << :multiple if args =~ /\.\.\.\]?\z/
+      (@arguments ||= {})[v] = { block: block, flags: f }
       (@bound ||= []) << v.to_sym
       self
     end
@@ -31,11 +33,12 @@ module OptionBinder
     def parse!(argv = default_argv)
       super
       (@arguments || {}).each do |v, args|
-        x = argv.shift
-        abort('missing arguments') unless args[:flags].include? :optional
+        x = args[:flags].include?(:multiple) ? argv : argv.shift
+        abort('missing arguments') if x.nil? && !args[:flags].include?(:optional)
         options_binding.local_variable_set v, args[:block] ? args[:block].call(x) : x
+        return if x.is_a? Array
       end
-      abort 'too many arguments' unless argv.shift.nil?
+      abort 'too many arguments' if argv.shift
     end
   end
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-o, c, v, q, p = nil, true, true, false, nil
+o, c, v, q, p = nil, true, true, false, [STDIN]
 
 ARGV.bind! to: self do
   use '[<options>] [<file>...]'
@@ -9,7 +9,7 @@ ARGV.bind! to: self do
   opt 'c -c --[no-]color'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
-  arg 'p [<path>]'
+  arg 'p [<path>...]'
 end
 
 AutoColor.enable on: self, colored: c, colorings: {
@@ -17,26 +17,32 @@ AutoColor.enable on: self, colored: c, colorings: {
   /attachment \d*/ => -> (s, r) { s.sub(r) { |p| p.yellow }},
 }
 
+i = v && !options.default?(:p) ? 1 : 0
 o ||= File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__)
-d = p ? File.open(p) { |f| Nokogiri::XML f } : Nokogiri::XML(STDIN)
 
 FileUtils.mkpath o
 
-d.css('bug').each do |bug|
-  bug_id = bug.css('bug_id').text.strip
+p.each do |f|
+  d = Nokogiri::XML File.open_or f
 
-  puts "bug #{bug_id}" unless q
+  puts "#{f.green}" unless q || i.zero?
 
-  bug.css('attachment').each do |attachment|
-    attachment_id = attachment.css('attachid').text.strip
-    attachment_filename = attachment.css('filename').text.strip
+  d.css('bug').each do |bug|
+    bug_id = bug.css('bug_id').text.strip
 
-    puts "  attachment #{attachment_id} #{attachment_filename}" unless q
+    puts "#{'  ' * i}bug #{bug_id}" unless q
 
-    file = File.join o, "#{attachment_id}.xml"
+    bug.css('attachment').each do |attachment|
+      attachment_id = attachment.css('attachid').text.strip
+      attachment_filename = attachment.css('filename').text.strip
 
-    if attachment_filename == 'mylyn-context.zip' && !File.exist?(file)
-      system "curl -#{'s' if !v || q}S https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"
+      puts "#{'  ' * (i + 1)}attachment #{attachment_id} #{attachment_filename}" unless q
+
+      file = File.join o, "#{attachment_id}.xml"
+
+      if attachment_filename == 'mylyn-context.zip' && !File.exist?(file)
+        system "curl -#{'s' if !v || q}S https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"
+      end
     end
   end
 end

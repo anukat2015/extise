@@ -1,14 +1,15 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-c, s, t, p = true, false, 80, nil
+c, s, t, v, p = true, false, 80, true, [STDIN]
 
 ARGV.bind! to: self do
-  use '[<options>] [<file>]'
+  use '[<options>] [<file>...]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:integer>]'
-  arg 'p [<path>]'
+  opt 'v -v --[no-]verbose'
+  arg 'p [<path>...]'
 end
 
 AutoColor.disable on: self unless c
@@ -34,6 +35,11 @@ def structure(e, i = 0, o = options.bound)
   end
 end
 
-d = p ? File.open(p) { |f| Nokogiri::XML f } : Nokogiri::XML(STDIN)
+i = v && !options.default?(:p) ? 1 : 0
 
-structure d.xpath('/*').first
+p.each do |f|
+  d = Nokogiri::XML File.open_or f
+
+  puts "#{f.green}" unless i.zero?
+  structure d.xpath('/*').first, i
+end

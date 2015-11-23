@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
+
+ARGV.bind! to: self do
+  use '[<options>] [<file>...]'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  opt 'z -- --stat'
+  arg 'p [<path>...]'
+end
+
+AutoColor.disable on: self unless c
+
+include BugsEclipseOrg
+
+i = v && !options.default?(:p) ? 1 : 0
+
+p.each do |f|
+  d = Nokogiri::XML File.open_or f
+
+  puts "#{f.green}" unless q || i.zero?
+
+  if z
+    prop :history, d.root.attributes['Id'].text, i
+    prop :events, d.css('InteractionEvent').count, i + 1
+    next
+  end
+
+  bug_url = d.root.attributes['Id'].text.strip
+  bug_id = bug_url.match(/\d+\z/)[0]
+  version = d.root.attributes['Version'].text.strip
+
+  abort "Invalid URL: #{bug_url}".red if bug_url !~ /\Ahttps:\/\/bugs\.eclipse\.org\/bugs-\d+\z/
+  abort "Invalid version: #{version}".red if version != '1'
+
+  bug = Bug.where(id: bug_id).first
+  contexts = Attachment.where(bug_id: bug_id, filename: 'mylyn-context.zip')
+  context = contexts.first
+
+  abort "#{Bug}:#{bug_id} not found".red if bug.nil?
+  abort "#{Bug}:#{bug_id} missing context" if contexts.count.zero?
+  abort "#{Bug}:#{bug_id} various contexts" if contexts.count > 1
+
+  d.css('InteractionEvent').each do |e|
+    interaction = persist(Interaction, attachment: context, start_date: e.css('StartDate').text.presence, xml: e) do |r|
+      r.bug_url = bug_url
+      r.version = version
+
+      r.kind = e.css('Kind').text.presence
+      r.start_date = e.css('StartDate').text.presence
+      r.end_date = e.css('EndDate').text.presence
+      r.originid = e.css('OriginId').text.presence
+      r.structure_kind = e.css('StructureKind').text.presence
+      r.structure_handle = e.css('StructureHandle').text.presence
+      r.navigation = e.css('Navigation').text.presence
+      r.delta = e.css('Delta').text.presence
+      r.interest = e.css('Interest').text.presence
+    end
+
+    dump interaction, i
+  end
+end

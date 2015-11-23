@@ -67,8 +67,8 @@ d.css('bug').each do |b|
     r.creation_ts = b.css('creation_ts').text.presence
     r.short_desc = b.css('short_desc').text.presence
     r.delta_ts = b.css('delta_ts').text.presence
-    r.reporter_accessible = b.css('reporter_accessible').text.presence
-    r.cclist_accessible = b.css('cclist_accessible').text.presence
+    r.reporter_accessible = b.css('reporter_accessible').text
+    r.cclist_accessible = b.css('cclist_accessible').text
     r.classificationid = b.css('classification_id').text.presence
     r.classification = b.css('classification').text.presence
     r.product = b.css('product').text.presence
@@ -85,7 +85,7 @@ d.css('bug').each do |b|
     r.bug_severity = b.css('bug_severity').text.presence
     r.target_milestone = b.css('target_milestone').text.presence
     r.dependson = b.css('dependson').map { |v| v.text.presence }.compact
-    r.everconfirmed = b.css('everconfirmed').text.presence
+    r.everconfirmed = b.css('everconfirmed').text
     r.reporter = b.css('reporter').text.presence
     r.reporter_name = b.css('reporter')[0].attributes['name'].try(&:text).presence
     r.assigned_to = b.css('assigned_to').text.presence
@@ -111,7 +111,7 @@ d.css('bug').each do |b|
       r.who_name = c.css('who')[0].attributes['name'].try(&:text).presence
       r.bug_when = c.css('bug_when').text.presence
       r.thetext = c.css('thetext').text.presence
-      r.isprivate = c.attributes['isprivate'].text.presence
+      r.isprivate = c.attributes['isprivate'].text
     end
 
     dump comment, :comment, 2
@@ -133,9 +133,9 @@ d.css('bug').each do |b|
       r.size = a.css('size').text.presence
       r.attacher = a.css('attacher').text.presence
       r.attacher_name = a.css('attacher')[0].attributes['name'].try(&:text).presence
-      r.isobsolete = a.attributes['isobsolete'].text.presence
-      r.ispatch = a.attributes['ispatch'].text.presence
-      r.isprivate = a.attributes['isprivate'].text.presence
+      r.isobsolete = a.attributes['isobsolete'].text
+      r.ispatch = a.attributes['ispatch'].text
+      r.isprivate = a.attributes['isprivate'].text
     end
 
     dump attachment, :attachment, 2

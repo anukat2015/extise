@@ -39,7 +39,7 @@ module OptionBinder
         options_binding.local_variable_set v, args[:block] ? args[:block].call(x) : x
         return if x.is_a? Array
       end
-      abort 'too many arguments' if argv.shift
+      abort 'too many arguments' if @arguments && argv.shift
     end
   end
 

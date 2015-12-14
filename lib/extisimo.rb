@@ -14,6 +14,7 @@ module Extisimo
     autoload :Conceptuality
     autoload :Element
     autoload :Expertise
+    autoload :Inferencer
     autoload :Interaction
     autoload :Metric
     autoload :Post

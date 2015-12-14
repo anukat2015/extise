@@ -15,6 +15,17 @@ ARGV.bind! to: self do
   arg 'p [<path>...]'
 end
 
+
+# TODO interactions are not unique,
+# add -f flag to import mylyn context to import interactions even if bug already has some
+# delete all interactions before running import mylyn context from here, always without -f
+
+# TODO fix empty files
+# 177799.xml
+# 119774.xml
+# 89038.xml
+# 104888.xml
+
 AutoColor.disable on: self unless c
 
 include BugsEclipseOrg
@@ -27,7 +38,7 @@ def import_mylyn_context(x, i = 0, o = options.bound)
   cmd = "import_mylyn_contexts #{args.reverse * ' '}"
   puts "#{'  ' * i}#{cmd.cyan}" if o[:v] unless o[:q]
   Open3.popen3(File.expand_path cmd, __dir__) do |_, out, error, status|
-    out.readlines.each do |l|
+    out.each_line do |l|
       puts "#{'  ' * i}#{l}"
     end unless o[:q]
     abort error.read unless status.value.to_i.zero?

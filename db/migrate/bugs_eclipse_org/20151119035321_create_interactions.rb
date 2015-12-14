@@ -20,7 +20,7 @@ class CreateInteractions < ActiveRecord::Migration
 
     add_index :bugs_eclipse_org_interactions, :attachment_id
 
-    add_index :bugs_eclipse_org_interactions, [:attachment_id, :start_date], unique: true, name: 'index_bugs_eclipse_org_interactions_as_unique'
+    add_index :bugs_eclipse_org_interactions, [:start_date, :attachment_id], unique: true, name: 'index_bugs_eclipse_org_interactions_as_unique'
     add_index :bugs_eclipse_org_interactions, :bug_url
     add_index :bugs_eclipse_org_interactions, :version
     add_index :bugs_eclipse_org_interactions, :kind

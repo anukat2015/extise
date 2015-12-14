@@ -1,2 +1,2 @@
-class Extisimo::Developer < ActiveRecord::Base
+class Extisimo::User < ActiveRecord::Base
 end

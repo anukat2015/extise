@@ -8,9 +8,19 @@ module Extisimo
   extend ActiveSupport::Autoload
 
   autoload_under 'models' do
-    autoload :Developer
+    autoload :Attachment
+    autoload :Commit
+    autoload :Concept
+    autoload :Conceptuality
+    autoload :Element
     autoload :Expertise
-    autoload :Topic
+    autoload :Interaction
+    autoload :Metric
+    autoload :Post
+    autoload :Project
+    autoload :Session
+    autoload :Task
+    autoload :User
   end
 
   def self.table_name_prefix

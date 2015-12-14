@@ -6,6 +6,7 @@ require 'database/version'
 
 module Database
   extend self
+
   include ActiveRecord::Tasks
 
   attr_accessor :root, :environment, :configurations

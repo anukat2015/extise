@@ -19,6 +19,6 @@ class CreateExpertises < ActiveRecord::Migration
     add_index :extisimo_expertises, :subject_id
     add_index :extisimo_expertises, :user_id
 
-    add_index :value
+    add_index :extisimo_expertises, :value
   end
 end

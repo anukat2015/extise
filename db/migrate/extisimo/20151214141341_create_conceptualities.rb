@@ -19,6 +19,6 @@ class CreateConceptualities < ActiveRecord::Migration
     add_index :extisimo_conceptualities, :subject_id
     add_index :extisimo_conceptualities, :concept_id
 
-    add_index :probability
+    add_index :extisimo_conceptualities, :probability
   end
 end

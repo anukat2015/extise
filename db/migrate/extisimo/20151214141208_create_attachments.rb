@@ -11,11 +11,11 @@ class CreateAttachments < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.datetime :submitted_at, null: false
+      t.datetime :attached_at, null: false
       t.datetime :modified_at, null: false
     end
 
-    add_index :extisimo_attachments, [:attached_at, :author, :task], unique: true, name: 'index_extisimo_attachments_as_unique'
+    add_index :extisimo_attachments, [:attached_at, :author_id, :task_id], unique: true, name: 'index_extisimo_attachments_as_unique'
 
     add_index :extisimo_attachments, :task_id
     add_index :extisimo_attachments, :author_id
@@ -23,7 +23,7 @@ class CreateAttachments < ActiveRecord::Migration
     add_index :extisimo_attachments, :file
     add_index :extisimo_attachments, :type
 
-    add_index :extisimo_posts, :attached_at
-    add_index :extisimo_posts, :modified_at
+    add_index :extisimo_attachments, :attached_at
+    add_index :extisimo_attachments, :modified_at
   end
 end

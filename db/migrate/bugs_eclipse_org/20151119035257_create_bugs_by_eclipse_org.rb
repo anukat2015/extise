@@ -1,4 +1,4 @@
-class CreateBugs < ActiveRecord::Migration
+class CreateBugsByEclipseOrg < ActiveRecord::Migration
   def change
     create_table :bugs_eclipse_org_bugs do |t|
       t.references :bugzilla, null: false

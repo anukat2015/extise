@@ -283,6 +283,535 @@ ALTER SEQUENCE bugs_eclipse_org_users_id_seq OWNED BY bugs_eclipse_org_users.id;
 
 
 --
+-- Name: extisimo_attachments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_attachments (
+    id integer NOT NULL,
+    task_id integer NOT NULL,
+    author_id integer NOT NULL,
+    file character varying(2048) NOT NULL,
+    type character varying NOT NULL,
+    description text NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    attached_at timestamp without time zone NOT NULL,
+    modified_at timestamp without time zone NOT NULL,
+    bugs_eclipse_org_attachment_id integer NOT NULL
+);
+
+
+--
+-- Name: extisimo_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_attachments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_attachments_id_seq OWNED BY extisimo_attachments.id;
+
+
+--
+-- Name: extisimo_commits; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_commits (
+    id integer NOT NULL,
+    repository_id integer NOT NULL,
+    author_id integer NOT NULL,
+    name character varying(40) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    commited_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_commits_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_commits_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_commits_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_commits_id_seq OWNED BY extisimo_commits.id;
+
+
+--
+-- Name: extisimo_concepts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_concepts (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_concepts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_concepts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_concepts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_concepts_id_seq OWNED BY extisimo_concepts.id;
+
+
+--
+-- Name: extisimo_conceptualities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_conceptualities (
+    id integer NOT NULL,
+    inferencer_id integer NOT NULL,
+    subject_id integer NOT NULL,
+    subject_type character varying NOT NULL,
+    concept_id integer NOT NULL,
+    inferencer_data json NOT NULL,
+    probability numeric(9,8) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_conceptualities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_conceptualities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_conceptualities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_conceptualities_id_seq OWNED BY extisimo_conceptualities.id;
+
+
+--
+-- Name: extisimo_elements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_elements (
+    id integer NOT NULL,
+    commit_id integer NOT NULL,
+    file character varying(2048) NOT NULL,
+    path character varying(2048) NOT NULL,
+    "offset" integer NOT NULL,
+    length integer NOT NULL,
+    line integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_elements_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_elements_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_elements_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_elements_id_seq OWNED BY extisimo_elements.id;
+
+
+--
+-- Name: extisimo_expertises; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_expertises (
+    id integer NOT NULL,
+    metric_id integer NOT NULL,
+    subject_id integer NOT NULL,
+    subject_type character varying NOT NULL,
+    user_id integer NOT NULL,
+    metric_data json NOT NULL,
+    value numeric(9,8) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_expertises_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_expertises_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_expertises_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_expertises_id_seq OWNED BY extisimo_expertises.id;
+
+
+--
+-- Name: extisimo_inferencers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_inferencers (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    target character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_inferencers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_inferencers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_inferencers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_inferencers_id_seq OWNED BY extisimo_inferencers.id;
+
+
+--
+-- Name: extisimo_interactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_interactions (
+    id integer NOT NULL,
+    attachment_id integer NOT NULL,
+    element_id integer NOT NULL,
+    session_id integer NOT NULL,
+    kind character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    started_at timestamp without time zone NOT NULL,
+    finished_at timestamp without time zone NOT NULL,
+    bugs_eclipse_org_interaction_id integer NOT NULL
+);
+
+
+--
+-- Name: extisimo_interactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_interactions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_interactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_interactions_id_seq OWNED BY extisimo_interactions.id;
+
+
+--
+-- Name: extisimo_metrics; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_metrics (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    target character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_metrics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_metrics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_metrics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_metrics_id_seq OWNED BY extisimo_metrics.id;
+
+
+--
+-- Name: extisimo_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_posts (
+    id integer NOT NULL,
+    task_id integer NOT NULL,
+    author_id integer NOT NULL,
+    description text NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    posted_at timestamp without time zone NOT NULL,
+    modified_at timestamp without time zone NOT NULL,
+    bugs_eclipse_org_comment_id integer NOT NULL
+);
+
+
+--
+-- Name: extisimo_posts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_posts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_posts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_posts_id_seq OWNED BY extisimo_posts.id;
+
+
+--
+-- Name: extisimo_projects; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_projects (
+    id integer NOT NULL,
+    product character varying NOT NULL,
+    component character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_projects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_projects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_projects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_projects_id_seq OWNED BY extisimo_projects.id;
+
+
+--
+-- Name: extisimo_repositories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_repositories (
+    id integer NOT NULL,
+    project_id integer NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_repositories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_repositories_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_repositories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_repositories_id_seq OWNED BY extisimo_repositories.id;
+
+
+--
+-- Name: extisimo_sessions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_sessions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    original_commit_id integer,
+    revision_commit_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    started_at timestamp without time zone NOT NULL,
+    finished_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_sessions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_sessions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_sessions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_sessions_id_seq OWNED BY extisimo_sessions.id;
+
+
+--
+-- Name: extisimo_tasks; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_tasks (
+    id integer NOT NULL,
+    reporter_id integer NOT NULL,
+    assignee_id integer NOT NULL,
+    project_id integer NOT NULL,
+    classification character varying NOT NULL,
+    keywords character varying[] NOT NULL,
+    description text NOT NULL,
+    status character varying NOT NULL,
+    resolution character varying NOT NULL,
+    severity character varying NOT NULL,
+    priority character varying NOT NULL,
+    confirmed boolean NOT NULL,
+    platform character varying NOT NULL,
+    operating_system character varying NOT NULL,
+    project_version character varying NOT NULL,
+    project_milestone character varying NOT NULL,
+    cc character varying[] NOT NULL,
+    votes_count integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    reported_at timestamp without time zone NOT NULL,
+    modified_at timestamp without time zone NOT NULL,
+    bugs_eclipse_org_bug_id integer NOT NULL
+);
+
+
+--
+-- Name: extisimo_tasks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_tasks_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_tasks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_tasks_id_seq OWNED BY extisimo_tasks.id;
+
+
+--
+-- Name: extisimo_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE extisimo_users (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    bugs_eclipse_org_user_id integer NOT NULL
+);
+
+
+--
+-- Name: extisimo_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE extisimo_users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: extisimo_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE extisimo_users_id_seq OWNED BY extisimo_users.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -334,6 +863,111 @@ ALTER TABLE ONLY bugs_eclipse_org_users ALTER COLUMN id SET DEFAULT nextval('bug
 
 
 --
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_attachments ALTER COLUMN id SET DEFAULT nextval('extisimo_attachments_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_commits ALTER COLUMN id SET DEFAULT nextval('extisimo_commits_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_concepts ALTER COLUMN id SET DEFAULT nextval('extisimo_concepts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_conceptualities ALTER COLUMN id SET DEFAULT nextval('extisimo_conceptualities_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_elements ALTER COLUMN id SET DEFAULT nextval('extisimo_elements_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_expertises ALTER COLUMN id SET DEFAULT nextval('extisimo_expertises_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_inferencers ALTER COLUMN id SET DEFAULT nextval('extisimo_inferencers_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_interactions ALTER COLUMN id SET DEFAULT nextval('extisimo_interactions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_metrics ALTER COLUMN id SET DEFAULT nextval('extisimo_metrics_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_posts ALTER COLUMN id SET DEFAULT nextval('extisimo_posts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_projects ALTER COLUMN id SET DEFAULT nextval('extisimo_projects_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_repositories ALTER COLUMN id SET DEFAULT nextval('extisimo_repositories_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_sessions ALTER COLUMN id SET DEFAULT nextval('extisimo_sessions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_tasks ALTER COLUMN id SET DEFAULT nextval('extisimo_tasks_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY extisimo_users ALTER COLUMN id SET DEFAULT nextval('extisimo_users_id_seq'::regclass);
+
+
+--
 -- Name: bugs_eclipse_org_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -379,6 +1013,126 @@ ALTER TABLE ONLY bugs_eclipse_org_interactions
 
 ALTER TABLE ONLY bugs_eclipse_org_users
     ADD CONSTRAINT bugs_eclipse_org_users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_attachments
+    ADD CONSTRAINT extisimo_attachments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_commits_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_commits
+    ADD CONSTRAINT extisimo_commits_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_concepts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_concepts
+    ADD CONSTRAINT extisimo_concepts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_conceptualities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_conceptualities
+    ADD CONSTRAINT extisimo_conceptualities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_elements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_elements
+    ADD CONSTRAINT extisimo_elements_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_expertises_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_expertises
+    ADD CONSTRAINT extisimo_expertises_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_inferencers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_inferencers
+    ADD CONSTRAINT extisimo_inferencers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_interactions
+    ADD CONSTRAINT extisimo_interactions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_metrics_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_metrics
+    ADD CONSTRAINT extisimo_metrics_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_posts
+    ADD CONSTRAINT extisimo_posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_projects_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_projects
+    ADD CONSTRAINT extisimo_projects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_repositories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_repositories
+    ADD CONSTRAINT extisimo_repositories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_sessions
+    ADD CONSTRAINT extisimo_sessions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_tasks
+    ADD CONSTRAINT extisimo_tasks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extisimo_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY extisimo_users
+    ADD CONSTRAINT extisimo_users_pkey PRIMARY KEY (id);
 
 
 --
@@ -686,7 +1440,7 @@ CREATE INDEX index_bugs_eclipse_org_comments_on_who_name ON bugs_eclipse_org_com
 -- Name: index_bugs_eclipse_org_interactions_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_bugs_eclipse_org_interactions_as_unique ON bugs_eclipse_org_interactions USING btree (attachment_id, start_date);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_interactions_as_unique ON bugs_eclipse_org_interactions USING btree (start_date, attachment_id);
 
 
 --
@@ -753,6 +1507,496 @@ CREATE UNIQUE INDEX index_bugs_eclipse_org_users_as_unique ON bugs_eclipse_org_u
 
 
 --
+-- Name: index_extisimo_attachments_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_attachments_as_unique ON extisimo_attachments USING btree (attached_at, author_id, task_id);
+
+
+--
+-- Name: index_extisimo_attachments_on_attached_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_attachments_on_attached_at ON extisimo_attachments USING btree (attached_at);
+
+
+--
+-- Name: index_extisimo_attachments_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_attachments_on_author_id ON extisimo_attachments USING btree (author_id);
+
+
+--
+-- Name: index_extisimo_attachments_on_bugs_eclipse_org_attachment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_attachments_on_bugs_eclipse_org_attachment_id ON extisimo_attachments USING btree (bugs_eclipse_org_attachment_id);
+
+
+--
+-- Name: index_extisimo_attachments_on_file; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_attachments_on_file ON extisimo_attachments USING btree (file);
+
+
+--
+-- Name: index_extisimo_attachments_on_modified_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_attachments_on_modified_at ON extisimo_attachments USING btree (modified_at);
+
+
+--
+-- Name: index_extisimo_attachments_on_task_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_attachments_on_task_id ON extisimo_attachments USING btree (task_id);
+
+
+--
+-- Name: index_extisimo_attachments_on_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_attachments_on_type ON extisimo_attachments USING btree (type);
+
+
+--
+-- Name: index_extisimo_commits_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_commits_as_unique ON extisimo_commits USING btree (repository_id, name);
+
+
+--
+-- Name: index_extisimo_commits_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_commits_on_author_id ON extisimo_commits USING btree (author_id);
+
+
+--
+-- Name: index_extisimo_commits_on_commited_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_commits_on_commited_at ON extisimo_commits USING btree (commited_at);
+
+
+--
+-- Name: index_extisimo_commits_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_commits_on_name ON extisimo_commits USING btree (name);
+
+
+--
+-- Name: index_extisimo_commits_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_commits_on_repository_id ON extisimo_commits USING btree (repository_id);
+
+
+--
+-- Name: index_extisimo_conceptualities_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_conceptualities_as_unique ON extisimo_conceptualities USING btree (concept_id, subject_id, subject_type, inferencer_id);
+
+
+--
+-- Name: index_extisimo_conceptualities_on_concept_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_conceptualities_on_concept_id ON extisimo_conceptualities USING btree (concept_id);
+
+
+--
+-- Name: index_extisimo_conceptualities_on_inferencer_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_conceptualities_on_inferencer_id ON extisimo_conceptualities USING btree (inferencer_id);
+
+
+--
+-- Name: index_extisimo_conceptualities_on_probability; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_conceptualities_on_probability ON extisimo_conceptualities USING btree (probability);
+
+
+--
+-- Name: index_extisimo_conceptualities_on_subject_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_conceptualities_on_subject_id ON extisimo_conceptualities USING btree (subject_id);
+
+
+--
+-- Name: index_extisimo_conceptualities_on_subject_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_conceptualities_on_subject_type ON extisimo_conceptualities USING btree (subject_type);
+
+
+--
+-- Name: index_extisimo_elements_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_elements_as_unique ON extisimo_elements USING btree (commit_id, file, path);
+
+
+--
+-- Name: index_extisimo_elements_on_commit_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_elements_on_commit_id ON extisimo_elements USING btree (commit_id);
+
+
+--
+-- Name: index_extisimo_elements_on_file; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_elements_on_file ON extisimo_elements USING btree (file);
+
+
+--
+-- Name: index_extisimo_elements_on_path; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_elements_on_path ON extisimo_elements USING btree (path);
+
+
+--
+-- Name: index_extisimo_expertises_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_expertises_as_unique ON extisimo_expertises USING btree (user_id, subject_id, subject_type, metric_id);
+
+
+--
+-- Name: index_extisimo_expertises_on_metric_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_expertises_on_metric_id ON extisimo_expertises USING btree (metric_id);
+
+
+--
+-- Name: index_extisimo_expertises_on_subject_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_expertises_on_subject_id ON extisimo_expertises USING btree (subject_id);
+
+
+--
+-- Name: index_extisimo_expertises_on_subject_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_expertises_on_subject_type ON extisimo_expertises USING btree (subject_type);
+
+
+--
+-- Name: index_extisimo_expertises_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_expertises_on_user_id ON extisimo_expertises USING btree (user_id);
+
+
+--
+-- Name: index_extisimo_expertises_on_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_expertises_on_value ON extisimo_expertises USING btree (value);
+
+
+--
+-- Name: index_extisimo_inferencers_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_inferencers_as_unique ON extisimo_inferencers USING btree (name);
+
+
+--
+-- Name: index_extisimo_inferencers_on_target; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_inferencers_on_target ON extisimo_inferencers USING btree (target);
+
+
+--
+-- Name: index_extisimo_interactions_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_interactions_as_unique ON extisimo_interactions USING btree (started_at, element_id, session_id);
+
+
+--
+-- Name: index_extisimo_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_interactions_on_attachment_id ON extisimo_interactions USING btree (attachment_id);
+
+
+--
+-- Name: index_extisimo_interactions_on_bugs_eclipse_org_interaction_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_interactions_on_bugs_eclipse_org_interaction_id ON extisimo_interactions USING btree (bugs_eclipse_org_interaction_id);
+
+
+--
+-- Name: index_extisimo_interactions_on_element_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_interactions_on_element_id ON extisimo_interactions USING btree (element_id);
+
+
+--
+-- Name: index_extisimo_interactions_on_finished_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_interactions_on_finished_at ON extisimo_interactions USING btree (finished_at);
+
+
+--
+-- Name: index_extisimo_interactions_on_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_interactions_on_kind ON extisimo_interactions USING btree (kind);
+
+
+--
+-- Name: index_extisimo_interactions_on_session_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_interactions_on_session_id ON extisimo_interactions USING btree (session_id);
+
+
+--
+-- Name: index_extisimo_interactions_on_started_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_interactions_on_started_at ON extisimo_interactions USING btree (started_at);
+
+
+--
+-- Name: index_extisimo_metrics_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_metrics_as_unique ON extisimo_metrics USING btree (name);
+
+
+--
+-- Name: index_extisimo_metrics_on_target; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_metrics_on_target ON extisimo_metrics USING btree (target);
+
+
+--
+-- Name: index_extisimo_name_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_name_as_unique ON extisimo_concepts USING btree (name);
+
+
+--
+-- Name: index_extisimo_posts_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_posts_as_unique ON extisimo_posts USING btree (posted_at, author_id, task_id);
+
+
+--
+-- Name: index_extisimo_posts_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_posts_on_author_id ON extisimo_posts USING btree (author_id);
+
+
+--
+-- Name: index_extisimo_posts_on_bugs_eclipse_org_comment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_posts_on_bugs_eclipse_org_comment_id ON extisimo_posts USING btree (bugs_eclipse_org_comment_id);
+
+
+--
+-- Name: index_extisimo_posts_on_modified_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_posts_on_modified_at ON extisimo_posts USING btree (modified_at);
+
+
+--
+-- Name: index_extisimo_posts_on_posted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_posts_on_posted_at ON extisimo_posts USING btree (posted_at);
+
+
+--
+-- Name: index_extisimo_posts_on_task_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_posts_on_task_id ON extisimo_posts USING btree (task_id);
+
+
+--
+-- Name: index_extisimo_projects_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_projects_as_unique ON extisimo_projects USING btree (product, component);
+
+
+--
+-- Name: index_extisimo_projects_on_component; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_projects_on_component ON extisimo_projects USING btree (component);
+
+
+--
+-- Name: index_extisimo_projects_on_product; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_projects_on_product ON extisimo_projects USING btree (product);
+
+
+--
+-- Name: index_extisimo_repositories_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_repositories_as_unique ON extisimo_repositories USING btree (name);
+
+
+--
+-- Name: index_extisimo_repositories_on_project_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_repositories_on_project_id ON extisimo_repositories USING btree (project_id);
+
+
+--
+-- Name: index_extisimo_sessions_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_sessions_as_unique ON extisimo_sessions USING btree (revision_commit_id);
+
+
+--
+-- Name: index_extisimo_sessions_on_finished_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_sessions_on_finished_at ON extisimo_sessions USING btree (finished_at);
+
+
+--
+-- Name: index_extisimo_sessions_on_started_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_sessions_on_started_at ON extisimo_sessions USING btree (started_at);
+
+
+--
+-- Name: index_extisimo_sessions_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_sessions_on_user_id ON extisimo_sessions USING btree (user_id);
+
+
+--
+-- Name: index_extisimo_tasks_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_tasks_as_unique ON extisimo_tasks USING btree (reported_at, reporter_id);
+
+
+--
+-- Name: index_extisimo_tasks_on_bugs_eclipse_org_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_tasks_on_bugs_eclipse_org_bug_id ON extisimo_tasks USING btree (bugs_eclipse_org_bug_id);
+
+
+--
+-- Name: index_extisimo_tasks_on_classification; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_classification ON extisimo_tasks USING btree (classification);
+
+
+--
+-- Name: index_extisimo_tasks_on_confirmed; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_confirmed ON extisimo_tasks USING btree (confirmed);
+
+
+--
+-- Name: index_extisimo_tasks_on_modified_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_modified_at ON extisimo_tasks USING btree (modified_at);
+
+
+--
+-- Name: index_extisimo_tasks_on_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_priority ON extisimo_tasks USING btree (priority);
+
+
+--
+-- Name: index_extisimo_tasks_on_reported_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_reported_at ON extisimo_tasks USING btree (reported_at);
+
+
+--
+-- Name: index_extisimo_tasks_on_resolution; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_resolution ON extisimo_tasks USING btree (resolution);
+
+
+--
+-- Name: index_extisimo_tasks_on_severity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_severity ON extisimo_tasks USING btree (severity);
+
+
+--
+-- Name: index_extisimo_tasks_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_status ON extisimo_tasks USING btree (status);
+
+
+--
+-- Name: index_extisimo_tasks_on_votes_count; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_votes_count ON extisimo_tasks USING btree (votes_count);
+
+
+--
+-- Name: index_extisimo_users_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_users_as_unique ON extisimo_users USING btree (name);
+
+
+--
+-- Name: index_extisimo_users_on_bugs_eclipse_org_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_extisimo_users_on_bugs_eclipse_org_user_id ON extisimo_users USING btree (bugs_eclipse_org_user_id);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -776,4 +2020,36 @@ INSERT INTO schema_migrations (version) VALUES ('20151119035307');
 INSERT INTO schema_migrations (version) VALUES ('20151119035313');
 
 INSERT INTO schema_migrations (version) VALUES ('20151119035321');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141051');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141150');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141155');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141203');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141208');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141224');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141226');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141311');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141321');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141326');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141339');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141341');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214141344');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214142907');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214142912');
+
+INSERT INTO schema_migrations (version) VALUES ('20151214143150');
 

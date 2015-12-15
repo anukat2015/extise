@@ -1,4 +1,4 @@
-class CreateAttachments < ActiveRecord::Migration
+class CreateAttachmentsByEclipseOrg < ActiveRecord::Migration
   def change
     create_table :bugs_eclipse_org_attachments do |t|
       t.references :bug, null: false

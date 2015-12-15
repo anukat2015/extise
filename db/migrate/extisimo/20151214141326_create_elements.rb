@@ -6,6 +6,11 @@ class CreateElements < ActiveRecord::Migration
       t.string :file, null: false, limit: 2048
       t.string :path, null: false, limit: 2048
 
+      t.integer :offset, null: false
+      t.integer :length, null: false
+
+      t.integer :line, null: false
+
       t.timestamps null: false
     end
 

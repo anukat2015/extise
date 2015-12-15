@@ -9,6 +9,6 @@ class CreateInferencers < ActiveRecord::Migration
 
     add_index :extisimo_inferencers, :name, unique: true, name: 'index_extisimo_inferencers_as_unique'
 
-    add_index :extisimo_metrics, :target
+    add_index :extisimo_inferencers, :target
   end
 end

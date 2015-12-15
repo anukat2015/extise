@@ -1,4 +1,4 @@
-class CreateInteractions < ActiveRecord::Migration
+class CreateInteractionsByEclipseOrg < ActiveRecord::Migration
   def change
     create_table :bugs_eclipse_org_interactions do |t|
       t.references :attachment, null: false

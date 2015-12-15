@@ -12,7 +12,7 @@ class CreatePosts < ActiveRecord::Migration
       t.datetime :modified_at, null: false
     end
 
-    add_index :extisimo_posts, [:posted_at, :author, :task], unique: true, name: 'index_extisimo_posts_as_unique'
+    add_index :extisimo_posts, [:posted_at, :author_id, :task_id], unique: true, name: 'index_extisimo_posts_as_unique'
 
     add_index :extisimo_posts, :task_id
     add_index :extisimo_posts, :author_id

@@ -1,12 +1,6 @@
 switch to https://github.com/thuss/standalone-migrations
   or make new game - total lightweight solution based on standalone-migrations 
 
-extisimo:
-  review models in schema.dia
-
-each extitimo:
-  bugs_eclipse_org_attachment_id
-
 def scopes for each extisimo model:
   concern time_range for session, commit, task, interaction, expertise, post, attachment
     check if rails supports this

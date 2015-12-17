@@ -19,10 +19,17 @@ module Extisimo
     autoload :Metric
     autoload :Post
     autoload :Project
+    autoload :Repository
     autoload :Session
     autoload :Task
     autoload :User
   end
+
+  autoload_under 'models/concerns' do
+    autoload :Reference
+    autoload :URL
+  end
+
 
   def self.table_name_prefix
     'extisimo_'

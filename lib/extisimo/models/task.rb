@@ -1,6 +1,8 @@
 class Extisimo::Task < ActiveRecord::Base
+  include Extisimo::Reference::Task
+  include Extisimo::URL::Task
 
-  #TODO bug_file_loc -> url to more info
+  #TODO mylyn context scope on attachments
 
   alias_attribute :text, :description
 end

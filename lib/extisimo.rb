@@ -26,6 +26,8 @@ module Extisimo
   end
 
   autoload_under 'models/concerns' do
+    autoload :Inferencible
+    autoload :Measurable
     autoload :Reference
     autoload :URL
   end

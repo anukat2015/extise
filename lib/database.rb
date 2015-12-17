@@ -2,6 +2,7 @@ require 'active_record'
 require 'active_record/tasks/database_tasks'
 require 'yaml'
 
+require 'database/extensions/active_record'
 require 'database/version'
 
 module Database

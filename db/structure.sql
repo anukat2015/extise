@@ -295,7 +295,7 @@ CREATE TABLE extisimo_attachments (
     description text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    attached_at timestamp without time zone NOT NULL,
+    submitted_at timestamp without time zone NOT NULL,
     modified_at timestamp without time zone NOT NULL,
     bugs_eclipse_org_attachment_id integer NOT NULL
 );
@@ -605,7 +605,7 @@ CREATE TABLE extisimo_posts (
     description text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    posted_at timestamp without time zone NOT NULL,
+    submitted_at timestamp without time zone NOT NULL,
     modified_at timestamp without time zone NOT NULL,
     bugs_eclipse_org_comment_id integer NOT NULL
 );
@@ -754,7 +754,7 @@ CREATE TABLE extisimo_tasks (
     votes_count integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    reported_at timestamp without time zone NOT NULL,
+    submitted_at timestamp without time zone NOT NULL,
     modified_at timestamp without time zone NOT NULL,
     bugs_eclipse_org_bug_id integer NOT NULL
 );
@@ -1510,14 +1510,7 @@ CREATE UNIQUE INDEX index_bugs_eclipse_org_users_as_unique ON bugs_eclipse_org_u
 -- Name: index_extisimo_attachments_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_extisimo_attachments_as_unique ON extisimo_attachments USING btree (attached_at, author_id, task_id);
-
-
---
--- Name: index_extisimo_attachments_on_attached_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_extisimo_attachments_on_attached_at ON extisimo_attachments USING btree (attached_at);
+CREATE UNIQUE INDEX index_extisimo_attachments_as_unique ON extisimo_attachments USING btree (submitted_at, author_id, task_id);
 
 
 --
@@ -1546,6 +1539,13 @@ CREATE INDEX index_extisimo_attachments_on_file ON extisimo_attachments USING bt
 --
 
 CREATE INDEX index_extisimo_attachments_on_modified_at ON extisimo_attachments USING btree (modified_at);
+
+
+--
+-- Name: index_extisimo_attachments_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_attachments_on_submitted_at ON extisimo_attachments USING btree (submitted_at);
 
 
 --
@@ -1804,7 +1804,7 @@ CREATE UNIQUE INDEX index_extisimo_name_as_unique ON extisimo_concepts USING btr
 -- Name: index_extisimo_posts_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_extisimo_posts_as_unique ON extisimo_posts USING btree (posted_at, author_id, task_id);
+CREATE UNIQUE INDEX index_extisimo_posts_as_unique ON extisimo_posts USING btree (submitted_at, author_id, task_id);
 
 
 --
@@ -1829,10 +1829,10 @@ CREATE INDEX index_extisimo_posts_on_modified_at ON extisimo_posts USING btree (
 
 
 --
--- Name: index_extisimo_posts_on_posted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_posts_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_extisimo_posts_on_posted_at ON extisimo_posts USING btree (posted_at);
+CREATE INDEX index_extisimo_posts_on_submitted_at ON extisimo_posts USING btree (submitted_at);
 
 
 --
@@ -1909,7 +1909,7 @@ CREATE INDEX index_extisimo_sessions_on_user_id ON extisimo_sessions USING btree
 -- Name: index_extisimo_tasks_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_extisimo_tasks_as_unique ON extisimo_tasks USING btree (reported_at, reporter_id);
+CREATE UNIQUE INDEX index_extisimo_tasks_as_unique ON extisimo_tasks USING btree (submitted_at, reporter_id);
 
 
 --
@@ -1948,13 +1948,6 @@ CREATE INDEX index_extisimo_tasks_on_priority ON extisimo_tasks USING btree (pri
 
 
 --
--- Name: index_extisimo_tasks_on_reported_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_extisimo_tasks_on_reported_at ON extisimo_tasks USING btree (reported_at);
-
-
---
 -- Name: index_extisimo_tasks_on_resolution; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1973,6 +1966,13 @@ CREATE INDEX index_extisimo_tasks_on_severity ON extisimo_tasks USING btree (sev
 --
 
 CREATE INDEX index_extisimo_tasks_on_status ON extisimo_tasks USING btree (status);
+
+
+--
+-- Name: index_extisimo_tasks_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_tasks_on_submitted_at ON extisimo_tasks USING btree (submitted_at);
 
 
 --

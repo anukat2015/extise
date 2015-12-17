@@ -23,11 +23,11 @@ class CreateTasks < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.datetime :reported_at, null: false
+      t.datetime :submitted_at, null: false
       t.datetime :modified_at, null: false
     end
 
-    add_index :extisimo_tasks, [:reported_at, :reporter_id], unique: true, name: 'index_extisimo_tasks_as_unique'
+    add_index :extisimo_tasks, [:submitted_at, :reporter_id], unique: true, name: 'index_extisimo_tasks_as_unique'
 
     add_index :extisimo_tasks, :classification
 
@@ -40,7 +40,7 @@ class CreateTasks < ActiveRecord::Migration
 
     add_index :extisimo_tasks, :votes_count
 
-    add_index :extisimo_tasks, :reported_at
+    add_index :extisimo_tasks, :submitted_at
     add_index :extisimo_tasks, :modified_at
   end
 end

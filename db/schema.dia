@@ -6707,7 +6707,7 @@ commit.author = commit.session.interactions.attachment.author#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#reported_at#</dia:string>
+            <dia:string>#submitted_at#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#datetime#</dia:string>
@@ -6816,13 +6816,13 @@ commit.author = commit.session.interactions.attachment.author#</dia:string>
         <dia:point val="55,35"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="54.95,34.95;64.02,42.85"/>
+        <dia:rectangle val="54.95,34.95;64.405,42.85"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="55,35"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="8.9700000000000006"/>
+        <dia:real val="9.3550000000000004"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="7.7999999999999998"/>
@@ -7055,7 +7055,7 @@ commit.author = commit.session.interactions.attachment.author#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#posted_at#</dia:string>
+            <dia:string>#submitted_at#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#datetime#</dia:string>
@@ -7111,13 +7111,13 @@ commit.author = commit.session.interactions.attachment.author#</dia:string>
         <dia:point val="55,24"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="54.95,23.95;64.02,33.45"/>
+        <dia:rectangle val="54.95,23.95;64.405,33.45"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="55,24"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="8.9700000000000006"/>
+        <dia:real val="9.3550000000000004"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="9.3999999999999986"/>
@@ -7396,7 +7396,7 @@ commit.author = commit.session.interactions.attachment.author#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#attached_at#</dia:string>
+            <dia:string>#submitted_at#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#datetime#</dia:string>
@@ -8653,7 +8653,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:point val="67,38"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="63.92,36.75;67.2,38.8"/>
+        <dia:rectangle val="64.305,36.75;67.2,38.8"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -8662,7 +8662,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:point val="67,38"/>
         <dia:point val="67,38"/>
         <dia:point val="67,37.5"/>
-        <dia:point val="63.97,37.5"/>
+        <dia:point val="64.355,37.5"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -8723,7 +8723,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:point val="65.51,47.7"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="63.92,25.75;67.1,48.55"/>
+        <dia:rectangle val="64.305,25.75;67.1,48.55"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -8732,7 +8732,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:point val="65.51,47.7"/>
         <dia:point val="67,47.7"/>
         <dia:point val="67,26.5"/>
-        <dia:point val="63.97,26.5"/>
+        <dia:point val="64.355,26.5"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -8794,7 +8794,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:point val="53,37"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="52.95,37;55.05,39.15"/>
+        <dia:rectangle val="52.95,36.9;55.05,39.15"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -8864,7 +8864,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:point val="53,26"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="52.95,26;55.05,28.15"/>
+        <dia:rectangle val="52.95,25.9;55.05,28.15"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -8931,16 +8931,16 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="63.97,25.7"/>
+        <dia:point val="64.355,25.7"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="63.92,19.75;69.05,26.55"/>
+        <dia:rectangle val="64.305,19.75;69.05,26.55"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="63.97,25.7"/>
+        <dia:point val="64.355,25.7"/>
         <dia:point val="67,25.7"/>
         <dia:point val="67,20.5"/>
         <dia:point val="69,20.5"/>

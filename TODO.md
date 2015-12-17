@@ -1,14 +1,6 @@
 switch to https://github.com/thuss/standalone-migrations
   or make new game - total lightweight solution based on standalone-migrations 
-
-def scopes for each extisimo model:
-  concern time_range for session, commit, task, interaction, expertise, post, attachment
-    check if rails supports this
-    interaction.from().to()
-    interaction.between()
     
-  no interaction.of_session() -> rather session.interactions 
-
 see & add to readme:
 
 https://wiki.eclipse.org/Mylyn/Integrator_Reference#Interaction_events

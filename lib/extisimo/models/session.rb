@@ -1,6 +1,6 @@
 class Extisimo::Session < ActiveRecord::Base
+  belongs_to :user
 
-  def user
-    #TODO attach -> sub
-  end
+  has_one :original_commit, class_name: :Commit
+  has_one :revision_commit, class_name: :Commit
 end

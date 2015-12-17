@@ -12,6 +12,10 @@ module Extisimo::Reference
 
     included do
       belongs_to :bugs_eclipse_org_bug, class_name: 'BugsEclipseOrg::Bug'
+
+      def mylyn_contexts
+        attachments.mylyn_context
+      end
     end
   end
 
@@ -28,6 +32,8 @@ module Extisimo::Reference
 
     included do
       belongs_to :bugs_eclipse_org_attachment, class_name: 'BugsEclipseOrg::Attachment'
+
+      scope :mylyn_context, -> { where name: 'mylyn-context.zip' }
     end
   end
 

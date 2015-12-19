@@ -6,4 +6,8 @@ class Extisimo::Post < ActiveRecord::Base
 
   belongs_to :task
   belongs_to :author, class_name: :User
+
+  scope :submitted_by, -> (user) { where author: user }
+
+  alias_scope :by, :submitted_by
 end

@@ -8,4 +8,10 @@ class Extisimo::Attachment < ActiveRecord::Base
   belongs_to :author, class_name: :User
 
   has_many :interactions, dependent: :destroy
+
+  scope :submitted_by, -> (user) { where author: user }
+
+  alias_scope :by, :submitted_by
+
+  scope :with_interactions, -> { joins(:interactions).uniq }
 end

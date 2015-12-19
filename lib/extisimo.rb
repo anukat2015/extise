@@ -32,7 +32,6 @@ module Extisimo
     autoload :URL
   end
 
-
   def self.table_name_prefix
     'extisimo_'
   end

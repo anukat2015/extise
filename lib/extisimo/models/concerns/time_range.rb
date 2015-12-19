@@ -1,3 +1,0 @@
-module Extisimo::TimeRange
-
-end

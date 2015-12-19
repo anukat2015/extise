@@ -4,6 +4,8 @@ module Extisimo::Reference
 
     included do
       has_one :bugs_eclipse_org_user, -> { readonly }, class_name: 'BugsEclipseOrg::User'
+
+      scope :has_mylyn_context, -> { has_attachments.merge Extisimo::Attachment.mylyn_context }
     end
   end
 
@@ -14,6 +16,8 @@ module Extisimo::Reference
       has_one :bugs_eclipse_org_bug, -> { readonly }, class_name: 'BugsEclipseOrg::Bug'
 
       has_many :mylyn_contexts, -> { mylyn_context }, class_name: :Attachment
+
+      scope :with_mylyn_context, -> { with_attachments.merge Extisimo::Attachment.mylyn_context }
     end
   end
 
@@ -31,7 +35,7 @@ module Extisimo::Reference
     included do
       has_one :bugs_eclipse_org_attachment, -> { readonly }, class_name: 'BugsEclipseOrg::Attachment'
 
-      scope :mylyn_context, -> { where name: 'mylyn-context.zip' }
+      scope :mylyn_context, -> { where file: 'mylyn-context.zip' }
     end
   end
 

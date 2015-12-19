@@ -8,7 +8,7 @@ class CreateCommits < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.datetime :commited_at, null: false
+      t.datetime :submitted_at, null: false
     end
 
     add_index :extisimo_commits, [:repository_id, :name], unique: true, name: 'index_extisimo_commits_as_unique'
@@ -18,6 +18,6 @@ class CreateCommits < ActiveRecord::Migration
 
     add_index :extisimo_commits, :name
 
-    add_index :extisimo_commits, :commited_at
+    add_index :extisimo_commits, :submitted_at
   end
 end

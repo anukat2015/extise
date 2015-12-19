@@ -5122,7 +5122,7 @@ bug, comment or attachment#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#commited_at#</dia:string>
+            <dia:string>#submitted_at#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#datetime#</dia:string>

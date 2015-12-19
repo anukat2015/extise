@@ -331,7 +331,7 @@ CREATE TABLE extisimo_commits (
     name character varying(40) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    commited_at timestamp without time zone NOT NULL
+    submitted_at timestamp without time zone NOT NULL
 );
 
 
@@ -1577,13 +1577,6 @@ CREATE INDEX index_extisimo_commits_on_author_id ON extisimo_commits USING btree
 
 
 --
--- Name: index_extisimo_commits_on_commited_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_extisimo_commits_on_commited_at ON extisimo_commits USING btree (commited_at);
-
-
---
 -- Name: index_extisimo_commits_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1595,6 +1588,13 @@ CREATE INDEX index_extisimo_commits_on_name ON extisimo_commits USING btree (nam
 --
 
 CREATE INDEX index_extisimo_commits_on_repository_id ON extisimo_commits USING btree (repository_id);
+
+
+--
+-- Name: index_extisimo_commits_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_extisimo_commits_on_submitted_at ON extisimo_commits USING btree (submitted_at);
 
 
 --

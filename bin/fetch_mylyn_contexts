@@ -3,7 +3,7 @@ require_relative 'common'
 
 o, c, v, q, p = nil, true, true, false, [STDIN]
 
-ARGV.bind! to: self do
+ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'o -o --output=<path>'
   opt 'c -c --[no-]color'

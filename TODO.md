@@ -1,5 +1,5 @@
 switch to https://github.com/thuss/standalone-migrations
-  or make new game - total lightweight solution based on standalone-migrations 
+or make new game - total lightweight solution based on standalone-migrations 
     
 see & add to readme:
 

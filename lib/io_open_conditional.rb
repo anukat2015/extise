@@ -1,4 +1,4 @@
-module IO::OpenExtension
+module IO::OpenConditional
   def open_if(*args)
     yield(*args) ? open(*args) : args.first
   end
@@ -8,4 +8,4 @@ module IO::OpenExtension
   end
 end
 
-IO.extend IO::OpenExtension
+IO.extend IO::OpenConditional

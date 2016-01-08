@@ -3,11 +3,11 @@ require_relative 'common'
 
 c, s, t, v, p = true, false, 80, true, [STDIN]
 
-ARGV.bind! to: self do
+ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
-  opt 't -t --trim[=<length:integer>]'
+  opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   arg 'p [<path>...]'
 end
@@ -23,7 +23,6 @@ end
 
 def structure(e, i = 0, o = options.bound)
   s = e.children.to_a.select { |x| x.name == 'text' }.map { |x| x.to_s.strip }.join "\n"
-
   puts "#{'  ' * i}#{e.name.blue} #{text e, s, i, o unless s.empty?}"
 
   e.attributes.to_h.tap { |h| h.sort if o[:s] }.each do |_, a|
@@ -39,7 +38,6 @@ i = v && !options.default?(:p) ? 1 : 0
 
 p.each do |f|
   d = Nokogiri::XML File.open_or f
-
   puts "#{f.green}" unless i.zero?
   structure d.xpath('/*').first, i
 end

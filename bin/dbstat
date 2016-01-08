@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+c, v = true, true
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>]'
+  opt 'c -c --[no-]color'
+  opt 'v -v --[no-]verbose'
+end
+
+AutoColor.disable on: self unless c
+
+configuration = ActiveRecord::Base.connection_config
+connection = ActiveRecord::Base.connection
+
+dump_attribute configuration[:database], ''
+
+groups = connection.tables.sort.inject({}) { |g, t| (g[t.sub(/_[a-z]+\z/, '')] ||= []) << t; g }
+
+groups.each do |group, tables|
+  dump_attribute group, '', 1
+
+  tables.each do |table|
+    dump_attribute table.sub(/.+_/, ''), connection.execute("select count(*) from #{table}")[0]['count'], 2
+  end
+end

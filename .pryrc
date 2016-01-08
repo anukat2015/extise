@@ -1,1 +1,3 @@
+require 'optbind'
+
 load 'Extisefile'

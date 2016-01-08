@@ -42,6 +42,12 @@ def count_mylyn_context_interactons(d, o = options.bound)
   end
 end
 
+def persist_user(l, n = [])
+  persist(User, login_name: l) do |r|
+    r.realnames = (r.realnames.to_a + [n]).flat_map(&:presence).compact.uniq
+  end
+end
+
 i = v && !options.default?(:p) ? 1 : 0
 
 p.each do |f|
@@ -62,9 +68,9 @@ p.each do |f|
   version = d.root.attributes['version'].text.presence
   maintainer = d.root.attributes['maintainer'].text.presence
 
-  abort "Invalid URL: #{urlbase}".red  if urlbase != 'https://bugs.eclipse.org/bugs/'
-  abort "Invalid version: #{version}".red  if version != '4.4.7'
-  abort "Invalid maintainer: #{maintainer}".red  if maintainer != 'webmaster@eclipse.org'
+  abort "Invalid URL: #{urlbase}".red if urlbase != 'https://bugs.eclipse.org/bugs/'
+  abort "Invalid version: #{version}".red if version != '4.4.7'
+  abort "Invalid maintainer: #{maintainer}".red if maintainer != 'webmaster@eclipse.org'
 
   bugzilla = persist(Bugzilla, urlbase: urlbase) do |r|
     r.version = version

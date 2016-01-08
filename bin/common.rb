@@ -56,7 +56,7 @@ def load_extise!
   def persist(model, attributes)
     xml = attributes.delete :xml
     model.find_or_initialize_by(attributes).tap do |record|
-      yield record
+      yield record if block_given?
       record.save!
     end
   rescue => failure
@@ -66,11 +66,5 @@ def load_extise!
       puts "\n--#{'XML-DEBUG'.red}--\n\n#{o.read}\n--#{'XML-DEBUG'.red}--\n\n"
     end if xml
     failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s.red) : raise(failure)
-  end
-
-  def persist_user(login, names = [])
-    persist(BugsEclipseOrg::User, login_name: login) do |user|
-      user.realnames = (user.realnames.to_a + [names]).flat_map(&:presence).compact.uniq
-    end
   end
 end

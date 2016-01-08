@@ -35,7 +35,7 @@ module Extisimo::Reference
     included do
       has_one :bugs_eclipse_org_attachment, -> { readonly }, class_name: 'BugsEclipseOrg::Attachment'
 
-      scope :mylyn_context, -> { where file: 'mylyn-context.zip' }
+      scope :mylyn_context, -> { where file: BugsEclipseOrg::Attachment::MYLYN_CONTEXT_FILENAME }
     end
   end
 

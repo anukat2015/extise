@@ -3,7 +3,7 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      has_one :bugs_eclipse_org_user, -> { readonly }, class_name: 'BugsEclipseOrg::User'
+      belongs_to :bugs_eclipse_org_user, -> { readonly }, class_name: 'BugsEclipseOrg::User'
 
       scope :has_mylyn_context, -> { has_attachments.merge Extisimo::Attachment.mylyn_context }
     end
@@ -13,7 +13,7 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      has_one :bugs_eclipse_org_bug, -> { readonly }, class_name: 'BugsEclipseOrg::Bug'
+      belongs_to :bugs_eclipse_org_bug, -> { readonly }, class_name: 'BugsEclipseOrg::Bug'
 
       has_many :mylyn_contexts, -> { mylyn_context }, class_name: :Attachment
 
@@ -25,7 +25,7 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      has_one :bugs_eclipse_org_comment, -> { readonly }, class_name: 'BugsEclipseOrg::Comment'
+      belongs_to :bugs_eclipse_org_comment, -> { readonly }, class_name: 'BugsEclipseOrg::Comment'
     end
   end
 
@@ -33,7 +33,7 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      has_one :bugs_eclipse_org_attachment, -> { readonly }, class_name: 'BugsEclipseOrg::Attachment'
+      belongs_to :bugs_eclipse_org_attachment, -> { readonly }, class_name: 'BugsEclipseOrg::Attachment'
 
       scope :mylyn_context, -> { where file: BugsEclipseOrg::Attachment::MYLYN_CONTEXT_FILENAME }
     end
@@ -43,9 +43,9 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      has_one :bugs_eclipse_org_interaction, -> { readonly }, class_name: 'BugsEclipseOrg::Interaction'
+      belongs_to :bugs_eclipse_org_interaction, -> { readonly }, class_name: 'BugsEclipseOrg::Interaction'
 
-      has_one :mylyn_context, -> { mylyn_context }, class_name: :Attachment
+      belongs_to :mylyn_context, -> { mylyn_context }, class_name: :Attachment
     end
   end
 end

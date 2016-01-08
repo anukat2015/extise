@@ -742,14 +742,14 @@ CREATE TABLE extisimo_tasks (
     keywords character varying[] NOT NULL,
     description text NOT NULL,
     status character varying NOT NULL,
-    resolution character varying NOT NULL,
+    resolution character varying,
     severity character varying NOT NULL,
     priority character varying NOT NULL,
     confirmed boolean NOT NULL,
     platform character varying NOT NULL,
     operating_system character varying NOT NULL,
-    project_version character varying NOT NULL,
-    project_milestone character varying NOT NULL,
+    project_version character varying,
+    project_milestone character varying,
     cc character varying[] NOT NULL,
     votes_count integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -1434,13 +1434,6 @@ CREATE INDEX index_bugs_eclipse_org_comments_on_who ON bugs_eclipse_org_comments
 --
 
 CREATE INDEX index_bugs_eclipse_org_comments_on_who_name ON bugs_eclipse_org_comments USING btree (who_name);
-
-
---
--- Name: index_bugs_eclipse_org_interactions_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX index_bugs_eclipse_org_interactions_as_unique ON bugs_eclipse_org_interactions USING btree (start_date, structure_handle, attachment_id);
 
 
 --

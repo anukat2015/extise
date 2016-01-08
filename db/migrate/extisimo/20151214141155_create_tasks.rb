@@ -9,14 +9,14 @@ class CreateTasks < ActiveRecord::Migration
       t.string :keywords, null: false, array: true
       t.text :description, null: false
       t.string :status, null: false
-      t.string :resolution, null: false
+      t.string :resolution, null: true
       t.string :severity, null: false
       t.string :priority, null: false
       t.boolean :confirmed, null: false
       t.string :platform, null: false
       t.string :operating_system, null: false
-      t.string :project_version, null: false
-      t.string :project_milestone, null: false
+      t.string :project_version, null: true
+      t.string :project_milestone, null: true
       t.string :cc, null: false, array: true
 
       t.integer :votes_count, null: false

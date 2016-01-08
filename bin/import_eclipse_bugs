@@ -1,37 +1,27 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-m, c, s, t, v, q, z, p = nil, true, false, 80, true, false, false, [STDIN]
+m, n, c, s, t, v, q, z, p = nil, :restrict, true, false, 80, true, false, false, [STDIN]
 
-ARGV.bind! to: self do
+ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'm -m --mylyn[=<path>]'
+  opt 'n    --mylyn-mode=(append|delete|restrict)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
-  opt 't -t --trim[=<length:integer>]'
+  opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
-  opt 'z -- --stat'
+  opt 'z    --stat'
   arg 'p [<path>...]'
 end
-
-
-# TODO interactions are not unique,
-# add -f flag to import mylyn context to import interactions even if bug already has some
-# delete all interactions before running import mylyn context from here, always without -f
-
-# TODO fix empty files
-# 177799.xml
-# 119774.xml
-# 89038.xml
-# 104888.xml
 
 AutoColor.disable on: self unless c
 
 include BugsEclipseOrg
 
-def import_mylyn_context(x, i = 0, o = options.bound)
-  file = File.join o[:m], "#{x}.xml"
+def import_mylyn_context(a, i = 0, o = options.bound)
+  file = File.join o[:m], "#{a}.xml"
   args = [file, "-t#{o[:t] - 2 * i}"]
   %w(verbose sort color).each { |x| o[x[0].to_sym] ? (args << "-#{x[0]}") : (args << "--no-#{x}") }
   args << '-q' if o[:q]
@@ -45,6 +35,13 @@ def import_mylyn_context(x, i = 0, o = options.bound)
   end
 end
 
+def count_mylyn_context_interactons(d, o = options.bound)
+  d.css('attachment').sum do |a|
+    next 0 unless a.css('filename').text == Attachment::MYLYN_CONTEXT_FILENAME
+    Nokogiri::XML(File.open File.join o[:m], "#{a.css('attachid').text}.xml").css('InteractionEvent').count
+  end
+end
+
 i = v && !options.default?(:p) ? 1 : 0
 
 p.each do |f|
@@ -53,10 +50,11 @@ p.each do |f|
   puts "#{f.green}" unless q || i.zero?
 
   if z
-    prop :bugzilla, d.root.attributes['urlbase'].text, i
-    prop :bugs, d.css('bug').count, i + 1
-    prop :comments, d.css('long_desc').count, i + 1
-    prop :attachments, d.css('attachment').count, i + 1
+    dump_attribute :bugzilla, d.root.attributes['urlbase'].text, i
+    dump_attribute :bugs, d.css('bug').count, i + 1
+    dump_attribute :comments, d.css('long_desc').count, i + 1
+    dump_attribute :attachments, d.css('attachment').count, i + 1
+    dump_attribute :interactions, count_mylyn_context_interactons(d), i + 2 if m
     next
   end
 
@@ -73,7 +71,7 @@ p.each do |f|
     r.maintainer = maintainer
   end
 
-  dump bugzilla, :bugzilla, i
+  dump_record bugzilla, :bugzilla, i
 
   d.css('bug').each do |b|
     bug = persist(Bug, bugid: b.css('bug_id').text.presence, xml: b) do |r|
@@ -115,9 +113,9 @@ p.each do |f|
       r.comment_sort_order = b.css('comment_sort_order').text.presence
     end
 
-    dump bug, :bug, i + 1
-    dump bug.author, :author, i + 2
-    dump bug.assignee, :assignee, i + 3
+    dump_record bug, :bug, i + 1
+    dump_record bug.author, :author, i + 2
+    dump_record bug.assignee, :assignee, i + 2
 
     b.css('long_desc').each do |c|
       comment = persist(Comment, commentid: c.css('commentid').text.presence, xml: c) do |r|
@@ -134,8 +132,8 @@ p.each do |f|
         r.isprivate = c.attributes['isprivate'].text
       end
 
-      dump comment, :comment, i + 2
-      dump comment.author, :author, i + 3
+      dump_record comment, :comment, i + 2
+      dump_record comment.author, :author, i + 3
     end
 
     b.css('attachment').each do |a|
@@ -158,10 +156,24 @@ p.each do |f|
         r.isprivate = a.attributes['isprivate'].text
       end
 
-      dump attachment, :attachment, i + 2
-      dump attachment.submitter, :submitter, i + 3
+      dump_record attachment, :attachment, i + 2
+      dump_record attachment.submitter, :submitter, i + 3
 
-      import_mylyn_context attachment.attachid, i + 3 if m && attachment.filename == 'mylyn-context.zip'
+      interactions = attachment.interactions
+
+      case n.to_sym
+      when :append
+        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> append".magenta if interactions.any?
+      when :delete
+        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> delete all".magenta if interactions.any?
+        interactions.destroy_all
+      when :restrict
+        abort "#{Attachment}:#{attachment.id} has #{interactions.count} interactions -> restrict".red if interactions.any?
+      else
+        raise
+      end
+
+      import_mylyn_context attachment.attachid, i + 3 if m && attachment.filename == Attachment::MYLYN_CONTEXT_FILENAME
     end
   end
 end

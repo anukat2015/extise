@@ -3,14 +3,14 @@ require_relative 'common' and load_extise!
 
 c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
 
-ARGV.bind! to: self do
+ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
-  opt 't -t --trim[=<length:integer>]'
+  opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
-  opt 'z -- --stat'
+  opt 'z    --stat'
   arg 'p [<path>...]'
 end
 
@@ -26,19 +26,19 @@ p.each do |f|
   puts "#{f.green}" unless q || i.zero?
 
   if z
-    prop :history, d.root.attributes['Id'].text, i
-    prop :events, d.css('InteractionEvent').count, i + 1
+    dump_attribute :history, d.root.attributes['Id'].text, i
+    dump_attribute :events, d.css('InteractionEvent').count, i + 1
     next
   end
 
   bug_url = d.root.attributes['Id'].text.strip
-  bugid = bug_url.match(/\d+\z/)[0]
+  bug_id = bug_url.match(/\d+\z/)[0]
   version = d.root.attributes['Version'].text.strip
 
   abort "Invalid URL: #{bug_url}".red if bug_url !~ /\Ahttps:\/\/bugs\.eclipse\.org\/bugs-\d+\z/
   abort "Invalid version: #{version}".red if version != '1'
 
-  bug = Bug.where(bugid: bugid).first
+  bug = Bug.where(bugid: bug_id).first
   contexts = Attachment.where(bug: bug, filename: 'mylyn-context.zip')
   context = contexts.first
 
@@ -47,9 +47,13 @@ p.each do |f|
   abort "#{Bug}:#{bug_id} various contexts" if contexts.count > 1
 
   d.css('InteractionEvent').each do |e|
-    time = Time.parse(e.attributes['StartDate'].text).utc
+    attributes = {
+      attachment_id: context.id,
+      start_date: Time.parse(e.attributes['StartDate'].text).utc,
+      structure_handle: e.attributes['StructureHandle'].text.presence,
+    }
 
-    interaction = persist(Interaction, attachment_id: context.id, start_date: time, xml: e) do |r|
+    interaction = persist(Interaction, attributes.merge(xml: e)) do |r|
       r.bug_url = bug_url
       r.version = version
 
@@ -57,12 +61,11 @@ p.each do |f|
       r.end_date = e.attributes['EndDate'].text.presence
       r.originid = e.attributes['OriginId'].text.presence
       r.structure_kind = e.attributes['StructureKind'].text.presence
-      r.structure_handle = e.attributes['StructureHandle'].text.presence
       r.navigation = e.attributes['Navigation'].text.presence
       r.delta = e.attributes['Delta'].text.presence
       r.interest = e.attributes['Interest'].text.presence
     end
 
-    dump interaction, :interaction, i
+    dump_record interaction, :interaction, i
   end
 end

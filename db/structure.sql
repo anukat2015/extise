@@ -222,7 +222,7 @@ CREATE TABLE bugs_eclipse_org_interactions (
     end_date timestamp without time zone NOT NULL,
     originid character varying NOT NULL,
     structure_kind character varying NOT NULL,
-    structure_handle text,
+    structure_handle character varying(1024),
     navigation character varying,
     delta character varying,
     interest numeric(12,8) NOT NULL,
@@ -1440,7 +1440,7 @@ CREATE INDEX index_bugs_eclipse_org_comments_on_who_name ON bugs_eclipse_org_com
 -- Name: index_bugs_eclipse_org_interactions_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_bugs_eclipse_org_interactions_as_unique ON bugs_eclipse_org_interactions USING btree (start_date, attachment_id);
+CREATE UNIQUE INDEX index_bugs_eclipse_org_interactions_as_unique ON bugs_eclipse_org_interactions USING btree (start_date, structure_handle, attachment_id);
 
 
 --

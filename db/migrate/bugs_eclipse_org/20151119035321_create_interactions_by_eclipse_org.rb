@@ -10,7 +10,7 @@ class CreateInteractionsByEclipseOrg < ActiveRecord::Migration
       t.datetime :end_date, null: false
       t.string :originid, null: false
       t.string :structure_kind, null: false
-      t.text :structure_handle, null: true
+      t.string :structure_handle, null: true, limit: 1024
       t.string :navigation, null: true
       t.string :delta, null: true
       t.decimal :interest, null: false, precision: 12, scale: 8
@@ -20,7 +20,9 @@ class CreateInteractionsByEclipseOrg < ActiveRecord::Migration
 
     add_index :bugs_eclipse_org_interactions, :attachment_id
 
-    add_index :bugs_eclipse_org_interactions, [:start_date, :attachment_id], unique: true, name: 'index_bugs_eclipse_org_interactions_as_unique'
+    # NOTE: provided attributes of available Mylyn context data from bugs.eclipse.org
+    # still pose significant ambiguity and hence a unique index can not be specified
+
     add_index :bugs_eclipse_org_interactions, :bug_url
     add_index :bugs_eclipse_org_interactions, :version
     add_index :bugs_eclipse_org_interactions, :kind

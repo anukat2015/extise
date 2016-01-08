@@ -14,4 +14,8 @@ class Extisimo::Attachment < ActiveRecord::Base
   alias_scope :by, :submitted_by
 
   scope :with_interactions, -> { joins(:interactions).uniq }
+
+  def self.inheritance_column
+    nil
+  end
 end

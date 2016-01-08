@@ -47,20 +47,17 @@ p.each do |f|
   abort "#{Bug}:#{bug_id} various contexts" if contexts.count > 1
 
   d.css('InteractionEvent').each do |e|
-    attributes = {
-      attachment_id: context.id,
-      start_date: Time.parse(e.attributes['StartDate'].text).utc,
-      structure_handle: e.attributes['StructureHandle'].text.presence,
-    }
-
-    interaction = persist(Interaction, attributes.merge(xml: e)) do |r|
+    interaction = persist(Interaction, xml: e) do |r|
+      r.attachment = context
       r.bug_url = bug_url
       r.version = version
 
       r.kind = e.attributes['Kind'].text.presence
+      r.start_date = Time.parse(e.attributes['StartDate'].text).utc
       r.end_date = e.attributes['EndDate'].text.presence
       r.originid = e.attributes['OriginId'].text.presence
       r.structure_kind = e.attributes['StructureKind'].text.presence
+      r.structure_handle = e.attributes['StructureHandle'].text.presence
       r.navigation = e.attributes['Navigation'].text.presence
       r.delta = e.attributes['Delta'].text.presence
       r.interest = e.attributes['Interest'].text.presence

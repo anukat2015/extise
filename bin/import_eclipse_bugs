@@ -5,7 +5,7 @@ m, n, c, s, t, v, q, z, p = nil, :restrict, true, false, 80, true, false, false,
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
-  opt 'm -m --mylyn[=<path>]'
+  opt 'm -m --mylyn=<path>'
   opt 'n    --mylyn-mode=(append|delete|restrict)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'

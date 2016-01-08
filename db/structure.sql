@@ -1503,7 +1503,7 @@ CREATE UNIQUE INDEX index_bugs_eclipse_org_users_as_unique ON bugs_eclipse_org_u
 -- Name: index_extisimo_attachments_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_extisimo_attachments_as_unique ON extisimo_attachments USING btree (submitted_at, author_id, task_id);
+CREATE UNIQUE INDEX index_extisimo_attachments_as_unique ON extisimo_attachments USING btree (submitted_at, author_id, task_id, file);
 
 
 --

@@ -53,9 +53,9 @@ def load_extise!
     end if o[:v]
   end
 
-  def persist(model, attributes)
+  def persist(model, attributes = {})
     xml = attributes.delete :xml
-    model.find_or_initialize_by(attributes).tap do |record|
+    (!attributes.empty? ? model.find_or_initialize_by(attributes) : model.new).tap do |record|
       yield record if block_given?
       record.save!
     end

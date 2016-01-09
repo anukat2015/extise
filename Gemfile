@@ -14,6 +14,6 @@ gem 'nokogiri', '~> 1.6.6'
 
 gem 'rspec', '~> 3.3.0'
 
-gem 'optbind', '~> 0.2.0'
+gem 'optbind', '~> 0.2.1'
 
 gem 'pry'

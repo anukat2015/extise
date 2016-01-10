@@ -9,9 +9,10 @@ module Extisimo::URL
       BUGZILLA_COMMENT = 'https://bugs.eclipse.org/bugs/show_bug.cgi?id=%bug#c%description'
       BUGZILLA_ATTACHMENT = 'https://bugs.eclipse.org/bugs/attachment.cgi?id=%attachment'
 
-      GERRIT_PROJECT = 'https://git.eclipse.org/c/%product/%component'
-      GERRIT_COMMIT = 'https://git.eclipse.org/c/%product/%component/commit/?id=%commit'
-      GERRIT_GIT = 'https://git.eclipse.org/gitroot/%product/%component.git'
+      # TODO project -> product + component != repository.name
+      # GERRIT_PROJECT = 'https://git.eclipse.org/c/%product/%component'
+      # GERRIT_COMMIT = 'https://git.eclipse.org/c/%product/%component/commit/?id=%commit'
+      # GERRIT_GIT = 'https://git.eclipse.org/gitroot/%product/%component.git'
 
       GITHUB_USER = 'https://github.com/%user'
       GITHUB_REPOSITORY = 'https://github.com/eclipse/%repository'

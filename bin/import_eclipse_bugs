@@ -23,7 +23,7 @@ include BugsEclipseOrg
 def import_mylyn_context(a, i = 0, o = options.bound)
   file = File.join o[:m], "#{a}.xml"
   args = [file, "-t#{o[:t] - 2 * i}"]
-  %w(verbose sort color).each { |x| o[x[0].to_sym] ? (args << "-#{x[0]}") : (args << "--no-#{x}") }
+  args << %w(verbose sort color).each { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
   args << '-q' if o[:q]
   cmd = "import_mylyn_contexts #{args.reverse * ' '}"
   puts "#{'  ' * i}#{cmd.cyan}" if o[:v] unless o[:q]

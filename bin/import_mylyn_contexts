@@ -43,8 +43,7 @@ p.each do |f|
   context = contexts.first
 
   abort "#{Bug}:#{bug_id} not found".red if bug.nil?
-  abort "#{Bug}:#{bug_id} missing context" if contexts.count.zero?
-  abort "#{Bug}:#{bug_id} various contexts" if contexts.count > 1
+  abort "#{Bug}:#{bug_id} missing context".red if contexts.count.zero?
 
   d.css('InteractionEvent').each do |e|
     interaction = persist(Interaction, xml: e) do |r|

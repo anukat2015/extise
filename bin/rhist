@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+e, c, s, t, v, m, a = false, true, true, 80, true, nil, nil
+
+non_blank = -> (x) { x.blank? ? (raise(OptionParser::MissingArgument.new '<model> <attribute>') unless e) : x }
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] <model> <attribute>'
+  use '[<options>] -e <command>...'
+  opt 'e -e --eval'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  arg 'm <model>', &non_blank
+  arg 'a <attribute>', &non_blank
+end
+
+AutoColor.disable on: self unless c
+
+unless e
+  begin
+    model = Class.const_get m
+    data = model.pluck a
+  rescue
+    abort "Unable to #{m}.pluck #{a}".red
+  end
+end
+
+args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
+args = args.insert 2, "-t#{t}"
+args += (['-e', "'load_extise!;[]'", m, a] + ARGV).compact if e
+
+Open3.popen2(File.expand_path "hist #{args * ' '}", __dir__) do |i, o|
+  i.puts data * "\n" unless e
+  i.close
+  puts o.read
+end

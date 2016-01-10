@@ -3,7 +3,7 @@ require_relative 'common' and load_extise!
 
 e, c, s, t, v, m, a = false, true, true, 80, true, nil, nil
 
-non_blank = -> (x) { x.blank? ? (raise(OptionParser::MissingArgument.new '<model> <attribute>') unless e) : x }
+non_blank = -> (x) { x.blank? ? (raise OptionParser::MissingArgument.new '<model> <attribute>' unless e) : x }
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <model> <attribute>'

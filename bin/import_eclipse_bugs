@@ -23,7 +23,7 @@ include BugsEclipseOrg
 def import_mylyn_context(a, i = 0, o = options.bound)
   file = File.join o[:m], "#{a}.xml"
   args = [file, "-t#{o[:t] - 2 * i}"]
-  args << %w(verbose sort color).each { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
+  args << %w(verbose sort color).map { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
   args << '-q' if o[:q]
   cmd = "import_mylyn_contexts #{args.reverse * ' '}"
   puts "#{'  ' * i}#{cmd.cyan}" if o[:v] unless o[:q]
@@ -169,9 +169,9 @@ p.each do |f|
 
       case n.to_sym
       when :append
-        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> append".magenta if interactions.any?
+        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> append".magenta if v && interactions.any?
       when :delete
-        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> delete all".magenta if interactions.any?
+        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> delete all".magenta if v && interactions.any?
         interactions.destroy_all
       when :restrict
         abort "#{Attachment}:#{attachment.id} has #{interactions.count} interactions -> restrict".red if interactions.any?

@@ -6,7 +6,7 @@ m, n, c, s, t, v, q, z, p = nil, :restrict, true, false, 80, true, false, false,
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'm -m --mylyn=<path>'
-  opt 'n    --mylyn-mode=(append|delete|restrict)'
+  opt 'n    --mylyn-mode=(append|delete|restrict|skip)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -20,8 +20,30 @@ AutoColor.disable on: self unless c
 
 include BugsEclipseOrg
 
+def import_mylyn_context?(a, i = 0, o = options.bound)
+  v = !o[:q] && a.interactions.any?
+
+  case o[:n].to_sym
+  when :append
+    puts "#{'  ' * i}has #{a.interactions.count} interactions -> append".magenta if v
+  when :delete
+    puts "#{'  ' * i}has #{a.interactions.count} interactions -> delete all".magenta if v
+    a.interactions.destroy_all
+  when :restrict
+    abort "#{Attachment}:#{a.id} has #{a.interactions.count} interactions -> restrict".red if a.interactions.any?
+  when :skip
+    puts "#{'  ' * i}has #{a.interactions.count} interactions -> skip".magenta if v
+    return false if a.interactions.any?
+  else
+    raise
+  end
+
+  true
+end
+
 def import_mylyn_context(a, i = 0, o = options.bound)
-  file = File.join o[:m], "#{a}.xml"
+  file = File.join o[:m], "#{a.attachid}.xml"
+  return if File.size(file).zero?
   args = [file, "-t#{o[:t] - 2 * i}"]
   args << %w(verbose sort color).map { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
   args << '-q' if o[:q]
@@ -165,21 +187,9 @@ p.each do |f|
       dump_record attachment, :attachment, i + 2
       dump_record attachment.submitter, :submitter, i + 3
 
-      interactions = attachment.interactions
-
-      case n.to_sym
-      when :append
-        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> append".magenta if v && interactions.any?
-      when :delete
-        puts "#{'  ' * (i + 3)}has #{interactions.count} interactions -> delete all".magenta if v && interactions.any?
-        interactions.destroy_all
-      when :restrict
-        abort "#{Attachment}:#{attachment.id} has #{interactions.count} interactions -> restrict".red if interactions.any?
-      else
-        raise
+      if m && attachment.filename == Attachment::MYLYN_CONTEXT_FILENAME
+        import_mylyn_context attachment, i + 3 if import_mylyn_context? attachment, i + 3
       end
-
-      import_mylyn_context attachment.attachid, i + 3 if m && attachment.filename == Attachment::MYLYN_CONTEXT_FILENAME
     end
   end
 end

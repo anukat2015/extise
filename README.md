@@ -6,7 +6,6 @@ A collection of tools to estimate developers' expertise
 
 - Ruby 2.2.3
 - PostgreSQL 9.4.5
-
 - Java 1.8
 - Eclipse 4.3
 - JDT 3.8
@@ -44,39 +43,39 @@ and additionally if appropriate to:
 
 ## Data acquisition
 
-### `fetch_mylyn_contexts`
+#### `fetch_mylyn_contexts`
 
     fetch_mylyn_contexts ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
 
 ## Data import
 
-### `import_eclipse_bugs`
+#### `import_eclipse_bugs`
 
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn=../data/bugs.eclipse.org/mylyn-context
     
-### `import_mylyn_contexts`
+#### `import_mylyn_contexts`
 
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml --stat
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml
 
 ## Utilities
 
-### `lsxml`
+#### `lsxml`
 
     lsxml ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml
 
-### `dbstat`
+#### `dbstat`
 
     dbstat
 
-### `hist`
+#### `hist`
 
     echo 1\n2\n1 | bin/hist
     hist -e '[1,2,1]'
 
-### `rhist`
+#### `rhist`
 
     rhist BugsEclipseOrg::Bug priority'
     rhist -e 'BugsEclipseOrg::Bug.pluck\(:priority\)'

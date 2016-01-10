@@ -11,6 +11,7 @@ require 'open3'
 require 'optbind'
 require 'optbind_auto_describe'
 require 'nokogiri'
+require 'rugged'
 require 'yaml'
 
 Colored.colorize_defaults = { extra: :bold }

@@ -30,12 +30,56 @@ A collection of tools to estimate developers' expertise
 
 ## Commands
 
-    import_eclipse_bugs
-    fetch_mylyn_contexts
+Executable commands respond to:
+
+    -h, --help
+        --version
+
+and additionally if appropriate to:
+ 
+    -c, --[no-]color                 Default true
+    -s, --[no-]sort                  Default true or false
+    -t, --trim[=<length>]            Default 80
+    -v, --[no-]verbose               Default true or false
+
+## Data acquisition
+
+### `fetch_mylyn_contexts`
+
+    fetch_mylyn_contexts ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
+
+## Data import
+
+### `import_eclipse_bugs`
+
+    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
+    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
+    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn=../data/bugs.eclipse.org/mylyn-context
+    
+### `import_mylyn_contexts`
+
+    import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml --stat
+    import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml
 
 ## Utilities
 
-    lsxml
+### `lsxml`
+
+    lsxml ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml
+
+### `dbstat`
+
+    dbstat
+
+### `hist`
+
+    echo 1\n2\n1 | bin/hist
+    hist -e '[1,2,1]'
+
+### `rhist`
+
+    rhist BugsEclipseOrg::Bug priority'
+    rhist -e 'BugsEclipseOrg::Bug.pluck\(:priority\)'
 
 ## Contributing
 

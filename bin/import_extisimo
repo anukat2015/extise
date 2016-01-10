@@ -1,0 +1,101 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+c, s, t, v, q = true, false, 80, true, false
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>]'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+end
+
+AutoColor.disable on: self unless c
+
+#TODO rename this script?
+
+def persist_user(user)
+  persist(Extisimo::User, name: user.login_name) do |r|
+    r.bugs_eclipse_org_user = user
+  end
+end
+
+i = 0
+
+#TODO import only RESOLVED tasks to extisimo
+
+BugsEclipseOrg::Bug.find_each do |b|
+  abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent reporter".red if b.reporter != b.author.login_name
+  abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent assignee".red if b.assigned_to != b.assignee.login_name
+
+  reporter = persist_user(b.author)
+  assignee = persist_user(b.assignee)
+  project = persist(Extisimo::Project, product: b.product, component: b.component)
+
+  task = persist(Extisimo::Task, submitted_at: b.creation_ts, reporter: reporter) do |r|
+    r.assignee = assignee
+    r.project = project
+    r.classification = b.classification.downcase.gsub(/[\-\s]+/, '_')
+    r.keywords = b.keywords
+    r.description = b.short_desc
+    r.status = b.bug_status.downcase.gsub(/[\-\s]+/, '_')
+    r.resolution = b.resolution.try! { downcase.gsub(/[\-\s]+/, '_') }
+    r.severity = b.bug_severity.downcase
+    r.priority = b.priority.downcase
+    r.confirmed = b.everconfirmed
+    r.platform = b.rep_platform
+    r.operating_system = b.op_sys.sub(/\s*\(unsup(\.|ported)\)\z/i, '')
+    r.project_version = b.version.try! { sub(/(unspecified|\-+)/i, '').presence }
+    r.project_milestone = b.target_milestone.try! { sub(/(unspecified|\-+)/i, '').presence }
+    r.cc = b.cc
+    r.votes_count = b.votes
+    r.modified_at = b.delta_ts
+    r.bugs_eclipse_org_bug = b
+  end
+
+  dump_record task, :task, i
+  dump_record reporter, :reporter, i + 1
+  dump_record assignee, :assignee, i + 1
+  dump_record project, :project, i + 1
+
+  b.comments.find_each do |c|
+    abort "#{BugsEclipseOrg::Comment}:#{c.id} inconsistent author".red if c.who != c.author.login_name
+
+    author = persist_user(c.author)
+
+    post = persist(Extisimo::Post, submitted_at: c.bug_when, author: author, task: task) do |r|
+      r.description = c.thetext
+      r.modified_at = c.bug_when
+      r.bugs_eclipse_org_comment = c
+    end
+
+    dump_record post, :post, i + 1
+    dump_record author, :author, i + 2
+  end
+
+  b.attachments.find_each do |a|
+    abort "#{BugsEclipseOrg::Attachment}:#{a.id} inconsistent author".red if a.attacher != a.submitter.login_name
+
+    author = persist_user(a.submitter)
+
+    attachment = persist(Extisimo::Attachment, submitted_at: a.date, author: author, task: task, file: a.filename) do |r|
+      r.type = a.type
+      r.description = a.desc
+      r.modified_at = a.delta_ts
+      r.bugs_eclipse_org_attachment = a
+    end
+
+    dump_record attachment, :attachment, i + 1
+    dump_record author, :author, i + 2
+
+    #TODO import only desired interactions
+
+    a.interactions do |e|
+
+
+
+    end
+  end
+end

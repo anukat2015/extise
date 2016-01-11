@@ -13,7 +13,7 @@ class CreateInteractionsByEclipseOrg < ActiveRecord::Migration
       t.string :structure_handle, null: true, limit: 1024
       t.string :navigation, null: true
       t.string :delta, null: true
-      t.decimal :interest, null: false, precision: 14, scale: 10
+      t.decimal :interest, null: false, precision: 18, scale: 12
 
       t.timestamps null: false
     end

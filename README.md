@@ -78,7 +78,7 @@ and additionally if appropriate to:
 #### `rhist`
 
     rhist BugsEclipseOrg::Bug priority'
-    rhist -e 'BugsEclipseOrg::Bug.pluck\(:priority\)'
+    rhist -e 'BugsEclipseOrg::Bug.pluck(:priority)'
 
 ## Contributing
 

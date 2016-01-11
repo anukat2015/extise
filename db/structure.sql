@@ -221,7 +221,7 @@ CREATE TABLE bugs_eclipse_org_interactions (
     start_date timestamp without time zone NOT NULL,
     end_date timestamp without time zone NOT NULL,
     originid character varying NOT NULL,
-    structure_kind character varying NOT NULL,
+    structure_kind character varying,
     structure_handle character varying(1024),
     navigation character varying,
     delta character varying,

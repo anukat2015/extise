@@ -9,7 +9,7 @@ class CreateInteractionsByEclipseOrg < ActiveRecord::Migration
       t.datetime :start_date, null: false
       t.datetime :end_date, null: false
       t.string :originid, null: false
-      t.string :structure_kind, null: false
+      t.string :structure_kind, null: true
       t.string :structure_handle, null: true, limit: 1024
       t.string :navigation, null: true
       t.string :delta, null: true

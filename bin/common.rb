@@ -62,6 +62,8 @@ def load_extise!
       yield record if block_given?
       record.save!
     end
+  rescue ActiveRecord::RecordNotUnique
+    model.find_by(attributes) || raise(ActiveRecord::RecordNotFound)
   rescue => failure
     Open3.popen2(File.expand_path 'lsxml', __dir__) do |i, o|
       i.puts xml

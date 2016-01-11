@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-m, o, n, c, s, t, v, q, z, p = nil, :restrict, 0, true, false, 80, true, false, false, [STDIN]
+m, o, n, w, c, s, t, v, q, z, p = nil, :restrict, 0, :thread, true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'm -m --mylyn=<path>'
   opt 'o    --mylyn-mode=(append|delete|restrict|skip)'
-  opt 'n    --parallel[=<processes:Integer>]'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-mode=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -24,19 +25,31 @@ AutoColor.disable on: self unless c
 include BugsEclipseOrg
 
 def import_mylyn_context?(a, i = 0, o = options.bound)
-  v = !o[:q] && a.interactions.any?
+  prefix = :bugs_eclipse_org_
+  count = ActiveRecord::Base.connection.execute(
+    <<-SQL
+      select count(*) from #{prefix}interactions
+      inner join #{prefix}attachments on #{prefix}attachments.id = #{prefix}interactions.attachment_id
+      where #{prefix}attachments.attachid = #{a}
+    SQL
+  )[0]['count'].to_i
+
+  inform = !o[:q] && o[:n].zero? && !count.zero?
 
   case o[:o].to_sym
   when :append
-    puts "#{'  ' * i}has #{a.interactions.count} interactions -> append".magenta if v
+    puts "#{'  ' * i}has #{count} interactions -> append".magenta if inform
   when :delete
-    puts "#{'  ' * i}has #{a.interactions.count} interactions -> delete all".magenta if v
-    a.interactions.destroy_all
+    puts "#{'  ' * i}has #{count} interactions -> delete all".magenta if inform
+    ActiveRecord::Base.connection.execute <<-SQL
+      delete from #{prefix}interactions using #{prefix}attachments
+      where #{prefix}interactions.attachment_id = #{prefix}attachments.id and #{prefix}attachments.attachid = #{a}
+    SQL
   when :restrict
-    abort "#{Attachment}:#{a.id} has #{a.interactions.count} interactions -> restrict".red if a.interactions.any?
+    abort "#{Attachment}:#{a} has #{count} interactions -> restrict".red unless count.zero?
   when :skip
-    puts "#{'  ' * i}has #{a.interactions.count} interactions -> skip".magenta if v
-    return false if a.interactions.any?
+    puts "#{'  ' * i}has #{count} interactions -> skip".magenta if inform
+    return false if count.zero?
   else
     raise
   end
@@ -45,7 +58,7 @@ def import_mylyn_context?(a, i = 0, o = options.bound)
 end
 
 def import_mylyn_context(a, i = 0, o = options.bound)
-  file = File.join o[:m], "#{a.attachid}.xml"
+  file = File.join o[:m], "#{a}.xml"
   return if File.size(file).zero?
   args = [file, "-t#{o[:t] - 2 * i}"]
   args << %w(verbose sort color).map { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
@@ -68,18 +81,17 @@ def count_mylyn_context(d, o = options.bound)
 end
 
 def process_bugs(a, o = options.bound)
-  progress = o[:n] != 0 ? { format: 'P%E %B ~%P%% %c/%C', progress_mark: '-' } : nil
-  Parallel.each(a, in_processes: o[:n], progress: progress) do |b|
-    ActiveRecord::Base.connection.reconnect!
-    yield b
+  progress = o[:n] != 0 ? { format: '%E %B %c/%C%P%%', progress_mark: '-' } : nil
+  Parallel.each(a, "in_#{o[:w].to_s.pluralize}".to_sym => o[:n], progress: progress) do |b|
+    ActiveRecord::Base.connection_pool.with_connection do
+      yield b
+    end
   end
 end
 
 def persist_user(l, n = [])
-  User.transaction do
-    persist(User, login_name: l) do |r|
-      r.realnames = (r.realnames.to_a + [n]).flat_map(&:presence).compact.uniq
-    end
+  persist(User, login_name: l) do |r|
+    r.realnames = (r.realnames.to_a + [n]).flat_map(&:presence).compact.uniq
   end
 end
 
@@ -115,13 +127,16 @@ p.each do |f|
   dump_record bugzilla, :bugzilla, i
 
   process_bugs d.css('bug') do |b|
+    author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].try(&:text).presence
+    assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
+
     bug = persist(Bug, bugid: b.css('bug_id').text.presence, xml: b) do |r|
       abort "#{Bug}:#{r.bugid} too many reporters".red if b.css('reporter').count != 1
       abort "#{Bug}:#{r.bugid} too many assignees".red if b.css('assigned_to').count != 1
 
-      r.bugzilla = bugzilla
-      r.author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].try(&:text).presence
-      r.assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
+      r.bugzilla_id = bugzilla.id
+      r.author_id = author.id
+      r.assignee_id = assignee.id
 
       r.creation_ts = b.css('creation_ts').text.presence
       r.short_desc = b.css('short_desc').text
@@ -155,15 +170,17 @@ p.each do |f|
     end
 
     dump_record bug, :bug, i + 1
-    dump_record bug.author, :author, i + 2
-    dump_record bug.assignee, :assignee, i + 2
+    dump_record author, :author, i + 2
+    dump_record assignee, :assignee, i + 2
 
     b.css('long_desc').each do |c|
+      author = persist_user c.css('who').text.presence, c.css('who')[0].attributes['name'].try(&:text).presence
+
       comment = persist(Comment, commentid: c.css('commentid').text.presence, xml: c) do |r|
         abort "#{Comment}:#{r.commentid} too many authors".red if c.css('who').count != 1
 
-        r.bug = bug
-        r.author = persist_user c.css('who').text.presence, c.css('who')[0].attributes['name'].try(&:text).presence
+        r.bug_id = bug.id
+        r.author_id = author.id
 
         r.comment_count = c.css('comment_count').text.presence
         r.who = c.css('who').text.presence
@@ -174,20 +191,24 @@ p.each do |f|
       end
 
       dump_record comment, :comment, i + 2
-      dump_record comment.author, :author, i + 3
+      dump_record author, :author, i + 3
     end
 
     b.css('attachment').each do |a|
-      attachment = persist(Attachment, attachid: a.css('attachid').text.presence, xml: a) do |r|
+      attachid = a.css('attachid').text.presence
+      filename = a.css('filename').text.presence
+      submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].try(&:text).presence
+
+      attachment = persist(Attachment, attachid: attachid, xml: a) do |r|
         abort "#{Attachment}:#{r.attachid} too many attachers".red if a.css('attacher').count != 1
 
-        r.bug = bug
-        r.submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].try(&:text).presence
+        r.bug_id = bug.id
+        r.submitter_id = submitter.id
 
         r.date = a.css('date').text.presence
         r.delta_ts = a.css('delta_ts').text.presence
         r.desc = a.css('desc').text
-        r.filename = a.css('filename').text.presence
+        r.filename = filename
         r.type = a.css('type').text.presence
         r.size = a.css('size').text.presence
         r.attacher = a.css('attacher').text.presence
@@ -198,10 +219,10 @@ p.each do |f|
       end
 
       dump_record attachment, :attachment, i + 2
-      dump_record attachment.submitter, :submitter, i + 3
+      dump_record submitter, :submitter, i + 3
 
-      if m && attachment.filename == Attachment::MYLYN_CONTEXT_FILENAME
-        import_mylyn_context attachment, i + 3 if import_mylyn_context? attachment, i + 3
+      if m && filename == Attachment::MYLYN_CONTEXT_FILENAME
+        import_mylyn_context attachid, i + 3 if import_mylyn_context? attachid, i + 3
       end
     end
   end

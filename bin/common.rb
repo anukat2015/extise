@@ -64,7 +64,7 @@ def load_extise!
     Open3.popen2(File.expand_path 'lsxml', __dir__) do |i, o|
       i.puts xml
       i.close
-      puts "\n--#{'XML-DEBUG'.red}--\n\n#{o.read}\n--#{'XML-DEBUG'.red}--\n\n"
+      $stderr.puts "\n--#{'XML-DEBUG'.red}--\n\n#{o.read}\n--#{'XML-DEBUG'.red}--\n\n"
     end if xml
     failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s.red) : raise(failure)
   end

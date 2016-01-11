@@ -57,7 +57,7 @@ def import_mylyn_context(a, i = 0, o = options.bound)
   end
 end
 
-def count_mylyn_context_interactons(d, o = options.bound)
+def count_mylyn_context(d, o = options.bound)
   d.css('attachment').sum do |a|
     next 0 unless a.css('filename').text == Attachment::MYLYN_CONTEXT_FILENAME
     Nokogiri::XML(File.open File.join o[:m], "#{a.css('attachid').text}.xml").css('InteractionEvent').count
@@ -82,7 +82,7 @@ p.each do |f|
     dump_attribute :bugs, d.css('bug').count, i + 1
     dump_attribute :comments, d.css('long_desc').count, i + 1
     dump_attribute :attachments, d.css('attachment').count, i + 1
-    dump_attribute :interactions, count_mylyn_context_interactons(d), i + 2 if m
+    dump_attribute :interactions, count_mylyn_context(d), i + 2 if m
     next
   end
 

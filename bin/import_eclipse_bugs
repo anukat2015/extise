@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-m, n, c, s, t, v, q, z, p = nil, :restrict, true, false, 80, true, false, false, [STDIN]
+m, o, n, c, s, t, v, q, z, p = nil, :restrict, 0, true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'm -m --mylyn=<path>'
-  opt 'n    --mylyn-mode=(append|delete|restrict|skip)'
+  opt 'o    --mylyn-mode=(append|delete|restrict|skip)'
+  opt 'n    --parallel[=<processes:Integer>]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -16,6 +17,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
+c, v, q = false, false, true unless n.zero?
+
 AutoColor.disable on: self unless c
 
 include BugsEclipseOrg
@@ -23,7 +26,7 @@ include BugsEclipseOrg
 def import_mylyn_context?(a, i = 0, o = options.bound)
   v = !o[:q] && a.interactions.any?
 
-  case o[:n].to_sym
+  case o[:o].to_sym
   when :append
     puts "#{'  ' * i}has #{a.interactions.count} interactions -> append".magenta if v
   when :delete
@@ -64,9 +67,19 @@ def count_mylyn_context(d, o = options.bound)
   end
 end
 
+def process_bugs(a, o = options.bound)
+  progress = o[:n] != 0 ? { format: 'P%E %B ~%P%% %c/%C', progress_mark: '-' } : nil
+  Parallel.each(a, in_processes: o[:n], progress: progress) do |b|
+    ActiveRecord::Base.connection.reconnect!
+    yield b
+  end
+end
+
 def persist_user(l, n = [])
-  persist(User, login_name: l) do |r|
-    r.realnames = (r.realnames.to_a + [n]).flat_map(&:presence).compact.uniq
+  User.transaction do
+    persist(User, login_name: l) do |r|
+      r.realnames = (r.realnames.to_a + [n]).flat_map(&:presence).compact.uniq
+    end
   end
 end
 
@@ -101,7 +114,7 @@ p.each do |f|
 
   dump_record bugzilla, :bugzilla, i
 
-  d.css('bug').each do |b|
+  process_bugs d.css('bug') do |b|
     bug = persist(Bug, bugid: b.css('bug_id').text.presence, xml: b) do |r|
       abort "#{Bug}:#{r.bugid} too many reporters".red if b.css('reporter').count != 1
       abort "#{Bug}:#{r.bugid} too many assignees".red if b.css('assigned_to').count != 1

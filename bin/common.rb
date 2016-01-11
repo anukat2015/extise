@@ -11,6 +11,8 @@ require 'open3'
 require 'optbind'
 require 'optbind_auto_describe'
 require 'nokogiri'
+require 'parallel'
+require 'ruby-progressbar'
 require 'rugged'
 require 'yaml'
 

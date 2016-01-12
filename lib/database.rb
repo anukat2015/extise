@@ -1,6 +1,7 @@
 require 'active_record'
 require 'active_record/tasks/database_tasks'
 require 'yaml'
+require 'zlib'
 
 require 'database/extensions/active_record'
 require 'database/version'

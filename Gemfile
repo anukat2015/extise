@@ -5,9 +5,9 @@ gem 'rake', '~> 10.4.2'
 
 gem 'pg'
 
-gem 'activemodel', '~> 4.2.4'
-gem 'activerecord', '~> 4.2.4'
-gem 'activesupport', '~> 4.2.4'
+gem 'activemodel', '~> 5.0.0.beta1'
+gem 'activerecord', '~> 5.0.0.beta1'
+gem 'activesupport', '~> 5.0.0.beta1'
 
 gem 'colored', '~> 1.2'
 gem 'nokogiri', '~> 1.6.6'

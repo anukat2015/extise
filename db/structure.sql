@@ -392,8 +392,8 @@ ALTER SEQUENCE extisimo_concepts_id_seq OWNED BY extisimo_concepts.id;
 CREATE TABLE extisimo_conceptualities (
     id integer NOT NULL,
     inferencer_id integer NOT NULL,
-    subject_id integer NOT NULL,
     subject_type character varying NOT NULL,
+    subject_id integer NOT NULL,
     concept_id integer NOT NULL,
     inferencer_data json NOT NULL,
     probability numeric(9,8) NOT NULL,
@@ -464,8 +464,8 @@ ALTER SEQUENCE extisimo_elements_id_seq OWNED BY extisimo_elements.id;
 CREATE TABLE extisimo_expertises (
     id integer NOT NULL,
     metric_id integer NOT NULL,
-    subject_id integer NOT NULL,
     subject_type character varying NOT NULL,
+    subject_id integer NOT NULL,
     user_id integer NOT NULL,
     metric_data json NOT NULL,
     value numeric(9,8) NOT NULL,

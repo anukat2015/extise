@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-n, w, b = 0, :thread, true
+a, n, w, b = [], 0, :thread, true
 c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
+  opt 'a -a --attachments=<ids:Array>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -37,18 +38,29 @@ p.each do |f|
   end
 
   bug_url = d.root.attributes['Id'].text.strip
-  bug_id = bug_url.match(/\d+\z/)[0]
   version = d.root.attributes['Version'].text.strip
+  bugid = Integer(bug_url.match(/\d+\z/)[0])
+  attachid = Integer(a.shift)
 
   abort "Invalid URL: #{bug_url}".red if bug_url !~ %r{\A(local|https://(bugs.eclipse.org/bugs|studio.atlassian.com))-\d+\z}
   abort "Invalid version: #{version}".red if version != '1'
 
-  bug = Bug.where(bugid: bug_id).first
-  contexts = Attachment.where(bug: bug, filename: 'mylyn-context.zip')
-  context = contexts.first
+  bug = Bug.where(bugid: bugid).first
 
-  abort "#{Bug}:#{bug_id} not found".red if bug.nil?
-  abort "#{Bug}:#{bug_id} missing context".red if contexts.count.zero?
+  abort "#{Bug}:#{bugid} not found".red if bug.nil?
+
+  if attachid
+    context = Attachment.where(attachid: attachid, filename: Attachment::MYLYN_CONTEXT_FILENAME).first
+
+    abort "#{Attachment}:#{attachid} context not found".red unless context
+    abort "#{Attachment}:#{attachid} context does not match #{Bug}:#{bugid}".red if context.bug.bugid != bugid
+  else
+    contexts = Attachment.where(bug: bug, filename: Attachment::MYLYN_CONTEXT_FILENAME)
+    context = contexts.first
+
+    abort "#{Bug}:#{bugid} missing context".red if contexts.count.zero?
+    abort "#{Bug}:#{bugid} various contexts" if contexts.count > 1
+  end
 
   process d.css('InteractionEvent'), count: n, worker: w, progress: b do |e|
     interaction = persist(Interaction, xml: e) do |r|

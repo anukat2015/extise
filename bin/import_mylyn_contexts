@@ -47,7 +47,7 @@ p.each do |f|
 
   bug = Bug.where(bugid: bugid).first
 
-  return warn("#{Bug}:#{bugid} not found -> skip".magenta) && nil if bug.nil?
+  warn("#{Bug}:#{bugid} not found -> skip".magenta) && next if bug.nil?
 
   if attachid
     context = Attachment.where(attachid: attachid, filename: Attachment::MYLYN_CONTEXT_FILENAME).first

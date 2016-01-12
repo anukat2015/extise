@@ -32,8 +32,10 @@ args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" 
 args = args.insert 2, "-t#{t}"
 args += ['-e', "'load_extise!;[]'"] + ([m, a] + ARGV).compact.map { |x| Shellwords.escape x } if e
 
-Open3.popen2e(File.expand_path "hist #{args * ' '}", __dir__) do |i, o, _|
-  Thread.new { o.each { |l| print l }}.join
+Open3.popen3(File.expand_path "hist #{args * ' '}", __dir__) do |i, o, e, t|
+  Thread.new { o.each { |l| print l }}
+  Thread.new { e.each { |l| STDERR.print l }}
   i.print data * "\n" unless e
   i.close
+  t.join
 end

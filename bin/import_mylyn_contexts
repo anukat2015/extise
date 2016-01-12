@@ -47,7 +47,7 @@ p.each do |f|
 
   bug = Bug.where(bugid: bugid).first
 
-  abort "#{Bug}:#{bugid} not found".red if bug.nil?
+  return warn("#{Bug}:#{bugid} not found -> skip".magenta) && nil if bug.nil?
 
   if attachid
     context = Attachment.where(attachid: attachid, filename: Attachment::MYLYN_CONTEXT_FILENAME).first
@@ -59,7 +59,7 @@ p.each do |f|
     context = contexts.first
 
     abort "#{Bug}:#{bugid} missing context".red if contexts.count.zero?
-    abort "#{Bug}:#{bugid} various contexts" if contexts.count > 1
+    abort "#{Bug}:#{bugid} various contexts".red if contexts.count > 1
   end
 
   process d.css('InteractionEvent'), count: n, worker: w, progress: b do |e|

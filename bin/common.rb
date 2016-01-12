@@ -72,9 +72,9 @@ def load_extise!
       i.puts xml
       i.close
       Thread.new {
-        STDERR.print "\n--#{'XML-DEBUG'.red}--\n\n"
-        o.each { |l| STDERR.print l }
-        STDERR.print "\n--#{'XML-DEBUG'.red}--\n\n"
+        warn "\n--#{'XML-DEBUG'.red}--\n\n"
+        o.each { |l| warn l }
+        warn "\n--#{'XML-DEBUG'.red}--\n\n"
       }.join
       t.join
     end if xml

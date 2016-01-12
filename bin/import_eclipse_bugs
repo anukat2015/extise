@@ -8,7 +8,7 @@ ARGV.bind_and_parse! to: :locals do
   opt 'm -m --mylyn=<path>'
   opt 'o    --mylyn-mode=(append|delete|restrict|skip)'
   opt 'n    --parallel[=<count:Integer>]'
-  opt 'w    --parallel-mode=(process|thread)'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -25,6 +25,7 @@ AutoColor.disable on: self unless c
 include BugsEclipseOrg
 
 def import_mylyn_context?(a, i = 0, o = options.bound)
+  inform = !o[:q] && o[:n].zero? && !count.zero?
   prefix = :bugs_eclipse_org_
   count = ActiveRecord::Base.connection.execute(
     <<-SQL
@@ -33,8 +34,6 @@ def import_mylyn_context?(a, i = 0, o = options.bound)
       where #{prefix}attachments.attachid = #{a}
     SQL
   )[0]['count'].to_i
-
-  inform = !o[:q] && o[:n].zero? && !count.zero?
 
   case o[:o].to_sym
   when :append
@@ -60,16 +59,15 @@ end
 def import_mylyn_context(a, i = 0, o = options.bound)
   file = File.join o[:m], "#{a}.xml"
   return if File.size(file).zero?
-  args = [file, "-t#{o[:t] - 2 * i}"]
+  args = [file, "--parallel=#{(o[:n] + 1) / 2} --parallel-worker=#{o[:w]}", "-t#{o[:t] - 2 * i}"]
   args << %w(verbose sort color).map { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
   args << '-q' if o[:q]
   cmd = "import_mylyn_contexts #{args.reverse * ' '}"
   puts "#{'  ' * i}#{cmd.cyan}" if o[:v] unless o[:q]
-  Open3.popen3(File.expand_path cmd, __dir__) do |_, out, error, status|
-    out.each_line do |l|
-      puts "#{'  ' * i}#{l}"
-    end unless o[:q]
-    abort error.read unless status.value.to_i.zero?
+  Open3.popen3(File.expand_path cmd, __dir__) do |_, output, error, status|
+    Thread.new { output.each { |l| print "#{'  ' * i}#{l}" }; output.close } unless o[:q]
+    Thread.new { error.each { |l| STDERR.print l}; error.close }
+    abort unless status.value.to_i.zero?
   end
 end
 
@@ -77,15 +75,6 @@ def count_mylyn_context(d, o = options.bound)
   d.css('attachment').sum do |a|
     next 0 unless a.css('filename').text == Attachment::MYLYN_CONTEXT_FILENAME
     Nokogiri::XML(File.open File.join o[:m], "#{a.css('attachid').text}.xml").css('InteractionEvent').count
-  end
-end
-
-def process_bugs(a, o = options.bound)
-  progress = o[:n] != 0 ? { format: '%E %B %c/%C%P%%', progress_mark: '-' } : nil
-  Parallel.each(a, "in_#{o[:w].to_s.pluralize}".to_sym => o[:n], progress: progress) do |b|
-    ActiveRecord::Base.connection_pool.with_connection do
-      yield b
-    end
   end
 end
 
@@ -126,7 +115,7 @@ p.each do |f|
 
   dump_record bugzilla, :bugzilla, i
 
-  process_bugs d.css('bug') do |b|
+  process d.css('bug'), count: n, worker: w do |b|
     author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].try(&:text).presence
     assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
 

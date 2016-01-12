@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
+n, w, c, s, t, v, q, z, p = 0, :thread, true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -13,6 +15,8 @@ ARGV.bind_and_parse! to: :locals do
   opt 'z    --stat'
   arg 'p [<path>...]'
 end
+
+c, v, q = false, false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
@@ -35,7 +39,7 @@ p.each do |f|
   bug_id = bug_url.match(/\d+\z/)[0]
   version = d.root.attributes['Version'].text.strip
 
-  abort "Invalid URL: #{bug_url}".red if bug_url !~ /\Ahttps:\/\/bugs\.eclipse\.org\/bugs-\d+\z/
+  abort "Invalid URL: #{bug_url}".red if bug_url !~ %r{\A(local|https://(bugs.eclipse.org/bugs|studio.atlassian.com))-\d+\z}
   abort "Invalid version: #{version}".red if version != '1'
 
   bug = Bug.where(bugid: bug_id).first
@@ -45,9 +49,9 @@ p.each do |f|
   abort "#{Bug}:#{bug_id} not found".red if bug.nil?
   abort "#{Bug}:#{bug_id} missing context".red if contexts.count.zero?
 
-  d.css('InteractionEvent').each do |e|
+  process d.css('InteractionEvent'), count: n, worker: w do |e|
     interaction = persist(Interaction, xml: e) do |r|
-      r.attachment = context
+      r.attachment_id = context.id
       r.bug_url = bug_url
       r.version = version
 

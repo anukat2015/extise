@@ -14,6 +14,7 @@ require 'nokogiri'
 require 'parallel'
 require 'ruby-progressbar'
 require 'rugged'
+require 'shellwords'
 require 'yaml'
 
 Colored.colorize_defaults = { extra: :bold }
@@ -58,18 +59,38 @@ def load_extise!
 
   def persist(model, attributes = {})
     xml = attributes.delete :xml
-    (!attributes.empty? ? model.find_or_initialize_by(attributes) : model.new).tap do |record|
+    # NOTE: ensures that a record is either created or updated, and initialized with attributes
+    # when present, otherwise a record is just created with no attributes, never updated
+    (attributes.empty? ? model.new : model.find_or_initialize_by(attributes)).tap do |record|
       yield record if block_given?
       record.save!
     end
   rescue ActiveRecord::RecordNotUnique
     model.find_by(attributes) || raise(ActiveRecord::RecordNotFound)
   rescue => failure
-    Open3.popen2(File.expand_path 'lsxml', __dir__) do |i, o|
+    Open3.popen2e(File.expand_path 'lsxml', __dir__) do |i, o, t|
       i.puts xml
       i.close
-      $stderr.puts "\n--#{'XML-DEBUG'.red}--\n\n#{o.read}\n--#{'XML-DEBUG'.red}--\n\n"
+      Thread.new {
+        STDERR.print "\n--#{'XML-DEBUG'.red}--\n\n"
+        o.each { |l| STDERR.print l }
+        STDERR.print "\n--#{'XML-DEBUG'.red}--\n\n"
+      }.join
+      t.join
     end if xml
     failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s.red) : raise(failure)
+  end
+
+  def process(items, options = {})
+    options = {
+      "in_#{options[:worker].to_s.pluralize}".to_sym => options[:count],
+      progress: options[:count] != 0 ? { format: '%E %B %c/%C %P%%', progress_mark: '-' } : nil
+    }
+
+    Parallel.map(items, options) do |item|
+      ActiveRecord::Base.connection_pool.with_connection do
+        yield item
+      end
+    end
   end
 end

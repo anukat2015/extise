@@ -25,7 +25,7 @@ AutoColor.disable on: self unless c
 
 include BugsEclipseOrg
 
-def import_mylyn_context?(a, i = 0, o = options.bound)
+def import_mylyn_context?(a, _, o = options.bound)
   prefix = :bugs_eclipse_org_
   count = ActiveRecord::Base.connection.execute(
     <<-SQL
@@ -37,9 +37,9 @@ def import_mylyn_context?(a, i = 0, o = options.bound)
   inform = !o[:q] && o[:n].zero? && !count.zero?
   case o[:o].to_sym
   when :append
-    warn "#{'  ' * i}#{Attachment}:#{a} has #{count} interactions -> append".magenta if inform
+    warn "#{Attachment}:#{a} has #{count} interactions -> append".magenta if inform
   when :delete
-    warn "#{'  ' * i}#{Attachment}:#{a} has #{count} interactions -> delete all".magenta if inform
+    warn "#{Attachment}:#{a} has #{count} interactions -> delete all".magenta if inform
     ActiveRecord::Base.connection.execute <<-SQL
       delete from #{prefix}interactions using #{prefix}attachments
       where #{prefix}interactions.attachment_id = #{prefix}attachments.id and #{prefix}attachments.attachid = #{a}
@@ -47,7 +47,7 @@ def import_mylyn_context?(a, i = 0, o = options.bound)
   when :restrict
     abort "#{Attachment}:#{a} has #{count} interactions -> restrict".red unless count.zero?
   when :skip
-    warn "#{'  ' * i}#{Attachment}:#{a} has #{count} interactions -> skip".magenta if inform
+    warn "#{Attachment}:#{a} has #{count} interactions -> skip".magenta if inform
     return false if count.zero?
   else
     raise
@@ -58,7 +58,7 @@ end
 def import_mylyn_context(a, i = 0, o = options.bound)
   file = File.join o[:m], "#{a}.xml"
   abort "#{Attachment}:#{a} has unreadable file -> fail".red unless File.readable? file
-  return warn("#{'  ' * i}#{Attachment}:#{a} has empty file -> skip".magenta) && nil if File.size(file).zero?
+  return warn("#{Attachment}:#{a} has empty file -> skip".magenta) && nil if File.size(file).zero?
   args = ["--attachment=#{a}", "--parallel=#{(o[:n] + 1) / 2}", "--parallel-worker=#{o[:w]}"]
   args += %w(color sort verbose).map { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
   args.insert -2, "-t#{o[:t] - 2 * i}"

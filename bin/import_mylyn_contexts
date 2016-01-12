@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-n, w, c, s, t, v, q, z, p = 0, :thread, true, false, 80, true, false, false, [STDIN]
+n, w, b = 0, :thread, true
+c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
@@ -16,7 +17,7 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-c, v, q = false, false, true unless n.zero?
+b, v, q = !q, false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
@@ -49,7 +50,7 @@ p.each do |f|
   abort "#{Bug}:#{bug_id} not found".red if bug.nil?
   abort "#{Bug}:#{bug_id} missing context".red if contexts.count.zero?
 
-  process d.css('InteractionEvent'), count: n, worker: w do |e|
+  process d.css('InteractionEvent'), count: n, worker: w, progress: b do |e|
     interaction = persist(Interaction, xml: e) do |r|
       r.attachment_id = context.id
       r.bug_url = bug_url

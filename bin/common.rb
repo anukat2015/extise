@@ -82,11 +82,13 @@ def load_extise!
   end
 
   def process(items, options = {})
+    progress = [true, nil].include?(options[:progress]) ? {
+      format: '%E %B %c/%C %P%%', progress_mark: '-'
+    } : options[:progress]
     options = {
       "in_#{options[:worker].to_s.pluralize}".to_sym => options[:count],
-      progress: options[:count] != 0 ? { format: '%E %B %c/%C %P%%', progress_mark: '-' } : nil
+      progress: options[:count] != 0 ? progress : nil
     }
-
     Parallel.map(items, options) do |item|
       ActiveRecord::Base.connection_pool.with_connection do
         yield item

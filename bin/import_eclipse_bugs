@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-m, o, n, w, c, s, t, v, q, z, p = nil, :restrict, 0, :thread, true, false, 80, true, false, false, [STDIN]
+m, o, n, w, b = nil, :restrict, 0, :thread, true
+c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
@@ -18,14 +19,13 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-c, v, q = false, false, true unless n.zero?
+b, v, q = !q, false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
 include BugsEclipseOrg
 
 def import_mylyn_context?(a, i = 0, o = options.bound)
-  inform = !o[:q] && o[:n].zero? && !count.zero?
   prefix = :bugs_eclipse_org_
   count = ActiveRecord::Base.connection.execute(
     <<-SQL
@@ -34,7 +34,7 @@ def import_mylyn_context?(a, i = 0, o = options.bound)
       where #{prefix}attachments.attachid = #{a}
     SQL
   )[0]['count'].to_i
-
+  inform = !o[:q] && o[:n].zero? && !count.zero?
   case o[:o].to_sym
   when :append
     puts "#{'  ' * i}has #{count} interactions -> append".magenta if inform
@@ -52,7 +52,6 @@ def import_mylyn_context?(a, i = 0, o = options.bound)
   else
     raise
   end
-
   true
 end
 
@@ -115,7 +114,7 @@ p.each do |f|
 
   dump_record bugzilla, :bugzilla, i
 
-  process d.css('bug'), count: n, worker: w do |b|
+  process d.css('bug'), count: n, worker: w, progress: b do |b|
     author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].try(&:text).presence
     assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
 

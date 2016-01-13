@@ -225,7 +225,7 @@ CREATE TABLE bugs_eclipse_org_interactions (
     structure_handle character varying(1024),
     navigation character varying,
     delta character varying,
-    interest numeric(18,12) NOT NULL,
+    interest numeric(20,12) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

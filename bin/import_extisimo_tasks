@@ -14,8 +14,6 @@ end
 
 AutoColor.disable on: self unless c
 
-#TODO rename this script?
-
 def persist_user(user)
   persist(Extisimo::User, name: user.login_name) do |r|
     r.bugs_eclipse_org_user = user

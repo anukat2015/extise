@@ -58,7 +58,7 @@ end
 def import_mylyn_context(a, i = 0, o = options.bound)
   file = File.join o[:m], "#{a}.xml"
   abort "#{Attachment}:#{a} has unreadable file -> fail".red unless File.readable? file
-  return warn("#{Attachment}:#{a} has empty file -> skip".magenta) && nil if File.size(file).zero?
+  return warn "#{Attachment}:#{a} has empty file -> skip".magenta if File.size(file).zero?
   args = ["--attachment=#{a}", "--parallel=#{(o[:n] + 1) / 2}", "--parallel-worker=#{o[:w]}"]
   args += %w(color sort verbose).map { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
   args.insert -2, "-t#{o[:t] - 2 * i}"
@@ -106,9 +106,10 @@ p.each do |f|
   version = d.root.attributes['version'].text.presence
   maintainer = d.root.attributes['maintainer'].text.presence
 
-  abort "Invalid URL: #{urlbase}".red if urlbase != 'https://bugs.eclipse.org/bugs/'
-  abort "Invalid version: #{version}".red if version != '4.4.7'
-  abort "Invalid maintainer: #{maintainer}".red if maintainer != 'webmaster@eclipse.org'
+  # NOTE: work only with data of bug sets from known sources as described below
+  abort "#{Bugzilla}:? invalid URL #{urlbase}".red if urlbase != 'https://bugs.eclipse.org/bugs/'
+  abort "#{Bugzilla}:? invalid version #{version}".red if version != '4.4.7'
+  abort "#{Bugzilla}:? invalid maintainer #{maintainer}".red if maintainer != 'webmaster@eclipse.org'
 
   bugzilla = persist(Bugzilla, urlbase: urlbase) do |r|
     r.version = version

@@ -39,21 +39,31 @@ p.each do |f|
 
   bug_url = d.root.attributes['Id'].text.strip
   version = d.root.attributes['Version'].text.strip
-  bugid = Integer(bug_url.match(/\d+\z/)[0])
-  attachid = Integer(a.shift)
+  bugid = bug_url.match(/\d+\z/)[0]
+  attachid = a.shift
 
-  abort "Invalid URL: #{bug_url}".red if bug_url !~ %r{\A(local|https://(bugs.eclipse.org/bugs|studio.atlassian.com))-\d+\z}
-  abort "Invalid version: #{version}".red if version != '1'
+  # NOTE: data from local URLs can not be trusted and data from studio.atlassian.com are often mismatched with bugs
+  if bug_url =~ %r{(local|https://studio.atlassian.com)-\d+\z}
+    warn "#{Bug}:#{bugid} has unsupported URL #{bug_url} -> skip".magenta
+    next
+  end
+
+  # NOTE: work only with data of contexts from known sources as described below
+  abort "#{Bug}:#{bugid} invalid URL #{bug_url}".red if bug_url !~ %r{\A(https://bugs.eclipse.org/bugs)-\d+\z}
+  abort "#{Bug}:#{bugid} invalid version #{version}".red if version != '1'
 
   bug = Bug.where(bugid: bugid).first
 
-  warn("#{Bug}:#{bugid} not found -> skip".magenta) && next if bug.nil?
+  if bug.nil?
+    warn "#{Bug}:#{bugid} not found -> skip".magenta
+    next
+  end
 
   if attachid
     context = Attachment.where(attachid: attachid, filename: Attachment::MYLYN_CONTEXT_FILENAME).first
 
     abort "#{Attachment}:#{attachid} context not found".red unless context
-    abort "#{Attachment}:#{attachid} context does not match #{Bug}:#{bugid}".red if context.bug.bugid != bugid
+    abort "#{Attachment}:#{attachid} context does not match #{Bug}:#{bugid}".red if context.bug.bugid.to_s != bugid
   else
     contexts = Attachment.where(bug: bug, filename: Attachment::MYLYN_CONTEXT_FILENAME)
     context = contexts.first

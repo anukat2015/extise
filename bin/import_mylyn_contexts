@@ -44,13 +44,13 @@ p.each do |f|
 
   # NOTE: data from local URLs can not be trusted and data from studio.atlassian.com are often mismatched with bugs
   if bug_url =~ %r{(local|https://studio.atlassian.com)-\d+\z}
-    warn "#{Bug}:#{bugid} has unsupported URL #{bug_url} -> skip".magenta
+    warn "#{Attachment}:#{attachid || '?'} has unsupported URL #{bug_url} -> skip".magenta
     next
   end
 
   # NOTE: work only with data of contexts from known sources as described below
-  abort "#{Bug}:#{bugid} invalid URL #{bug_url}".red if bug_url !~ %r{\A(https://bugs.eclipse.org/bugs)-\d+\z}
-  abort "#{Bug}:#{bugid} invalid version #{version}".red if version != '1'
+  abort "#{Attachment}:#{attachid || '?'} invalid URL #{bug_url}".red if bug_url !~ %r{\A(https://bugs.eclipse.org/bugs)-\d+\z}
+  abort "#{Attachment}:#{attachid || '?'} invalid version #{version}".red if version != '1'
 
   bug = Bug.where(bugid: bugid).first
 

@@ -71,7 +71,7 @@ def load_extise!
       record.save!
     end
   rescue ActiveRecord::RecordNotUnique
-    model.find_by(attributes) || raise(ActiveRecord::RecordNotFound)
+    retry
   rescue => failure
     Open3.popen2e(File.expand_path 'lsxml', __dir__) do |i, o, t|
       i.puts xml

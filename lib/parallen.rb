@@ -5,7 +5,9 @@ module Parallen
 
   def process(items, options = {})
     progress = [true, nil].include?(options[:progress]) ? {
-      format: '%E %B %c/%C %P%%', progress_mark: '-', total: options[:total] || items.count
+      format: "#{options[:title] if options[:title]} %E %B %c/%C %P%%",
+      progress_mark: '-',
+      total: options[:total] || items.count
     } : options[:progress]
     options = {
       "in_#{options[:worker].to_s.sub(/[sd]\z/) { |c| c == 's' ? 'ses' : 'ds'}}".to_sym => options[:count],

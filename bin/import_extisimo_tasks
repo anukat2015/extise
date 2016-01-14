@@ -14,7 +14,10 @@ end
 
 AutoColor.disable on: self unless c
 
-# NOTE: user with login name bugs.eclipse.org seems to be a real user
+# NOTE: there are many users with ambiguous login names, such as 'AJDT-inbox', 'mylyn-triaged', 'emo'
+# NOTE: there are some users with real names such as 'Project inbox', 'Missing name'
+# NOTE: user with login name 'eclipse' hides many real users, present as reporter or assignee
+# NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
 
 def persist_user(user)
   persist(Extisimo::User, name: user.login_name) do |r|
@@ -24,14 +27,11 @@ end
 
 i = 0
 
-#TODO problem with login name 'eclipse' -> has many real users (as reporters / assignees)
-
-#TODO keywords are completely unusable
-#TODO dependson can be ignored
-
 #TODO import only with RESOLVED bug_status
 #TODO import only with FIXED resolution
 #TODO import only confirmed
+
+#TODO after this filter review data and maybe filter even by classification, component + product
 
 BugsEclipseOrg::Bug.find_each do |b|
   abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent reporter".red if b.reporter != b.author.login_name
@@ -41,23 +41,22 @@ BugsEclipseOrg::Bug.find_each do |b|
   assignee = persist_user(b.assignee)
   project = persist(Extisimo::Project, product: b.product, component: b.component)
 
+  # NOTE: that keywords of original bugs have very low information value
+
   task = persist(Extisimo::Task, submitted_at: b.creation_ts, reporter: reporter) do |r|
     r.assignee = assignee
     r.project = project
     r.classification = b.classification.downcase.gsub(/[\-\s]+/, '_')
-    r.keywords = b.keywords
     r.description = b.short_desc
     r.status = b.bug_status.downcase.gsub(/[\-\s]+/, '_')
     r.resolution = b.resolution.try! { downcase.gsub(/[\-\s]+/, '_') }
     r.severity = b.bug_severity.downcase
     r.priority = b.priority.downcase
-    r.confirmed = b.everconfirmed
     r.platform = b.rep_platform
     r.operating_system = b.op_sys.sub(/\s*\(unsup(\.|ported)\)\z/i, '')
     r.project_version = b.version.try! { sub(/(unspecified|\-+)/i, '').presence }
     r.project_milestone = b.target_milestone.try! { sub(/(unspecified|\-+)/i, '').presence }
     r.cc = b.cc
-    r.votes_count = b.votes
     r.modified_at = b.delta_ts
     r.bugs_eclipse_org_bug = b
   end

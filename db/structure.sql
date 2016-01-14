@@ -739,19 +739,16 @@ CREATE TABLE extisimo_tasks (
     assignee_id integer NOT NULL,
     project_id integer NOT NULL,
     classification character varying NOT NULL,
-    keywords character varying[] NOT NULL,
     description text NOT NULL,
     status character varying NOT NULL,
     resolution character varying,
     severity character varying NOT NULL,
     priority character varying NOT NULL,
-    confirmed boolean NOT NULL,
     platform character varying NOT NULL,
     operating_system character varying NOT NULL,
     project_version character varying,
     project_milestone character varying,
     cc character varying[] NOT NULL,
-    votes_count integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     submitted_at timestamp without time zone NOT NULL,
@@ -1920,13 +1917,6 @@ CREATE INDEX index_extisimo_tasks_on_classification ON extisimo_tasks USING btre
 
 
 --
--- Name: index_extisimo_tasks_on_confirmed; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_extisimo_tasks_on_confirmed ON extisimo_tasks USING btree (confirmed);
-
-
---
 -- Name: index_extisimo_tasks_on_modified_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1966,13 +1956,6 @@ CREATE INDEX index_extisimo_tasks_on_status ON extisimo_tasks USING btree (statu
 --
 
 CREATE INDEX index_extisimo_tasks_on_submitted_at ON extisimo_tasks USING btree (submitted_at);
-
-
---
--- Name: index_extisimo_tasks_on_votes_count; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_extisimo_tasks_on_votes_count ON extisimo_tasks USING btree (votes_count);
 
 
 --

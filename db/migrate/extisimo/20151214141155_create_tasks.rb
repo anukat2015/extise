@@ -6,20 +6,16 @@ class CreateTasks < ActiveRecord::Migration
       t.references :project, null: false
 
       t.string :classification, null: false
-      t.string :keywords, null: false, array: true
       t.text :description, null: false
       t.string :status, null: false
       t.string :resolution, null: true
       t.string :severity, null: false
       t.string :priority, null: false
-      t.boolean :confirmed, null: false
       t.string :platform, null: false
       t.string :operating_system, null: false
       t.string :project_version, null: true
       t.string :project_milestone, null: true
       t.string :cc, null: false, array: true
-
-      t.integer :votes_count, null: false
 
       t.timestamps null: false
 
@@ -35,10 +31,6 @@ class CreateTasks < ActiveRecord::Migration
     add_index :extisimo_tasks, :resolution
     add_index :extisimo_tasks, :severity
     add_index :extisimo_tasks, :priority
-
-    add_index :extisimo_tasks, :confirmed
-
-    add_index :extisimo_tasks, :votes_count
 
     add_index :extisimo_tasks, :submitted_at
     add_index :extisimo_tasks, :modified_at

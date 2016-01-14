@@ -1,16 +1,22 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-o, c, v, q, p = nil, true, true, false, [STDIN]
+o, n, w = File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__), 4, :thread
+c, v, q, p = true, true, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
   opt 'o -o --output=<path>'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
   arg 'p [<path>...]'
 end
+
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
 
 AutoColor.enable on: self, colored: c, colorings: {
   /bug \d*/ => :blue,
@@ -18,7 +24,6 @@ AutoColor.enable on: self, colored: c, colorings: {
 }
 
 i = v && !options.default?(:p) ? 1 : 0
-o ||= File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__)
 
 FileUtils.mkpath o
 
@@ -27,7 +32,7 @@ p.each do |f|
 
   puts "#{f.green}" unless q || i.zero?
 
-  d.css('bug').each do |bug|
+  Parallen.process d.css('bug'), count: n, worker: w, progress: !n.zero? do |bug|
     bug_id = bug.css('bug_id').text.strip
 
     puts "#{'  ' * i}bug #{bug_id}" unless q

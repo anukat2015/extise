@@ -5,7 +5,7 @@ e, c, s, t, v, p = false, true, true, 80, true, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<path>...]'
-  use '[<options>] -e <command>...'
+  use '[<options>] -e [<command>...]'
   opt 'e -e --eval'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
@@ -16,22 +16,27 @@ end
 
 AutoColor.disable on: self unless c
 
-def blank
-  Object.new.instance_eval { binding }
-end if e
+def safe_eval(s)
+  s = s.read if s.is_a? IO
+  Object.new.instance_eval { binding }.eval(s).tap { |a| raise 'not an array' unless a.is_a? Array }
+rescue Exception
+  abort "Unable to evaluate input -> #{$!}".red
+end
 
-a = p.inject([]) { |r, f| r += e ? blank.eval(f) : File.open_or(f).readlines }
+a = p.inject([]) { |_, f| _ += e ? safe_eval(f) : File.open_or(f).readlines }
 h = a.inject(Hash.new 0) { |h, i| h[i.to_s.strip] += 1; h }
 h = Hash[h.sort_by { |_, x| -x }] if s
 
-pad_k = h.keys.max_by { |k| k.length }.length
+abort 'No input data'.red if h.empty?
+
+pad_k = [h.keys.max_by { |k| k.length }.length, t].min
 pad_x = h.values.max_by { |x| x.to_s.length }.to_s.length
-max_b = [t - pad_k - (v ? 1 + pad_x + 1 + 6 + 1: 0), 1].max
+max_b = [IO.console.winsize[1] - pad_k - (v ? 1 + pad_x + 1 + 6 + 1 : 0), 1].max
 sum = h.values.inject :+
 
 h.each do |k, x|
   r = x.to_f / sum
-  print "%#{pad_k}s".yellow % k
+  print "%#{pad_k}s".yellow % k[0..(t - 1)]
   print " %#{pad_x}s" % x if v
   print ' %6.2f' % (100 * r) if v
   puts ' ' << ('-' * (max_b * r).to_i).black

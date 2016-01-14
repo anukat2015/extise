@@ -7,7 +7,7 @@ non_blank = -> (x) { x.blank? ? (raise OptionParser::MissingArgument.new '<model
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <model> <attribute>'
-  use '[<options>] -e <command>...'
+  use '[<options>] -e [<command>...]'
   opt 'e -e --eval'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
@@ -19,23 +19,24 @@ end
 
 AutoColor.disable on: self unless c
 
-unless e
-  begin
-    model = Class.const_get m
-    data = model.pluck a
-  rescue
-    abort "Unable to #{m}.pluck #{a}".red
-  end
+data = Class.const_get(m).pluck(a) rescue abort("Unable to #{m}.pluck #{a}".red) unless e
+args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
+args.insert -2, "-t#{t}"
+
+if e
+  data, args = %w(load_extise!) + ([m, a] + ARGV).compact.map { |x| Shellwords.escape x }, args << '-e'
+  args, data = args + ["'#{data[0]};[]'"] + data[1..-1], [] if data.size > 1
 end
 
-args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
-args = args.insert 2, "-t#{t}"
-args += ['-e', "'load_extise!;[]'"] + ([m, a] + ARGV).compact.map { |x| Shellwords.escape x } if e
+Open3.popen3(File.expand_path "hist #{args * ' '}", __dir__) do |input, output, error, status|
+  Thread.new { output.each { |l| print l }}
+  Thread.new { error.each { |l| STDERR.print l }}
 
-Open3.popen3(File.expand_path "hist #{args * ' '}", __dir__) do |i, o, e, t|
-  Thread.new { o.each { |l| print l }}
-  Thread.new { e.each { |l| STDERR.print l }}
-  i.print data * "\n" unless e
-  i.close
-  t.join
+  unless data.empty?
+    input.print data * "\n"
+    STDIN.each { |l| input.print "\n#{l}" } if e
+  end
+
+  input.close
+  abort unless status.value.to_i.zero?
 end

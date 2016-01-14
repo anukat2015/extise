@@ -72,8 +72,10 @@ and additionally if appropriate to:
 
 #### `hist`
 
-    echo 1\n2\n1 | bin/hist
+    hist ../data/extise.fiit.stuba.sk/extise_development-bugs_eclipse_org-20160113_all-with-mylyn-context-20160110-1824.warnings
     hist -e '[1,2,1]'
+    echo 1\n2\n1 | hist
+    echo [1,2,1] | hist -e
 
 #### `rhist`
 

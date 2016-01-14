@@ -43,22 +43,50 @@ and additionally if appropriate to:
 
 ## Data acquisition
 
+Following commands should be executed subsequently:
+
 #### `fetch_mylyn_contexts`
+
+Download and unpack Mylyn context files from remote server according to input bugs file  
 
     fetch_mylyn_contexts ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
 
 ## Data import
 
+Following commands should be executed subsequently:
+
 #### `import_eclipse_bugs`
+
+Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attachments}` tables  
 
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn=../data/bugs.eclipse.org/mylyn-context
-    
+
 #### `import_mylyn_contexts`
+
+Import Mylyn context interactions, fill `bugs_eclipse_org_interactions` table
 
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml --stat
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml
+    
+#### `import_extise_tasks`
+
+Import Extise tasks using Eclipse bugs, fill `extisimo_{users,projects,tasks,posts,attachments}` tables
+
+    TODO
+
+#### `import_extise_commits`
+
+Import Extise commits using Eclipse Git, fill `extisimo_{repositories,commits,elements}` tables
+
+    TODO
+
+#### `import_extise_interactions`
+
+Import Extise interactions using tasks and repositories, fill `extisimo_{sessions,interactions}` tables
+
+    TODO
 
 ## Utilities
 

@@ -14,8 +14,8 @@ end
 
 AutoColor.disable on: self unless c
 
-# NOTE: there are many users with ambiguous login names, such as 'AJDT-inbox', 'mylyn-triaged', 'emo'
-# NOTE: there are some users with real names such as 'Project inbox', 'Missing name'
+# NOTE: many users have ambiguous login names, such as 'AJDT-inbox', 'mylyn-triaged', 'emo'
+# NOTE: some users have real names such as 'Project inbox', 'Missing name'
 # NOTE: user with login name 'eclipse' hides many real users, present as reporter or assignee
 # NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
 
@@ -27,13 +27,13 @@ end
 
 i = 0
 
-#TODO import only with RESOLVED bug_status
-#TODO import only with FIXED resolution
-#TODO import only confirmed
-
 #TODO after this filter review data and maybe filter even by classification, component + product
 
-BugsEclipseOrg::Bug.find_each do |b|
+# NOTE: import only confirmed, resolved, and fixed bugs
+
+attributes = { everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED }
+
+BugsEclipseOrg::Bug.where(attributes).find_each do |b|
   abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent reporter".red if b.reporter != b.author.login_name
   abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent assignee".red if b.assigned_to != b.assignee.login_name
 
@@ -41,7 +41,7 @@ BugsEclipseOrg::Bug.find_each do |b|
   assignee = persist_user(b.assignee)
   project = persist(Extisimo::Project, product: b.product, component: b.component)
 
-  # NOTE: that keywords of original bugs have very low information value
+  # NOTE: keywords of original bugs have very low information value
 
   task = persist(Extisimo::Task, submitted_at: b.creation_ts, reporter: reporter) do |r|
     r.assignee = assignee
@@ -58,7 +58,7 @@ BugsEclipseOrg::Bug.find_each do |b|
     r.project_milestone = b.target_milestone.try! { sub(/(unspecified|\-+)/i, '').presence }
     r.cc = b.cc
     r.modified_at = b.delta_ts
-    r.bugs_eclipse_org_bug = b
+    r.bugs_eclipse_org_bug_id = b.id
   end
 
   dump_record task, :task, i
@@ -71,10 +71,12 @@ BugsEclipseOrg::Bug.find_each do |b|
 
     author = persist_user(c.author)
 
+    # NOTE: original comments do not contain modification timestamp, creation timestamp is used instead
+
     post = persist(Extisimo::Post, submitted_at: c.bug_when, author: author, task: task) do |r|
       r.description = c.thetext
       r.modified_at = c.bug_when
-      r.bugs_eclipse_org_comment = c
+      r.bugs_eclipse_org_comment_id = c.id
     end
 
     dump_record post, :post, i + 1
@@ -90,65 +92,10 @@ BugsEclipseOrg::Bug.find_each do |b|
       r.type = a.type
       r.description = a.desc
       r.modified_at = a.delta_ts
-      r.bugs_eclipse_org_attachment = a
+      r.bugs_eclipse_org_attachment_id = a.id
     end
 
     dump_record attachment, :attachment, i + 1
     dump_record author, :author, i + 2
-
-    #TODO import only kind:
-    # selection
-    # edit
-
-    #TODO import only structure_kind
-    # resource
-    # java
-    # aspectj
-    # plugin.xml
-    # build.xml
-    # DLTK ???
-    # http ???
-    # html
-
-    #TODO import only originid:
-    # - sure:
-    # org.eclipse.jdt.ui.CompilationUnitEditor
-    # org.eclipse.jdt.ui.ClassFileEditor
-    # org.eclipse.jdt.ui.PackageExplorer
-    # org.eclipse.ui.navigator.ProjectExplorer
-    # org.eclipse.ui.views.ResourceNavigator
-    # - maybe:
-    # org.eclipse.ajdt.internal.ui.editor.CompilationUnitEditor
-    # org.eclipse.mylar.java.ui.editor.MylarCompilationUnitEditor
-    # org.eclipse.wst.jsdt.ui.CompilationUnitEditor
-    # - less-likely:
-    # org.eclipse.ui.views.ContentOutline
-    # org.eclipse.search.ui.views.SearchView
-    # org.eclipse.ui.DefaultTextEditor
-    # org.eclipse.pde.ui.manifestEditor
-    # org.eclipse.jdt.callhierarchy.view
-    # org.eclipse.jdt.ui.PropertiesFileEditor
-    # org.eclipse.ant.ui.internal.editor.AntEditor
-    # org.eclipse.jdt.ui.TypeHierarchy
-    # org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart
-    # org.eclipse.compare.CompareEditor
-    # org.eclipse.pde.ui.featureEditor
-    # org.eclipse.pde.ui.buildEditor
-    # org.eclipse.pde.ui.schemaEditor
-    # org.eclipse.mylyn.tasks.ui.editors.task
-    # org.eclipse.pde.ui.productEditor
-    # org.eclipse.m2e.editor.MavenPomEditor
-    # - and more with < 100 interactions
-
-    #TODO note delta is always null
-    #TODO note navigation can be ignored
-    #TODO note original data have only: propagation, manipulation, selection, edit, prediction
-    # missing: Command, Preference, Attention
-
-    a.interactions do |e|
-
-
-
-    end
   end
 end

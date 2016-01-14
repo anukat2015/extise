@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+c, s, t, v, q = true, false, 80, true, false
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>]'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+end
+
+AutoColor.disable on: self unless c
+
+def persist_user(user)
+  persist(Extisimo::User, name: user.login_name) do |r|
+    r.bugs_eclipse_org_user = user
+  end
+end
+
+i = 0
+

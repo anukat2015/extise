@@ -13,6 +13,7 @@ require 'optbind'
 require 'optbind_auto_describe'
 require 'nokogiri'
 require 'parallel'
+require 'parallen'
 require 'ruby-progressbar'
 require 'rugged'
 require 'shellwords'
@@ -31,6 +32,9 @@ def options(source = ARGV)
     options.define_singleton_method(:default) { binder.bound_defaults }
     options.define_singleton_method(:default?) { |v| binder.default? v }
     options.define_singleton_method(:bound) { binder.bound_variables }
+    options.define_singleton_method(:bound?) { |v| binder.bound? v }
+    options.define_singleton_method(:assigned) { binder.bound_variables }
+    options.define_singleton_method(:assigned?) { |v| binder.assigned? v }
   end
   options
 end
@@ -83,17 +87,10 @@ def load_extise!
   end
 
   def process(items, options = {})
-    progress = [true, nil].include?(options[:progress]) ? {
-      format: '%E %B %c/%C %P%%', progress_mark: '-'
-    } : options[:progress]
-    options = {
-      "in_#{options[:worker].to_s.pluralize}".to_sym => options[:count],
-      progress: options[:count] != 0 ? progress : nil
-    }
-    Parallel.map(items, options) do |item|
+    Parallen.process(items, options) { |item|
       ActiveRecord::Base.connection_pool.with_connection do
         yield item
       end
-    end
+    }.tap { ActiveRecord::Base.connection.reconnect! }
   end
 end

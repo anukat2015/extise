@@ -14,7 +14,7 @@ gem 'nokogiri', '~> 1.6.6'
 
 gem 'rspec', '~> 3.3.0'
 
-gem 'optbind', '~> 0.2.2'
+gem 'optbind', '~> 0.3.0'
 gem 'parallel', '~> 1.6.1'
 gem 'ruby-progressbar', '~> 1.7.5'
 gem 'rugged', '~> 0.23.3'

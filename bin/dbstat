@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-c, v = true, true
+c, v, p = true, true, nil
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>]'
+  use '[<options>] [<prefix>]'
   opt 'c -c --[no-]color'
   opt 'v -v --[no-]verbose'
+  arg 'p [<prefix>]'
 end
 
 AutoColor.disable on: self unless c
@@ -14,9 +15,12 @@ AutoColor.disable on: self unless c
 configuration = ActiveRecord::Base.connection_config
 connection = ActiveRecord::Base.connection
 
-dump_attribute configuration[:database], ''
-
 groups = connection.tables.sort.inject({}) { |g, t| (g[t.sub(/_[a-z]+\z/, '')] ||= []) << t; g }
+groups = Hash[[groups.find { |g, _| g == p }].compact] if p
+
+abort "No tables#{" with prefix #{p}" if p} found".red if groups.empty?
+
+dump_attribute configuration[:database], ''
 
 groups.each do |group, tables|
   dump_attribute group, '', 1

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-a, n, w, b = [], 0, :thread, true
+a, n, w = [], 4, :thread
 c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
@@ -18,7 +18,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-b, v, q = !q, false, true unless n.zero?
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
@@ -72,7 +73,7 @@ p.each do |f|
     abort "#{Bug}:#{bugid} various contexts".red if contexts.count > 1
   end
 
-  process d.css('InteractionEvent'), count: n, worker: w, progress: b do |e|
+  process d.css('InteractionEvent'), count: n, worker: w, progress: !n.zero? do |e|
     interaction = persist(Interaction, xml: e) do |r|
       r.attachment_id = context.id
       r.bug_url = bug_url

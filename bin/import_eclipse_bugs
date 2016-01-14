@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-m, o, n, w, b = nil, :restrict, 0, :thread, true
+m, o, n, w = nil, :restrict, 4, :thread
 c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
@@ -19,7 +19,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-b, v, q = !q, false, true unless n.zero?
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
@@ -118,7 +119,7 @@ p.each do |f|
 
   dump_record bugzilla, :bugzilla, i
 
-  process d.css('bug'), count: n, worker: w, progress: b do |b|
+  process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
     bugid = b.css('bug_id').text.presence
     author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].try(&:text).presence
     assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence

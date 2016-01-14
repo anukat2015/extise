@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
+n, w = 4, :thread
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>]'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -12,7 +15,17 @@ ARGV.bind_and_parse! to: :locals do
   opt 'q -q --quiet'
 end
 
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
+
 AutoColor.disable on: self unless c
+
+# NOTE: since original data entities omit milliseconds in their timestamps and in order for unique indices to
+#       work as intended these milliseconds are automatically computed from identifiers of respective entities
+
+def fix_timestamp(time, unique)
+  Time.at time.to_i + Zlib::crc32(unique) % 1000
+end
 
 # NOTE: many users have ambiguous login names, such as 'AJDT-inbox', 'mylyn-triaged', 'emo'
 # NOTE: some users have real names such as 'Project inbox', 'Missing name'
@@ -31,71 +44,77 @@ i = 0
 
 # NOTE: import only confirmed, resolved, and fixed bugs
 
-attributes = { everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED }
+bugs = BugsEclipseOrg::Bug.where(everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED)
+batches_count = (bugs.size / 1000.0).ceil
 
-BugsEclipseOrg::Bug.where(attributes).find_each do |b|
-  abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent reporter".red if b.reporter != b.author.login_name
-  abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent assignee".red if b.assigned_to != b.assignee.login_name
+bugs.in_batches.each_with_index do |batch, index|
+  process batch, count: n, worker: w, title: "Batch: #{index + 1}/#{batches_count}", progress: !n.zero? do |b|
+    abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent reporter".red if b.reporter != b.author.login_name
+    abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent assignee".red if b.assigned_to != b.assignee.login_name
 
-  reporter = persist_user(b.author)
-  assignee = persist_user(b.assignee)
-  project = persist(Extisimo::Project, product: b.product, component: b.component)
+    reporter = persist_user(b.author)
+    assignee = persist_user(b.assignee)
+    project = persist(Extisimo::Project, product: b.product, component: b.component)
 
-  # NOTE: keywords of original bugs have very low information value
+    # NOTE: keywords of original bugs have very low information value
 
-  task = persist(Extisimo::Task, submitted_at: b.creation_ts, reporter: reporter) do |r|
-    r.assignee = assignee
-    r.project = project
-    r.classification = b.classification.downcase.gsub(/[\-\s]+/, '_')
-    r.description = b.short_desc
-    r.status = b.bug_status.downcase.gsub(/[\-\s]+/, '_')
-    r.resolution = b.resolution.try! { downcase.gsub(/[\-\s]+/, '_') }
-    r.severity = b.bug_severity.downcase
-    r.priority = b.priority.downcase
-    r.platform = b.rep_platform
-    r.operating_system = b.op_sys.sub(/\s*\(unsup(\.|ported)\)\z/i, '')
-    r.project_version = b.version.try! { sub(/(unspecified|\-+)/i, '').presence }
-    r.project_milestone = b.target_milestone.try! { sub(/(unspecified|\-+)/i, '').presence }
-    r.cc = b.cc
-    r.modified_at = b.delta_ts
-    r.bugs_eclipse_org_bug_id = b.id
-  end
+    puts "#{b.creation_ts}"
+    abort
 
-  dump_record task, :task, i
-  dump_record reporter, :reporter, i + 1
-  dump_record assignee, :assignee, i + 1
-  dump_record project, :project, i + 1
-
-  b.comments.find_each do |c|
-    abort "#{BugsEclipseOrg::Comment}:#{c.commentid} inconsistent author".red if c.who != c.author.login_name
-
-    author = persist_user(c.author)
-
-    # NOTE: original comments do not contain modification timestamp, creation timestamp is used instead
-
-    post = persist(Extisimo::Post, submitted_at: c.bug_when, author: author, task: task) do |r|
-      r.description = c.thetext
-      r.modified_at = c.bug_when
-      r.bugs_eclipse_org_comment_id = c.id
+    task = persist(Extisimo::Task, submitted_at: fix_timestamp(b.creation_ts, b.bugid), reporter_id: reporter.id) do |r|
+      r.assignee = assignee
+      r.project = project
+      r.classification = b.classification.downcase.gsub(/[\-\s]+/, '_')
+      r.description = b.short_desc
+      r.status = b.bug_status.downcase.gsub(/[\-\s]+/, '_')
+      r.resolution = b.resolution.try! { downcase.gsub(/[\-\s]+/, '_') }
+      r.severity = b.bug_severity.downcase
+      r.priority = b.priority.downcase
+      r.platform = b.rep_platform
+      r.operating_system = b.op_sys.sub(/\s*\(unsup(\.|ported)\)\z/i, '')
+      r.project_version = b.version.try! { sub(/(unspecified|\-+)/i, '').presence }
+      r.project_milestone = b.target_milestone.try! { sub(/(unspecified|\-+)/i, '').presence }
+      r.cc = b.cc
+      r.modified_at = fix_timestamp b.delta_ts, b.bugid
+      r.bugs_eclipse_org_bug_id = b.id
     end
 
-    dump_record post, :post, i + 1
-    dump_record author, :author, i + 2
-  end
+    dump_record task, :task, i
+    dump_record reporter, :reporter, i + 1
+    dump_record assignee, :assignee, i + 1
+    dump_record project, :project, i + 1
 
-  b.attachments.find_each do |a|
-    abort "#{BugsEclipseOrg::Attachment}:#{a.attachid} inconsistent author".red if a.attacher != a.submitter.login_name
+    b.comments.find_each do |c|
+      abort "#{BugsEclipseOrg::Comment}:#{c.commentid} inconsistent author".red if c.who != c.author.login_name
 
-    author = persist_user(a.submitter)
+      author = persist_user(c.author)
 
-    attachment = persist(Extisimo::Attachment, submitted_at: a.date, author: author, task: task, file: a.filename) do |r|
-      r.type = a.type
-      r.description = a.desc
-      r.modified_at = a.delta_ts
-      r.bugs_eclipse_org_attachment_id = a.id
+      # NOTE: original comments do not contain modification timestamp, creation timestamp is used instead
+
+      post = persist(Extisimo::Post, submitted_at: fix_timestamp(c.bug_when, c.commentid), author_id: author.id, task_id: task.id) do |r|
+        r.description = c.thetext
+        r.modified_at = c.submitted_at
+        r.bugs_eclipse_org_comment_id = c.id
+      end
+
+      dump_record post, :post, i + 1
+      dump_record author, :author, i + 2
     end
 
-    dump_record attachment, :attachment, i + 1
-    dump_record author, :author, i + 2
+    b.attachments.find_each do |a|
+      abort "#{BugsEclipseOrg::Attachment}:#{a.attachid} inconsistent author".red if a.attacher != a.submitter.login_name
+
+      author = persist_user(a.submitter)
+
+      attachment = persist(Extisimo::Attachment, submitted_at: fix_timestamp(a.date, a.attachid), author_id: author.id, task_id: task.id) do |r|
+        r.type = a.type
+        r.description = a.desc
+        r.modified_at = fix_timestamp a.delta_ts, a.attachid
+        r.bugs_eclipse_org_attachment_id = a.id
+      end
+
+      dump_record attachment, :attachment, i + 1
+      dump_record author, :author, i + 2
+    end
   end
 end

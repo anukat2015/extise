@@ -108,6 +108,7 @@ p.each do |f|
   maintainer = d.root.attributes['maintainer'].text.presence
 
   # NOTE: work only with data of bug sets from known sources as described below
+
   abort "#{Bugzilla}:? invalid URL #{urlbase}".red if urlbase != 'https://bugs.eclipse.org/bugs/'
   abort "#{Bugzilla}:? invalid version #{version}".red if version != '4.4.7'
   abort "#{Bugzilla}:? invalid maintainer #{maintainer}".red if maintainer != 'webmaster@eclipse.org'

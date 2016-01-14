@@ -44,12 +44,14 @@ p.each do |f|
   attachid = a.shift
 
   # NOTE: data from local URLs can not be trusted and data from studio.atlassian.com are often mismatched with bugs
+
   if bug_url =~ %r{(local|https://studio.atlassian.com)-\d+\z}
     warn "#{Attachment}:#{attachid || '?'} has unsupported URL #{bug_url} -> skip".magenta
     next
   end
 
   # NOTE: work only with data of contexts from known sources as described below
+
   abort "#{Attachment}:#{attachid || '?'} invalid URL #{bug_url}".red if bug_url !~ %r{\A(https://bugs.eclipse.org/bugs)-\d+\z}
   abort "#{Attachment}:#{attachid || '?'} invalid version #{version}".red if version != '1'
 

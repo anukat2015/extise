@@ -2,12 +2,16 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 9.5.1
+-- Dumped by pg_dump version 9.5.1
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
@@ -30,7 +34,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: bugs_eclipse_org_attachments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_attachments; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE bugs_eclipse_org_attachments (
@@ -74,7 +78,7 @@ ALTER SEQUENCE bugs_eclipse_org_attachments_id_seq OWNED BY bugs_eclipse_org_att
 
 
 --
--- Name: bugs_eclipse_org_bugs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugs; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE bugs_eclipse_org_bugs (
@@ -137,7 +141,7 @@ ALTER SEQUENCE bugs_eclipse_org_bugs_id_seq OWNED BY bugs_eclipse_org_bugs.id;
 
 
 --
--- Name: bugs_eclipse_org_bugzillas; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugzillas; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE bugs_eclipse_org_bugzillas (
@@ -170,7 +174,7 @@ ALTER SEQUENCE bugs_eclipse_org_bugzillas_id_seq OWNED BY bugs_eclipse_org_bugzi
 
 
 --
--- Name: bugs_eclipse_org_comments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_comments; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE bugs_eclipse_org_comments (
@@ -209,7 +213,7 @@ ALTER SEQUENCE bugs_eclipse_org_comments_id_seq OWNED BY bugs_eclipse_org_commen
 
 
 --
--- Name: bugs_eclipse_org_interactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_interactions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE bugs_eclipse_org_interactions (
@@ -251,7 +255,7 @@ ALTER SEQUENCE bugs_eclipse_org_interactions_id_seq OWNED BY bugs_eclipse_org_in
 
 
 --
--- Name: bugs_eclipse_org_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE bugs_eclipse_org_users (
@@ -283,7 +287,7 @@ ALTER SEQUENCE bugs_eclipse_org_users_id_seq OWNED BY bugs_eclipse_org_users.id;
 
 
 --
--- Name: extisimo_attachments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_attachments; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_attachments (
@@ -321,7 +325,7 @@ ALTER SEQUENCE extisimo_attachments_id_seq OWNED BY extisimo_attachments.id;
 
 
 --
--- Name: extisimo_commits; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_commits; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_commits (
@@ -355,7 +359,7 @@ ALTER SEQUENCE extisimo_commits_id_seq OWNED BY extisimo_commits.id;
 
 
 --
--- Name: extisimo_concepts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_concepts; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_concepts (
@@ -386,7 +390,7 @@ ALTER SEQUENCE extisimo_concepts_id_seq OWNED BY extisimo_concepts.id;
 
 
 --
--- Name: extisimo_conceptualities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_conceptualities; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_conceptualities (
@@ -422,7 +426,7 @@ ALTER SEQUENCE extisimo_conceptualities_id_seq OWNED BY extisimo_conceptualities
 
 
 --
--- Name: extisimo_elements; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_elements; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_elements (
@@ -458,7 +462,7 @@ ALTER SEQUENCE extisimo_elements_id_seq OWNED BY extisimo_elements.id;
 
 
 --
--- Name: extisimo_expertises; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_expertises; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_expertises (
@@ -494,7 +498,7 @@ ALTER SEQUENCE extisimo_expertises_id_seq OWNED BY extisimo_expertises.id;
 
 
 --
--- Name: extisimo_inferencers; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_inferencers; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_inferencers (
@@ -526,7 +530,7 @@ ALTER SEQUENCE extisimo_inferencers_id_seq OWNED BY extisimo_inferencers.id;
 
 
 --
--- Name: extisimo_interactions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_interactions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_interactions (
@@ -563,7 +567,7 @@ ALTER SEQUENCE extisimo_interactions_id_seq OWNED BY extisimo_interactions.id;
 
 
 --
--- Name: extisimo_metrics; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_metrics; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_metrics (
@@ -595,7 +599,7 @@ ALTER SEQUENCE extisimo_metrics_id_seq OWNED BY extisimo_metrics.id;
 
 
 --
--- Name: extisimo_posts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_posts; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_posts (
@@ -631,7 +635,7 @@ ALTER SEQUENCE extisimo_posts_id_seq OWNED BY extisimo_posts.id;
 
 
 --
--- Name: extisimo_projects; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_projects; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_projects (
@@ -663,7 +667,7 @@ ALTER SEQUENCE extisimo_projects_id_seq OWNED BY extisimo_projects.id;
 
 
 --
--- Name: extisimo_repositories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_repositories; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_repositories (
@@ -695,7 +699,7 @@ ALTER SEQUENCE extisimo_repositories_id_seq OWNED BY extisimo_repositories.id;
 
 
 --
--- Name: extisimo_sessions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_sessions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_sessions (
@@ -730,7 +734,7 @@ ALTER SEQUENCE extisimo_sessions_id_seq OWNED BY extisimo_sessions.id;
 
 
 --
--- Name: extisimo_tasks; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_tasks; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_tasks (
@@ -777,7 +781,7 @@ ALTER SEQUENCE extisimo_tasks_id_seq OWNED BY extisimo_tasks.id;
 
 
 --
--- Name: extisimo_users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE extisimo_users (
@@ -809,7 +813,7 @@ ALTER SEQUENCE extisimo_users_id_seq OWNED BY extisimo_users.id;
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE schema_migrations (
@@ -965,7 +969,7 @@ ALTER TABLE ONLY extisimo_users ALTER COLUMN id SET DEFAULT nextval('extisimo_us
 
 
 --
--- Name: bugs_eclipse_org_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY bugs_eclipse_org_attachments
@@ -973,7 +977,7 @@ ALTER TABLE ONLY bugs_eclipse_org_attachments
 
 
 --
--- Name: bugs_eclipse_org_bugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY bugs_eclipse_org_bugs
@@ -981,7 +985,7 @@ ALTER TABLE ONLY bugs_eclipse_org_bugs
 
 
 --
--- Name: bugs_eclipse_org_bugzillas_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_bugzillas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY bugs_eclipse_org_bugzillas
@@ -989,7 +993,7 @@ ALTER TABLE ONLY bugs_eclipse_org_bugzillas
 
 
 --
--- Name: bugs_eclipse_org_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY bugs_eclipse_org_comments
@@ -997,7 +1001,7 @@ ALTER TABLE ONLY bugs_eclipse_org_comments
 
 
 --
--- Name: bugs_eclipse_org_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY bugs_eclipse_org_interactions
@@ -1005,7 +1009,7 @@ ALTER TABLE ONLY bugs_eclipse_org_interactions
 
 
 --
--- Name: bugs_eclipse_org_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bugs_eclipse_org_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY bugs_eclipse_org_users
@@ -1013,7 +1017,7 @@ ALTER TABLE ONLY bugs_eclipse_org_users
 
 
 --
--- Name: extisimo_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_attachments
@@ -1021,7 +1025,7 @@ ALTER TABLE ONLY extisimo_attachments
 
 
 --
--- Name: extisimo_commits_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_commits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_commits
@@ -1029,7 +1033,7 @@ ALTER TABLE ONLY extisimo_commits
 
 
 --
--- Name: extisimo_concepts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_concepts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_concepts
@@ -1037,7 +1041,7 @@ ALTER TABLE ONLY extisimo_concepts
 
 
 --
--- Name: extisimo_conceptualities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_conceptualities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_conceptualities
@@ -1045,7 +1049,7 @@ ALTER TABLE ONLY extisimo_conceptualities
 
 
 --
--- Name: extisimo_elements_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_elements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_elements
@@ -1053,7 +1057,7 @@ ALTER TABLE ONLY extisimo_elements
 
 
 --
--- Name: extisimo_expertises_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_expertises_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_expertises
@@ -1061,7 +1065,7 @@ ALTER TABLE ONLY extisimo_expertises
 
 
 --
--- Name: extisimo_inferencers_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_inferencers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_inferencers
@@ -1069,7 +1073,7 @@ ALTER TABLE ONLY extisimo_inferencers
 
 
 --
--- Name: extisimo_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_interactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_interactions
@@ -1077,7 +1081,7 @@ ALTER TABLE ONLY extisimo_interactions
 
 
 --
--- Name: extisimo_metrics_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_metrics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_metrics
@@ -1085,7 +1089,7 @@ ALTER TABLE ONLY extisimo_metrics
 
 
 --
--- Name: extisimo_posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_posts
@@ -1093,7 +1097,7 @@ ALTER TABLE ONLY extisimo_posts
 
 
 --
--- Name: extisimo_projects_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_projects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_projects
@@ -1101,7 +1105,7 @@ ALTER TABLE ONLY extisimo_projects
 
 
 --
--- Name: extisimo_repositories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_repositories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_repositories
@@ -1109,7 +1113,7 @@ ALTER TABLE ONLY extisimo_repositories
 
 
 --
--- Name: extisimo_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_sessions
@@ -1117,7 +1121,7 @@ ALTER TABLE ONLY extisimo_sessions
 
 
 --
--- Name: extisimo_tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_tasks
@@ -1125,7 +1129,7 @@ ALTER TABLE ONLY extisimo_tasks
 
 
 --
--- Name: extisimo_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: extisimo_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY extisimo_users
@@ -1133,847 +1137,847 @@ ALTER TABLE ONLY extisimo_users
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_bugs_eclipse_org_attachments_as_unique ON bugs_eclipse_org_attachments USING btree (attachid);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_attacher; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_attacher; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_attacher ON bugs_eclipse_org_attachments USING btree (attacher);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_attacher_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_attacher_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_attacher_name ON bugs_eclipse_org_attachments USING btree (attacher_name);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_bug_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_bug_id ON bugs_eclipse_org_attachments USING btree (bug_id);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_date; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_date ON bugs_eclipse_org_attachments USING btree (date);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_delta_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_delta_ts; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_delta_ts ON bugs_eclipse_org_attachments USING btree (delta_ts);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_filename; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_filename; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_filename ON bugs_eclipse_org_attachments USING btree (filename);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_size; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_size; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_size ON bugs_eclipse_org_attachments USING btree (size);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_submitter_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_submitter_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_submitter_id ON bugs_eclipse_org_attachments USING btree (submitter_id);
 
 
 --
--- Name: index_bugs_eclipse_org_attachments_on_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_attachments_on_type; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_attachments_on_type ON bugs_eclipse_org_attachments USING btree (type);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_bugs_eclipse_org_bugs_as_unique ON bugs_eclipse_org_bugs USING btree (bugid);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_assigned_to; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_assigned_to; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_assigned_to ON bugs_eclipse_org_bugs USING btree (assigned_to);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_assigned_to_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_assigned_to_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_assigned_to_name ON bugs_eclipse_org_bugs USING btree (assigned_to_name);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_assignee_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_assignee_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_assignee_id ON bugs_eclipse_org_bugs USING btree (assignee_id);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_author_id ON bugs_eclipse_org_bugs USING btree (author_id);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_bug_severity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_bug_severity; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_bug_severity ON bugs_eclipse_org_bugs USING btree (bug_severity);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_bug_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_bug_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_bug_status ON bugs_eclipse_org_bugs USING btree (bug_status);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_bugzilla_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_bugzilla_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_bugzilla_id ON bugs_eclipse_org_bugs USING btree (bugzilla_id);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_classification; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_classification; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_classification ON bugs_eclipse_org_bugs USING btree (classification);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_classificationid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_classificationid; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_classificationid ON bugs_eclipse_org_bugs USING btree (classificationid);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_component; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_component; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_component ON bugs_eclipse_org_bugs USING btree (component);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_creation_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_creation_ts; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_creation_ts ON bugs_eclipse_org_bugs USING btree (creation_ts);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_delta_ts; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_delta_ts; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_delta_ts ON bugs_eclipse_org_bugs USING btree (delta_ts);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_everconfirmed; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_everconfirmed; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_everconfirmed ON bugs_eclipse_org_bugs USING btree (everconfirmed);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_op_sys; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_op_sys; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_op_sys ON bugs_eclipse_org_bugs USING btree (op_sys);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_priority; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_priority ON bugs_eclipse_org_bugs USING btree (priority);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_product; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_product; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_product ON bugs_eclipse_org_bugs USING btree (product);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_rep_platform; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_rep_platform; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_rep_platform ON bugs_eclipse_org_bugs USING btree (rep_platform);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_reporter; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_reporter; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_reporter ON bugs_eclipse_org_bugs USING btree (reporter);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_reporter_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_reporter_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_reporter_name ON bugs_eclipse_org_bugs USING btree (reporter_name);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_resolution; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_resolution; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_resolution ON bugs_eclipse_org_bugs USING btree (resolution);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_target_milestone; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_target_milestone; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_target_milestone ON bugs_eclipse_org_bugs USING btree (target_milestone);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_version; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_version ON bugs_eclipse_org_bugs USING btree (version);
 
 
 --
--- Name: index_bugs_eclipse_org_bugs_on_votes; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugs_on_votes; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_votes ON bugs_eclipse_org_bugs USING btree (votes);
 
 
 --
--- Name: index_bugs_eclipse_org_bugzillas_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugzillas_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_bugs_eclipse_org_bugzillas_as_unique ON bugs_eclipse_org_bugzillas USING btree (urlbase);
 
 
 --
--- Name: index_bugs_eclipse_org_bugzillas_on_maintainer; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugzillas_on_maintainer; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugzillas_on_maintainer ON bugs_eclipse_org_bugzillas USING btree (maintainer);
 
 
 --
--- Name: index_bugs_eclipse_org_bugzillas_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_bugzillas_on_version; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugzillas_on_version ON bugs_eclipse_org_bugzillas USING btree (version);
 
 
 --
--- Name: index_bugs_eclipse_org_comments_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_bugs_eclipse_org_comments_as_unique ON bugs_eclipse_org_comments USING btree (commentid);
 
 
 --
--- Name: index_bugs_eclipse_org_comments_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_comments_on_author_id ON bugs_eclipse_org_comments USING btree (author_id);
 
 
 --
--- Name: index_bugs_eclipse_org_comments_on_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_bug_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_comments_on_bug_id ON bugs_eclipse_org_comments USING btree (bug_id);
 
 
 --
--- Name: index_bugs_eclipse_org_comments_on_bug_when; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_bug_when; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_comments_on_bug_when ON bugs_eclipse_org_comments USING btree (bug_when);
 
 
 --
--- Name: index_bugs_eclipse_org_comments_on_who; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_who; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_comments_on_who ON bugs_eclipse_org_comments USING btree (who);
 
 
 --
--- Name: index_bugs_eclipse_org_comments_on_who_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_comments_on_who_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_comments_on_who_name ON bugs_eclipse_org_comments USING btree (who_name);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_attachment_id ON bugs_eclipse_org_interactions USING btree (attachment_id);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_bug_url; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_bug_url; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_bug_url ON bugs_eclipse_org_interactions USING btree (bug_url);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_end_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_end_date; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_end_date ON bugs_eclipse_org_interactions USING btree (end_date);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_kind; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_kind ON bugs_eclipse_org_interactions USING btree (kind);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_originid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_originid; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_originid ON bugs_eclipse_org_interactions USING btree (originid);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_start_date; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_start_date; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_start_date ON bugs_eclipse_org_interactions USING btree (start_date);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_structure_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_structure_kind; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_structure_kind ON bugs_eclipse_org_interactions USING btree (structure_kind);
 
 
 --
--- Name: index_bugs_eclipse_org_interactions_on_version; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_interactions_on_version; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_interactions_on_version ON bugs_eclipse_org_interactions USING btree (version);
 
 
 --
--- Name: index_bugs_eclipse_org_users_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_bugs_eclipse_org_users_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_bugs_eclipse_org_users_as_unique ON bugs_eclipse_org_users USING btree (login_name);
 
 
 --
--- Name: index_extisimo_attachments_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_attachments_as_unique ON extisimo_attachments USING btree (submitted_at, author_id, task_id);
 
 
 --
--- Name: index_extisimo_attachments_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_attachments_on_author_id ON extisimo_attachments USING btree (author_id);
 
 
 --
--- Name: index_extisimo_attachments_on_bugs_eclipse_org_attachment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_on_bugs_eclipse_org_attachment_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_attachments_on_bugs_eclipse_org_attachment_id ON extisimo_attachments USING btree (bugs_eclipse_org_attachment_id);
 
 
 --
--- Name: index_extisimo_attachments_on_file; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_on_file; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_attachments_on_file ON extisimo_attachments USING btree (file);
 
 
 --
--- Name: index_extisimo_attachments_on_modified_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_on_modified_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_attachments_on_modified_at ON extisimo_attachments USING btree (modified_at);
 
 
 --
--- Name: index_extisimo_attachments_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_on_submitted_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_attachments_on_submitted_at ON extisimo_attachments USING btree (submitted_at);
 
 
 --
--- Name: index_extisimo_attachments_on_task_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_on_task_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_attachments_on_task_id ON extisimo_attachments USING btree (task_id);
 
 
 --
--- Name: index_extisimo_attachments_on_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_attachments_on_type; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_attachments_on_type ON extisimo_attachments USING btree (type);
 
 
 --
--- Name: index_extisimo_commits_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_commits_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_commits_as_unique ON extisimo_commits USING btree (repository_id, name);
 
 
 --
--- Name: index_extisimo_commits_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_commits_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_commits_on_author_id ON extisimo_commits USING btree (author_id);
 
 
 --
--- Name: index_extisimo_commits_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_commits_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_commits_on_name ON extisimo_commits USING btree (name);
 
 
 --
--- Name: index_extisimo_commits_on_repository_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_commits_on_repository_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_commits_on_repository_id ON extisimo_commits USING btree (repository_id);
 
 
 --
--- Name: index_extisimo_commits_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_commits_on_submitted_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_commits_on_submitted_at ON extisimo_commits USING btree (submitted_at);
 
 
 --
--- Name: index_extisimo_conceptualities_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_conceptualities_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_conceptualities_as_unique ON extisimo_conceptualities USING btree (concept_id, subject_id, subject_type, inferencer_id);
 
 
 --
--- Name: index_extisimo_conceptualities_on_concept_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_conceptualities_on_concept_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_conceptualities_on_concept_id ON extisimo_conceptualities USING btree (concept_id);
 
 
 --
--- Name: index_extisimo_conceptualities_on_inferencer_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_conceptualities_on_inferencer_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_conceptualities_on_inferencer_id ON extisimo_conceptualities USING btree (inferencer_id);
 
 
 --
--- Name: index_extisimo_conceptualities_on_probability; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_conceptualities_on_probability; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_conceptualities_on_probability ON extisimo_conceptualities USING btree (probability);
 
 
 --
--- Name: index_extisimo_conceptualities_on_subject_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_conceptualities_on_subject_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_conceptualities_on_subject_id ON extisimo_conceptualities USING btree (subject_id);
 
 
 --
--- Name: index_extisimo_conceptualities_on_subject_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_conceptualities_on_subject_type; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_conceptualities_on_subject_type ON extisimo_conceptualities USING btree (subject_type);
 
 
 --
--- Name: index_extisimo_elements_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_elements_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_elements_as_unique ON extisimo_elements USING btree (commit_id, file, path);
 
 
 --
--- Name: index_extisimo_elements_on_commit_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_elements_on_commit_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_elements_on_commit_id ON extisimo_elements USING btree (commit_id);
 
 
 --
--- Name: index_extisimo_elements_on_file; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_elements_on_file; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_elements_on_file ON extisimo_elements USING btree (file);
 
 
 --
--- Name: index_extisimo_elements_on_path; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_elements_on_path; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_elements_on_path ON extisimo_elements USING btree (path);
 
 
 --
--- Name: index_extisimo_expertises_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_expertises_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_expertises_as_unique ON extisimo_expertises USING btree (user_id, subject_id, subject_type, metric_id);
 
 
 --
--- Name: index_extisimo_expertises_on_metric_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_expertises_on_metric_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_expertises_on_metric_id ON extisimo_expertises USING btree (metric_id);
 
 
 --
--- Name: index_extisimo_expertises_on_subject_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_expertises_on_subject_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_expertises_on_subject_id ON extisimo_expertises USING btree (subject_id);
 
 
 --
--- Name: index_extisimo_expertises_on_subject_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_expertises_on_subject_type; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_expertises_on_subject_type ON extisimo_expertises USING btree (subject_type);
 
 
 --
--- Name: index_extisimo_expertises_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_expertises_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_expertises_on_user_id ON extisimo_expertises USING btree (user_id);
 
 
 --
--- Name: index_extisimo_expertises_on_value; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_expertises_on_value; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_expertises_on_value ON extisimo_expertises USING btree (value);
 
 
 --
--- Name: index_extisimo_inferencers_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_inferencers_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_inferencers_as_unique ON extisimo_inferencers USING btree (name);
 
 
 --
--- Name: index_extisimo_inferencers_on_target; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_inferencers_on_target; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_inferencers_on_target ON extisimo_inferencers USING btree (target);
 
 
 --
--- Name: index_extisimo_interactions_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_interactions_as_unique ON extisimo_interactions USING btree (started_at, element_id, session_id);
 
 
 --
--- Name: index_extisimo_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_interactions_on_attachment_id ON extisimo_interactions USING btree (attachment_id);
 
 
 --
--- Name: index_extisimo_interactions_on_bugs_eclipse_org_interaction_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_on_bugs_eclipse_org_interaction_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_interactions_on_bugs_eclipse_org_interaction_id ON extisimo_interactions USING btree (bugs_eclipse_org_interaction_id);
 
 
 --
--- Name: index_extisimo_interactions_on_element_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_on_element_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_interactions_on_element_id ON extisimo_interactions USING btree (element_id);
 
 
 --
--- Name: index_extisimo_interactions_on_finished_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_on_finished_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_interactions_on_finished_at ON extisimo_interactions USING btree (finished_at);
 
 
 --
--- Name: index_extisimo_interactions_on_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_on_kind; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_interactions_on_kind ON extisimo_interactions USING btree (kind);
 
 
 --
--- Name: index_extisimo_interactions_on_session_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_on_session_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_interactions_on_session_id ON extisimo_interactions USING btree (session_id);
 
 
 --
--- Name: index_extisimo_interactions_on_started_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_interactions_on_started_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_interactions_on_started_at ON extisimo_interactions USING btree (started_at);
 
 
 --
--- Name: index_extisimo_metrics_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_metrics_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_metrics_as_unique ON extisimo_metrics USING btree (name);
 
 
 --
--- Name: index_extisimo_metrics_on_target; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_metrics_on_target; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_metrics_on_target ON extisimo_metrics USING btree (target);
 
 
 --
--- Name: index_extisimo_name_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_name_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_name_as_unique ON extisimo_concepts USING btree (name);
 
 
 --
--- Name: index_extisimo_posts_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_posts_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_posts_as_unique ON extisimo_posts USING btree (submitted_at, author_id, task_id);
 
 
 --
--- Name: index_extisimo_posts_on_author_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_posts_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_posts_on_author_id ON extisimo_posts USING btree (author_id);
 
 
 --
--- Name: index_extisimo_posts_on_bugs_eclipse_org_comment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_posts_on_bugs_eclipse_org_comment_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_posts_on_bugs_eclipse_org_comment_id ON extisimo_posts USING btree (bugs_eclipse_org_comment_id);
 
 
 --
--- Name: index_extisimo_posts_on_modified_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_posts_on_modified_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_posts_on_modified_at ON extisimo_posts USING btree (modified_at);
 
 
 --
--- Name: index_extisimo_posts_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_posts_on_submitted_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_posts_on_submitted_at ON extisimo_posts USING btree (submitted_at);
 
 
 --
--- Name: index_extisimo_posts_on_task_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_posts_on_task_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_posts_on_task_id ON extisimo_posts USING btree (task_id);
 
 
 --
--- Name: index_extisimo_projects_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_projects_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_projects_as_unique ON extisimo_projects USING btree (product, component);
 
 
 --
--- Name: index_extisimo_projects_on_component; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_projects_on_component; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_projects_on_component ON extisimo_projects USING btree (component);
 
 
 --
--- Name: index_extisimo_projects_on_product; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_projects_on_product; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_projects_on_product ON extisimo_projects USING btree (product);
 
 
 --
--- Name: index_extisimo_repositories_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_repositories_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_repositories_as_unique ON extisimo_repositories USING btree (name);
 
 
 --
--- Name: index_extisimo_repositories_on_project_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_repositories_on_project_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_repositories_on_project_id ON extisimo_repositories USING btree (project_id);
 
 
 --
--- Name: index_extisimo_sessions_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_sessions_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_sessions_as_unique ON extisimo_sessions USING btree (revision_commit_id);
 
 
 --
--- Name: index_extisimo_sessions_on_finished_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_sessions_on_finished_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_sessions_on_finished_at ON extisimo_sessions USING btree (finished_at);
 
 
 --
--- Name: index_extisimo_sessions_on_started_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_sessions_on_started_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_sessions_on_started_at ON extisimo_sessions USING btree (started_at);
 
 
 --
--- Name: index_extisimo_sessions_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_sessions_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_sessions_on_user_id ON extisimo_sessions USING btree (user_id);
 
 
 --
--- Name: index_extisimo_tasks_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_tasks_as_unique ON extisimo_tasks USING btree (submitted_at, reporter_id);
 
 
 --
--- Name: index_extisimo_tasks_on_bugs_eclipse_org_bug_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_bugs_eclipse_org_bug_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_tasks_on_bugs_eclipse_org_bug_id ON extisimo_tasks USING btree (bugs_eclipse_org_bug_id);
 
 
 --
--- Name: index_extisimo_tasks_on_classification; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_classification; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_tasks_on_classification ON extisimo_tasks USING btree (classification);
 
 
 --
--- Name: index_extisimo_tasks_on_modified_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_modified_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_tasks_on_modified_at ON extisimo_tasks USING btree (modified_at);
 
 
 --
--- Name: index_extisimo_tasks_on_priority; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_priority; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_tasks_on_priority ON extisimo_tasks USING btree (priority);
 
 
 --
--- Name: index_extisimo_tasks_on_resolution; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_resolution; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_tasks_on_resolution ON extisimo_tasks USING btree (resolution);
 
 
 --
--- Name: index_extisimo_tasks_on_severity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_severity; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_tasks_on_severity ON extisimo_tasks USING btree (severity);
 
 
 --
--- Name: index_extisimo_tasks_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_status; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_tasks_on_status ON extisimo_tasks USING btree (status);
 
 
 --
--- Name: index_extisimo_tasks_on_submitted_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_tasks_on_submitted_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_tasks_on_submitted_at ON extisimo_tasks USING btree (submitted_at);
 
 
 --
--- Name: index_extisimo_users_as_unique; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_users_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_users_as_unique ON extisimo_users USING btree (name);
 
 
 --
--- Name: index_extisimo_users_on_bugs_eclipse_org_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_extisimo_users_on_bugs_eclipse_org_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_users_on_bugs_eclipse_org_user_id ON extisimo_users USING btree (bugs_eclipse_org_user_id);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
@@ -1983,7 +1987,7 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "$user", public;
 
 INSERT INTO schema_migrations (version) VALUES ('20151119035247');
 

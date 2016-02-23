@@ -5,7 +5,7 @@ A collection of tools to estimate developers' expertise
 ## Requirements
 
 - Ruby 2.2.3
-- PostgreSQL 9.4.5
+- PostgreSQL 9.5.1
 - Java 1.8
 - Eclipse 4.3
 - JDT 3.8
@@ -92,9 +92,9 @@ Import Extise interactions using tasks and repositories, fill `extisimo_{session
 
 #### `psql`
 
-    TODO
+Import from raw SQL 
 
-#### `ferry`
+    psql -U extise extise_development < ../data/extise.fiit.stuba.sk/extise_development-bugs_eclipse_org-20160113-all-with-mylyn-context-20160110-1824.sql
 
 ## Data export
 
@@ -102,11 +102,9 @@ Import Extise interactions using tasks and repositories, fill `extisimo_{session
 
 #### `pg_dump`
 
-    TODO
+Export to raw SQL
 
-#### `ferry`
-
-    TODO
+    pg_dump -U extise extise_development > extise_development.sql
 
 ## Utilities
 

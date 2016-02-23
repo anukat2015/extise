@@ -29,12 +29,12 @@ A collection of tools to estimate developers' expertise
 
 ## Commands
 
-Executable commands respond to:
+Every executable command responds to:
 
     -h, --help
         --version
 
-and additionally if appropriate to:
+and additionally, if appropriate to:
  
     -c, --[no-]color                 Default true
     -s, --[no-]sort                  Default true or false
@@ -117,6 +117,7 @@ Import Extise interactions using tasks and repositories, fill `extisimo_{session
 #### `dbstat`
 
     dbstat
+    dbstat bugs_eclipse_org
 
 #### `hist`
 

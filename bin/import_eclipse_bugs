@@ -30,9 +30,9 @@ def import_mylyn_context?(a, _, o = options.bound)
   prefix = :bugs_eclipse_org_
   count = ActiveRecord::Base.connection.execute(
     <<-SQL
-      select count(*) from #{prefix}interactions
-      inner join #{prefix}attachments on #{prefix}attachments.id = #{prefix}interactions.attachment_id
-      where #{prefix}attachments.attachid = #{a}
+      SELECT COUNT(*) FROM #{prefix}interactions
+      INNER JOIN #{prefix}attachments ON #{prefix}attachments.id = #{prefix}interactions.attachment_id
+      WHERE #{prefix}attachments.attachid = #{a}
     SQL
   )[0]['count'].to_i
   inform = !o[:q] && o[:n].zero? && !count.zero?
@@ -42,8 +42,8 @@ def import_mylyn_context?(a, _, o = options.bound)
   when :delete
     warn "#{Attachment}:#{a} has #{count} interactions -> delete all".magenta if inform
     ActiveRecord::Base.connection.execute <<-SQL
-      delete from #{prefix}interactions using #{prefix}attachments
-      where #{prefix}interactions.attachment_id = #{prefix}attachments.id and #{prefix}attachments.attachid = #{a}
+      DELETE FROM #{prefix}interactions USING #{prefix}attachments
+      WHERE #{prefix}interactions.attachment_id = #{prefix}attachments.id AND #{prefix}attachments.attachid = #{a}
     SQL
   when :restrict
     abort "#{Attachment}:#{a} has #{count} interactions -> restrict".red unless count.zero?

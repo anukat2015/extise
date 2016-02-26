@@ -20,8 +20,8 @@ class CreateInteractionsByEclipseOrg < ActiveRecord::Migration
 
     add_index :bugs_eclipse_org_interactions, :attachment_id
 
-    # NOTE: provided attributes of available Mylyn context data from bugs.eclipse.org
-    # still pose significant ambiguity and hence a unique index can not be specified
+    # NOTE: provided attributes of available Mylyn context data from bugs.eclipse.org still
+    # pose significant ambiguity and hence its impossible to specify a unique index here
 
     add_index :bugs_eclipse_org_interactions, :bug_url
     add_index :bugs_eclipse_org_interactions, :version

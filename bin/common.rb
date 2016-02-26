@@ -12,9 +12,7 @@ require 'open3'
 require 'optbind'
 require 'optbind_auto_describe'
 require 'nokogiri'
-require 'parallel'
 require 'parallen'
-require 'ruby-progressbar'
 require 'rugged'
 require 'shellwords'
 require 'yaml'
@@ -62,11 +60,15 @@ def load_extise!
     end if o[:v]
   end
 
-  def persist(model, attributes = {})
-    xml = attributes.delete :xml
-    # NOTE: ensures that a record is either created or updated, and initialized with attributes
-    # when present, otherwise a record is just created with no attributes, never updated
-    (attributes.empty? ? model.new : model.find_or_initialize_by(attributes)).tap do |record|
+  # NOTE: massive insert or insert with update of a records batch can not be performed for object hierarchies
+  # in a simple way, therefore we use classic ActiveRecord methods here to avoid excessive code and keeping
+  # it simple, but thus sacrificing performance
+
+  def persist(model, keys = {})
+    xml = keys.delete :xml
+    # NOTE: ensures that a record is either created or updated on present
+    # keys, otherwise a record is just created and never updated
+    (keys.empty? ? model.new : model.find_or_initialize_by(keys)).tap do |record|
       yield record if block_given?
       record.save!
     end
@@ -86,11 +88,22 @@ def load_extise!
     failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s.red) : raise(failure)
   end
 
-  def process(items, options = {})
-    Parallen.process(items, options) { |item|
-      ActiveRecord::Base.connection_pool.with_connection do
-        yield item
+  def process(items, options = {}, &block)
+    # NOTE: internal progress bar of parallel utility can not be updated
+    # on batch processing, therefore a custom solution is required here
+    options[:total] = items.count
+    progress = Progresso.build options
+    if progress
+      after_each = options[:before_each]
+      options[:after_each] = lambda do |item, index, result|
+        after_each.call item, index, result if after_each
+        progress.increment
       end
-    }.tap { ActiveRecord::Base.connection.reconnect! }
+    end
+    Butcher.process(items, options) do |batch|
+      Parallen.process(batch, options) { |item|
+        ActiveRecord::Base.connection_pool.with_connection { block.call item }
+      }.tap { ActiveRecord::Base.connection.reconnect! }
+    end
   end
 end

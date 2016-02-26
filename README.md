@@ -61,14 +61,14 @@ Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attac
 
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
-    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn=../data/bugs.eclipse.org/mylyn-context
+    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn=../data/bugs.eclipse.org/mylyn-context-20160110-1829
 
 #### `import_mylyn_contexts`
 
 Import Mylyn context interactions, fill `bugs_eclipse_org_interactions` table
 
-    import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml --stat
-    import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml
+    import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1829/71687.xml --stat
+    import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1829/71687.xml
     
 #### `import_extise_tasks`
 

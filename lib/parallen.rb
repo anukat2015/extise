@@ -3,18 +3,13 @@ require 'parallel'
 module Parallen
   extend self
 
-  def process(items, options = {})
-    progress = [true, nil].include?(options[:progress]) ? {
-      format: "#{options[:title] if options[:title]} %E %B %c/%C %P%%",
-      progress_mark: '-',
-      total: options[:total] || items.count
-    } : options[:progress]
+  def process(items, options = {}, &block)
     options = {
       "in_#{options[:worker].to_s.sub(/[sd]\z/) { |c| c == 's' ? 'ses' : 'ds'}}".to_sym => options[:count],
-      progress: options[:count] != 0 ? progress : nil
+      progress: options[:progress],
+      start: options[:before_each],
+      finish: options[:after_each]
     }
-    Parallel.map(items, options) do |item|
-      yield item
-    end
+    Parallel.map items, options, &block
   end
 end

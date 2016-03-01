@@ -10,6 +10,6 @@ module Progresso
       progress_mark: '-',
       total: options[:total]
     } : progress
-    ProgressBar.create options if options
+    ProgressBar.create options
   end
 end

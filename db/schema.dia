@@ -5978,7 +5978,7 @@ bug, comment or attachment#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#commit.session = session.revision_commit
+            <dia:string>#commit.session ~ session.revision_commit
 commit.author = commit.session.interactions.attachment.author#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
@@ -7470,7 +7470,7 @@ if possible#</dia:string>
           <dia:attribute name="string">
             <dia:string>#session.user ≠ session.original_commit.author
 session.user = session.revision_commit.author
-session.user = session.interactions.attachment.submitter
+session.user = session.interactions.attachment.author
 session.started_at = session.interactions.first.started_at
 session.finished_at = session.interactions.last.finished_at #</dia:string>
           </dia:attribute>

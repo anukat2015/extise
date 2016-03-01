@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-n, w = 4, :process
+n, w = 4, :thread
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>]'
   opt 'n    --parallel[=<count:Integer>]'
-  opt 'w    --parallel-worker=(process)'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'

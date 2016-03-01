@@ -9,10 +9,10 @@ class Extisimo::User < ActiveRecord::Base
   has_many :sessions, dependent: :destroy
   has_many :expertises, dependent: :destroy
 
-  scope :has_assigned_tasks, -> { joins(:tasks).uniq.merge Extisimo::Task.assigned_to self }
-  scope :has_reported_tasks, -> { joins(:tasks).uniq.merge Extisimo::Task.reported_by self }
-  scope :has_posts, -> { joins(:posts).uniq }
-  scope :has_attachments, -> { joins(:attachments).uniq }
+  scope :has_assigned_tasks, -> { joins(:tasks).distinct.merge Extisimo::Task.assigned_to self }
+  scope :has_reported_tasks, -> { joins(:tasks).distinct.merge Extisimo::Task.reported_by self }
+  scope :has_posts, -> { joins(:posts).distinct }
+  scope :has_attachments, -> { joins(:attachments).distinct }
 
   alias_scope :has_tasks, :has_assigned_tasks
 end

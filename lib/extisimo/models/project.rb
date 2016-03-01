@@ -4,7 +4,7 @@ class Extisimo::Project < ActiveRecord::Base
   has_many :tasks, dependent: :destroy
 
   def collaborators
-    tasks.flat_map(&:collaborators).uniq
+    tasks.flat_map(&:collaborators).distinct
   end
 
   has_many :repositories, dependent: :destroy

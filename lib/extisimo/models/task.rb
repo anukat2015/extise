@@ -26,6 +26,6 @@ class Extisimo::Task < ActiveRecord::Base
   alias_scope :by, :reported_by
   alias_scope :for, :assigned_to
 
-  scope :with_posts, -> { joins(:posts).uniq }
-  scope :with_attachments, -> { joins(:attachments).uniq }
+  scope :with_posts, -> { joins(:posts).distinct }
+  scope :with_attachments, -> { joins(:attachments).distinct }
 end

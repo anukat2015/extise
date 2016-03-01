@@ -675,7 +675,8 @@ CREATE TABLE extisimo_repositories (
     project_id integer NOT NULL,
     name character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    git_eclipse_org_product character varying NOT NULL
 );
 
 
@@ -1865,6 +1866,13 @@ CREATE UNIQUE INDEX index_extisimo_repositories_as_unique ON extisimo_repositori
 
 
 --
+-- Name: index_extisimo_repositories_on_git_eclipse_org_product; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_repositories_on_git_eclipse_org_product ON extisimo_repositories USING btree (git_eclipse_org_product);
+
+
+--
 -- Name: index_extisimo_repositories_on_project_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2032,4 +2040,6 @@ INSERT INTO schema_migrations (version) VALUES ('20151214142907');
 INSERT INTO schema_migrations (version) VALUES ('20151214142912');
 
 INSERT INTO schema_migrations (version) VALUES ('20151214143150');
+
+INSERT INTO schema_migrations (version) VALUES ('20160301153317');
 

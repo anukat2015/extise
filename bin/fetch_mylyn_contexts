@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-o, n, w = File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__), 4, :thread
+o, n, w = nil, 4, :thread
 c, v, q, p = true, true, false, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
@@ -25,7 +25,7 @@ AutoColor.enable on: self, colored: c, colorings: {
 
 i = v && !options.default?(:p) ? 1 : 0
 
-FileUtils.mkpath o
+FileUtils.mkpath o ||= File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__)
 
 p.each do |f|
   d = Nokogiri::XML File.open_or f

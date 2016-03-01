@@ -1,13 +1,3 @@
-Add ferry - document import / export in readme
-
-Add activerecord-import or use bulk create (check if update works too)
-maybe add an option -> create_only vs create_or_update
-
-Add to readme psql -U postgres extise_development < tmp/.sql
-              pg_dump -U postgres extise_development > tmp/.sql
-
-
-
 switch to https://github.com/thuss/standalone-migrations
 or make new game - total lightweight solution based on standalone-migrations 
     

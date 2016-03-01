@@ -6,13 +6,12 @@ module Extisimo::URL
   module Templates
     module Eclipse
       BUGZILLA_BUG = 'https://bugs.eclipse.org/bugs/show_bug.cgi?id=%bug'
-      BUGZILLA_COMMENT = 'https://bugs.eclipse.org/bugs/show_bug.cgi?id=%bug#c%description'
+      BUGZILLA_DESCRIPTION = 'https://bugs.eclipse.org/bugs/show_bug.cgi?id=%bug#c%description'
       BUGZILLA_ATTACHMENT = 'https://bugs.eclipse.org/bugs/attachment.cgi?id=%attachment'
 
-      # TODO project -> product + component != repository.name
-      # GERRIT_PROJECT = 'https://git.eclipse.org/c/%product/%component'
-      # GERRIT_COMMIT = 'https://git.eclipse.org/c/%product/%component/commit/?id=%commit'
-      # GERRIT_GIT = 'https://git.eclipse.org/gitroot/%product/%component.git'
+      GERRIT_PROJECT = 'https://git.eclipse.org/c/%product/%repository.git'
+      GERRIT_COMMIT = 'https://git.eclipse.org/c/%product/%repository.git/commit/?id=%commit'
+      GERRIT_GIT = 'https://git.eclipse.org/gitroot/%product/%repository.git'
 
       GITHUB_USER = 'https://github.com/%user'
       GITHUB_REPOSITORY = 'https://github.com/eclipse/%repository'
@@ -28,7 +27,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def github_url
-      GITHUB_USER.sub(/%(user)/, 'user' => name)
+      GITHUB_USER.gsub(/%(user)/, '%user' => name)
     end
   end
 
@@ -36,7 +35,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def bugzilla_url
-      BUGZILLA_BUG.sub(/%(bug)/, 'bug' => bugs_bugzilla_org_bug.bugid)
+      BUGZILLA_BUG.gsub(/%(bug)/, '%bug' => bugs_eclipse_org_bug.bugid)
     end
   end
 
@@ -44,7 +43,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def bugzilla_url
-      BUGZILLA_COMMENT.sub(/%(bug|comment)/, 'bug' => bugs_bugzilla_org_comment.bugs_bugzilla_org_bug.bugid, 'comment' => bugs_bugzilla_org_comment.commentid)
+      BUGZILLA_DESCRIPTION.gsub(/%(bug|description)/, '%bug' => bugs_eclipse_org_comment.bug.bugid, '%description' => bugs_eclipse_org_comment.comment_count)
     end
   end
 
@@ -52,19 +51,19 @@ module Extisimo::URL
     include Extisimo::URL
 
     def bugzilla_url
-      BUGZILLA_ATTACHMENT.sub(/%(attachment)/, 'attachment' => bugs_bugzilla_org_attachment.attachid)
+      BUGZILLA_ATTACHMENT.gsub(/%(attachment)/, '%attachment' => bugs_eclipse_org_attachment.attachid)
     end
   end
 
   module Project
     include Extisimo::URL
 
-    def gerrit_url
-      GERRIT_PROJECT.sub(/%(product|component)/, 'product' => product, 'component' => component)
+    def gerrit_urls
+      repositories.pluck(:git_eclipse_org_product, :name).map { |product, name| GERRIT_PROJECT.gsub(/%(product|repository)/, '%product' => product, '%repository' => name) }
     end
 
     def github_urls
-      repositories.pluck(:name).map { |name| GITHUB_REPOSITORY.sub(/%(repository)/, 'repository' => name) }
+      repositories.pluck(:name).map { |name| GITHUB_REPOSITORY.gsub(/%(repository)/, '%repository' => name) }
     end
   end
 
@@ -72,11 +71,11 @@ module Extisimo::URL
     include Extisimo::URL
 
     def gerrit_url
-      GERRIT_GIT.sub(/%(product|component)/, 'product' => project.product, 'component' => project.component)
+      GERRIT_GIT.gsub(/%(product|repository)/, '%product' => git_eclipse_org_product, '%repository' => name)
     end
 
     def github_url
-      GITHUB_GIT.sub(/%(repository)/, 'repository' => name)
+      GITHUB_GIT.gsub(/%(repository)/, '%repository' => name)
     end
   end
 
@@ -84,11 +83,11 @@ module Extisimo::URL
     include Extisimo::URL
 
     def gerrit_url
-      GERRIT_COMMIT.sub(/%(repository|commit)/, 'product' => repository.project.product, 'component' => repository.project.component, 'commit' => name)
+      GERRIT_COMMIT.gsub(/%(product|repository|commit)/, '%product' => repository.git_eclipse_org_product, '%repository' => repository.name, '%commit' => name)
     end
 
     def github_url
-      GITHUB_COMMIT.sub(/%(repository|commit)/, 'repository' => repository.name, 'commit' => name)
+      GITHUB_COMMIT.gsub(/%(repository|commit)/, '%repository' => repository.name, '%commit' => name)
     end
   end
 
@@ -96,7 +95,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def github_url
-      GITHUB_COMMIT.sub(/%(repository|commit|file|line)/, 'repository' => commit.repository.name, 'commit' => commit.name, 'file' => file, 'line' => line)
+      GITHUB_COMMIT.gsub(/%(repository|commit|file|line)/, '%repository' => commit.repository.name, '%commit' => commit.name, '%file' => file, '%line' => line)
     end
   end
 end

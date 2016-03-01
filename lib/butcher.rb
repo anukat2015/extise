@@ -2,7 +2,7 @@ module Butcher
   extend self
 
   def process(items, options = {}, &block)
-    batch_size = options[:batch_size] || 10
+    batch_size = options[:batch_size] || 1000
     index, block_with_hooks = 0, -> (batch) do
       options[:before_batch].call batch, index if options[:before_batch]
       results = block.call batch

@@ -43,9 +43,9 @@ end
 def process(items, options = {}, &block)
   # NOTE: internal progress bar of parallel utility can not be updated
   # on batch processing, therefore a custom solution is required here
-  options[:total] = items.count
-  progress = Progresso.build options
-  if progress
+  unless options[:progress] === false
+    options[:total] ||= items.count
+    progress = Progresso.build options
     after_each = options[:before_each]
     options[:after_each] = lambda do |item, index, result|
       after_each.call item, index, result if after_each

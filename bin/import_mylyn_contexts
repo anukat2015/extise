@@ -33,6 +33,7 @@ p.each do |f|
   puts "#{f.green}" unless q || i.zero?
 
   if z
+    q = false
     dump_attribute :history, d.root.attributes['Id'].text, i
     dump_attribute :events, d.css('InteractionEvent').count, i + 1
     next

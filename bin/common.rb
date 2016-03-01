@@ -101,9 +101,11 @@ def load_extise!
       end
     end
     Butcher.process(items, options) do |batch|
-      Parallen.process(batch, options) { |item|
+      results = Parallen.process(batch, options) do |item|
         ActiveRecord::Base.connection_pool.with_connection { block.call item }
-      }.tap { ActiveRecord::Base.connection.reconnect! }
+      end
+      ActiveRecord::Base.connection.reconnect!
+      results
     end
   end
 end

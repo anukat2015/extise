@@ -95,6 +95,7 @@ p.each do |f|
   puts "#{f.green}" unless q || i.zero?
 
   if z
+    q = false
     dump_attribute :bugzilla, d.root.attributes['urlbase'].text, i
     dump_attribute :bugs, d.css('bug').count, i + 1
     dump_attribute :comments, d.css('long_desc').count, i + 1

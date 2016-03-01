@@ -21,7 +21,7 @@ v, q = false, true unless n.zero?
 AutoColor.disable on: self unless c
 
 # NOTE: since original data entities omit milliseconds in their timestamps and in order for unique indices to
-#       work as intended these milliseconds are automatically computed from identifiers of respective entities
+# work as intended these milliseconds are automatically computed from identifiers of respective entities
 
 def fix_timestamp(time, unique)
   Time.at time.to_i + (Zlib::crc32(unique.to_s) % 1000).to_f / 1000

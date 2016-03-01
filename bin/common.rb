@@ -4,6 +4,7 @@ abort 'common: internals only' if $0 == __FILE__
 $LOAD_PATH.unshift File.expand_path '../../lib', __FILE__
 
 require 'auto_color'
+require 'butcher'
 require 'colored_defaults'
 require 'fileutils'
 require 'io/console'
@@ -13,6 +14,7 @@ require 'optbind'
 require 'optbind_auto_describe'
 require 'nokogiri'
 require 'parallen'
+require 'progresso'
 require 'rugged'
 require 'shellwords'
 require 'yaml'
@@ -35,6 +37,25 @@ def options(source = ARGV)
     options.define_singleton_method(:assigned?) { |v| binder.assigned? v }
   end
   options
+end
+
+def process(items, options = {}, &block)
+  # NOTE: internal progress bar of parallel utility can not be updated
+  # on batch processing, therefore a custom solution is required here
+  options[:total] = items.count
+  progress = Progresso.build options
+  if progress
+    after_each = options[:before_each]
+    options[:after_each] = lambda do |item, index, result|
+      after_each.call item, index, result if after_each
+      progress.increment
+    end
+  end
+  Butcher.process(items, options) do |batch|
+    Parallen.process(batch, options) do |item|
+      block.call item
+    end
+  end
 end
 
 def load_extise!
@@ -88,24 +109,16 @@ def load_extise!
     failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s.red) : raise(failure)
   end
 
+  alias process_without_active_record process
+
   def process(items, options = {}, &block)
-    # NOTE: internal progress bar of parallel utility can not be updated
-    # on batch processing, therefore a custom solution is required here
-    options[:total] = items.count
-    progress = Progresso.build options
-    if progress
-      after_each = options[:before_each]
-      options[:after_each] = lambda do |item, index, result|
-        after_each.call item, index, result if after_each
-        progress.increment
-      end
-    end
-    Butcher.process(items, options) do |batch|
-      results = Parallen.process(batch, options) do |item|
-        ActiveRecord::Base.connection_pool.with_connection { block.call item }
-      end
+    after_batch = options[:after_batch]
+    options[:after_batch] = -> (batch, index, results) do
+      ActiveRecord::Base.connection_pool.with_connection { after_batch.call batch, index, results } if after_batch
       ActiveRecord::Base.connection.reconnect!
-      results
+    end
+    process_without_active_record items, options do |item|
+      ActiveRecord::Base.connection_pool.with_connection { block.call item }
     end
   end
 end

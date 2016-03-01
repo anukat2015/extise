@@ -32,7 +32,7 @@ p.each do |f|
 
   puts "#{f.green}" unless q || i.zero?
 
-  Parallen.process d.css('bug'), count: n, worker: w, progress: !n.zero? do |bug|
+  process d.css('bug'), count: n, worker: w, progress: !n.zero? do |bug|
     bug_id = bug.css('bug_id').text.strip
 
     puts "#{'  ' * i}bug #{bug_id}" unless q

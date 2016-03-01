@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+c, s, t, v, q, p = true, false, 80, true, false, [STDIN]
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>]'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  arg 'p [<path>...]'
+end
+
+AutoColor.disable on: self unless c
+
+p.each do |f|
+  d = CSV.new(File.open_or f)
+
+  process(d, progress: false) do |r|
+    p, c, g, n = *r
+
+    begin
+      project = Extisimo::Project.find_by! product: p, component: c
+    rescue ActiveRecord::RecordNotFound
+      warn "#{Extisimo::Project}:? #{p} #{c} not found".magenta
+      next
+    end
+
+    dump_record project, :project
+
+    repository = persist(Extisimo::Repository, name: n) do |r|
+      r.project = project
+      r.git_eclipse_org_product = g
+    end
+
+    dump_record repository, :repository, 1
+  end
+end

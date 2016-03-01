@@ -65,26 +65,32 @@ Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attac
 
 #### `import_mylyn_contexts`
 
-Import Mylyn context interactions, fill `bugs_eclipse_org_interactions` table
+Import Mylyn context interactions, fill `bugs_eclipse_org_{interactions}` tables
 
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1829/71687.xml --stat
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1829/71687.xml
     
 #### `import_extise_tasks`
 
-Import Extise tasks using Eclipse bugs, fill `extisimo_{users,projects,tasks,posts,attachments}` tables
+Import Extise tasks from Eclipse bugs, fill `extisimo_{users,projects,tasks,posts,attachments}` tables
 
-    TODO
+    import_extise_tasks
+
+#### `map_extise_repositories`
+
+Map Extise repositories to projects, fill `extisimo_{repositories}` tables
+
+    map_extise_repositories ../data/bugs.eclipse.org/repositories-to-projects-map.csv
 
 #### `import_extise_commits`
 
-Import Extise commits using Eclipse Git, fill `extisimo_{repositories,commits,elements}` tables
+Import Extise commits from repositories, fill `extisimo_{commits,elements}` tables
 
     TODO
 
 #### `import_extise_interactions`
 
-Import Extise interactions using tasks and repositories, fill `extisimo_{sessions,interactions}` tables
+Import Extise interactions from tasks and commits, fill `extisimo_{sessions,interactions}` tables
 
     TODO
 
@@ -104,7 +110,7 @@ Import from raw SQL
 
 Export to raw SQL
 
-    pg_dump -U extise extise_development > extise_development.sql
+    pg_dump -U extise --exclude-table=schema_\* --data-only extise_development > extise_development.sql
 
 ## Utilities
 

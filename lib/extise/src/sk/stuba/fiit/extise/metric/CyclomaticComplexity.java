@@ -44,11 +44,6 @@ public final class CyclomaticComplexity extends NumericMetric<Integer> {
   private static final class Complexer extends NodeVisitor {
     int v = 1;
 
-    // TODO consider all conditional expressions which obviously evaluate to true / false
-    // and penalize complexity for that, i.e. while(true), if (false)
-
-    // TODO consider fall-through switch cases
-
     Complexer() {}
 
     // annotations and declarations

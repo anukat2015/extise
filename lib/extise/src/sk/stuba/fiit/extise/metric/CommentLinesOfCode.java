@@ -23,6 +23,7 @@ public final class CommentLinesOfCode extends NumericMetric<Integer> {
     CompilationUnit unit = (CompilationUnit) TreeParsers.parse(input);
 
     // TODO JDT somehow does not parse line & block comments
+    // TODO number of comment nodes does not correspond with comment lines of code
 
     return asList(NodeCounters.<ASTNode>ofClass(Comment.class).apply(unit));
   }

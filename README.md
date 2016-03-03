@@ -116,7 +116,7 @@ Export to raw SQL
 
 #### `lsxml`
 
-    lsxml ../data/bugs.eclipse.org/mylyn-context-20160110-1827/71687.xml
+    lsxml ../data/bugs.eclipse.org/mylyn-context-20160110-1829/71687.xml
 
 #### `dbstat`
 

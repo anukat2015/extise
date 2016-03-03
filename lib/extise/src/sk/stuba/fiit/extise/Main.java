@@ -33,19 +33,23 @@ public final class Main {
   @SuppressWarnings({"unchecked", "rawtypes"})
   private static void bootstrap(final String ... args) throws Exception {
     Function function = null;
-    int index = -1;
+    int index = 0;
 
-    while (!args[++ index].equals("--")) {
-      if (function == null) {
-        function = resolve(args[index]);
-
-        continue;
+    while (index < args.length) {
+      if (args[index].equals("--")) {
+        break;
       }
 
-      function = compose(resolve(args[index]), function);
+      if (function == null) {
+        function = resolve(args[index]);
+      } else {
+        function = compose(resolve(args[index]), function);
+      }
+
+      index ++;
     }
 
-    String[] paths = copyOfRange(args, index + 1, args.length);
+    String[] paths = index < args.length ? copyOfRange(args, index + 1, args.length) : new String[0];
 
     Bootstrap.run(function, paths);
   }
@@ -92,6 +96,10 @@ public final class Main {
 
       if (index == 0 || result.size() == 0) {
         throw failure("missing argument: <function>", new RuntimeException());
+      }
+
+      if (index + 1 == args.length) {
+        throw failure("missing argument: <file>", new RuntimeException());
       }
 
       if (index > 0) {

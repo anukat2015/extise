@@ -39,15 +39,7 @@ public final class Bootstrap {
 
     Collection<?> outputs = function.apply(inputs);
 
-    out.println(function);
-
-    int index = 0;
-
     for (Object output: outputs) {
-      if (files.length != 0) {
-        out.println(files[index ++]);
-      }
-
       out.println(output);
     }
   }

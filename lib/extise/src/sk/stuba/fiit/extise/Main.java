@@ -1,65 +1,114 @@
 package sk.stuba.fiit.extise;
 
-import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.io.Files;
+import com.google.common.base.Joiner;
 
-import org.elasticsearch.common.base.Charsets;
-import sk.stuba.fiit.extise.map.ElasticsearchStopwordsFilter;
-import sk.stuba.fiit.extise.map.JavaQualifiedNameTokenizer;
-import sk.stuba.fiit.extise.map.JavaSimpleNameTokenizer;
-import sk.stuba.fiit.extise.map.LowercaseFilter;
-import sk.stuba.fiit.extise.map.PorterStemmer;
-import sk.stuba.fiit.extise.map.SortFilter;
-import sk.stuba.fiit.extise.map.UnaccentFilter;
-import sk.stuba.fiit.extise.map.UniqueFilter;
-import sk.stuba.fiit.extise.map.WhitespaceFilter;
-import sk.stuba.fiit.extise.metric.CommentLinesOfCode;
-import sk.stuba.fiit.extise.metric.CyclomaticComplexity;
-import sk.stuba.fiit.extise.metric.LinesOfCode;
-import sk.stuba.fiit.extise.metric.LogicLinesOfCode;
-import sk.stuba.fiit.extise.metric.NaiveCyclomaticComplexity;
-import sk.stuba.fiit.extise.metric.SourceLinesOfCode;
+import org.elasticsearch.common.cli.commons.CommandLine;
+import org.elasticsearch.common.cli.commons.CommandLineParser;
+import org.elasticsearch.common.cli.commons.GnuParser;
+import org.elasticsearch.common.cli.commons.Options;
+import org.elasticsearch.common.cli.commons.ParseException;
+import org.elasticsearch.common.cli.commons.UnrecognizedOptionException;
+
+import static java.lang.System.err;
+import static java.lang.System.out;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.copyOfRange;
 
 import static com.google.common.base.Functions.compose;
+import static com.google.common.collect.Lists.newArrayList;
 
 public final class Main {
+  public static final String PROGRAM = "extise";
+
+  public static final String VERSION = "0.0.0";
+
   public static void main(final String ... args) throws Exception {
-    String path = "../../spec/fixtures/classes/HashMap.java";
-    String fixture = Files.toString(new File(path), Charsets.UTF_8);
+    bootstrap(options(args));
+  }
 
-    Function<Collection<String>, Collection<String>> fx;
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private static void bootstrap(final String ... args) throws Exception {
+    Function function = null;
+    int index = -1;
 
-    fx = new JavaSimpleNameTokenizer();
-    fx = new JavaQualifiedNameTokenizer();
-    //fx = new JavadocTokenizer();
-    //fx = new JavaSmartTokenizer();
-    //fx = new WhitespaceTokenizer();
+    while (!args[++ index].equals("--")) {
+      if (function == null) {
+        function = resolve(args[index]);
 
-    //fx = compose(new EnglishStemmer(), fx);
-    fx = compose(new PorterStemmer(), fx);
-    //fx = compose(new KpStemmer(), fx);
-    //fx = compose(new LovinsStemmer(), fx);
+        continue;
+      }
 
-    fx = compose(new ElasticsearchStopwordsFilter(), fx);
-    //fx = compose(new RanksNlStopwordsFilter(), fx);
+      function = compose(resolve(args[index]), function);
+    }
 
-    fx = compose(new LowercaseFilter(), fx);
-    fx = compose(new UnaccentFilter(), fx);
-    fx = compose(new UniqueFilter(), fx);
-    fx = compose(new WhitespaceFilter(), fx);
-    fx = compose(new SortFilter(), fx);
+    String[] paths = copyOfRange(args, index + 1, args.length);
 
-    Bootstrap.run(fx, path);
+    Bootstrap.run(function, paths);
+  }
 
-    Bootstrap.run(new LinesOfCode(), path);
-    Bootstrap.run(new SourceLinesOfCode(), path);
-    Bootstrap.run(new LogicLinesOfCode(), path);
-    Bootstrap.run(new CommentLinesOfCode(), path);
+  private static Function<? super Collection<String>, ? extends Collection<?>> resolve(final String name) throws Exception {
+    String[] prefixes = { "sk.stuba.fiit.extise.dom", "sk.stuba.fiit.extise.map", "sk.stuba.fiit.extise.metric" };
 
-    Bootstrap.run(new NaiveCyclomaticComplexity(), path);
-    Bootstrap.run(new CyclomaticComplexity(), path);
+    for (String prefix: prefixes) {
+      try {
+        return Function.class.cast(Class.forName(prefix + "." + name).newInstance());
+      } catch (ClassNotFoundException e) {
+        continue;
+      }
+    }
+
+    throw new ClassNotFoundException("{" + Joiner.on(",").join(prefixes) + "}." + name);
+  }
+
+  private static String[] options(final String ... args) throws Exception {
+    int index = asList(args).indexOf("--");
+
+    Options options = new Options();
+
+    options.addOption("h", "help", false, "");
+    options.addOption("version", false, "");
+
+    try {
+      CommandLineParser parser = new GnuParser();
+      CommandLine line = parser.parse(options, args);
+
+      if (line.hasOption("help")) {
+        out.printf("usage: %s [<options>] <function...> [--] [<file...>]%n%n", PROGRAM);
+        out.printf("    -h, --help%n");
+        out.printf("        --version%n%n");
+        System.exit(0);
+      }
+
+      if (line.hasOption("version")) {
+        out.printf("%s %s%n", PROGRAM, VERSION);
+        System.exit(0);
+      }
+
+      List<String> result = newArrayList(line.getArgs());
+
+      if (index == 0 || result.size() == 0) {
+        throw failure("missing argument: <function>", new RuntimeException());
+      }
+
+      if (index > 0) {
+        result.add(index, "--");
+      }
+
+      return result.toArray(new String[result.size()]);
+    } catch (UnrecognizedOptionException e) {
+      throw failure("invalid option: " + e.getOption(), e);
+    } catch (ParseException e) {
+      throw failure("unable to parse options", e);
+    }
+  }
+
+  private static Exception failure(final String message, final Exception failure) throws Exception {
+    err.printf("%s: %s%n", PROGRAM, message);
+    System.exit(1);
+    return failure;
   }
 }

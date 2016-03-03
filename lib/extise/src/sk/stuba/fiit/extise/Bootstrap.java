@@ -11,8 +11,6 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
-import org.elasticsearch.common.base.Joiner;
-
 import static java.lang.System.in;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
@@ -26,24 +24,30 @@ import static com.google.common.io.Resources.getResource;
 public final class Bootstrap {
   private Bootstrap() {}
 
-  public static void run(final Function<? super Collection<String>, ? extends Collection<?>> fx, final String ... args) throws Exception {
+  public static void run(final Function<? super Collection<String>, ? extends Collection<?>> function, final String ... files) throws Exception {
     List<String> inputs;
 
-    if (args.length != 0) {
-      inputs = newArrayListWithCapacity(args.length);
+    if (files.length != 0) {
+      inputs = newArrayListWithCapacity(files.length);
 
-      for (String arg: args) {
-        inputs.add(Files.toString(new File(arg), UTF_8));
+      for (String file: files) {
+        inputs.add(Files.toString(new File(file), UTF_8));
       }
     } else {
       inputs = asList(CharStreams.toString(new InputStreamReader(in, UTF_8)));
     }
 
-    Collection<?> outputs = fx.apply(inputs);
+    Collection<?> outputs = function.apply(inputs);
 
-    out.println(fx + " " + Joiner.on(" ").join(args));
+    out.println(function);
+
+    int index = 0;
 
     for (Object output: outputs) {
+      if (files.length != 0) {
+        out.println(files[index ++]);
+      }
+
       out.println(output);
     }
   }

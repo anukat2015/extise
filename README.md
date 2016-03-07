@@ -112,6 +112,21 @@ Export to raw SQL
 
     pg_dump -U extise --exclude-table=schema_\* --data-only extise_development > extise_development.sql
 
+## Analysis
+
+#### `extise`
+
+TODO
+
+    extise --list
+    extise MethodExtractor < spec/fixtures/classes/HashMap.java
+    extise CyclomaticComplexity < spec/fixtures/classes/HashMap.java
+    extise JavaQualifiedNameTokenizer UnaccentFilter LowercaseFilter PorterStemmer ElasticsearchStopwordsFilter WhitespaceFilter UniqueFilter SortFilter -- spec/fixtures/classes/*
+
+#### `jgibblda`
+
+TODO
+
 ## Utilities
 
 #### `lsxml`

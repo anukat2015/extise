@@ -1,24 +1,100 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-c, s, t, v, q = true, false, 80, true, false
+d, n, w = nil, 4, :thread
+c, s, t, v, q, r = true, false, 80, true, false, nil
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>]'
+  use '[<options>] <repository>'
+  opt 'd -d --directory=<path>'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
+  arg 'r <repository>'
 end
+
+d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
-def persist_user(user)
-  persist(Extisimo::User, name: user.login_name) do |r|
-    r.bugs_eclipse_org_user = user
-  end
+include Extisimo
+
+def each_file(git, tree, path = '.', &block)
+  tree.each_blob { |f| block.call f.merge(path: File.join(path, f[:name]).sub(/\A\.\//, '')) }
+  tree.each_tree { |t| each_file git, git.lookup(t[:oid]), File.join(path, t[:name]), &block }
 end
 
-i = 0
+repository = Repository.find_by name: r
 
+abort "#{Repository}:? not found by #{r}".red unless repository
+
+dump_record repository, :repository
+
+path = File.join d, repository.name
+git = Rugged::Repository.new path
+
+git.checkout 'master'
+
+process git.walk('HEAD').to_a, count: n, worker: w, progress: !n.zero? do |c|
+  author = User.find_by name: c.author[:name]
+
+  # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
+
+  unless author
+    warn "#{User}:? not found by #{c.author[:name]}".magenta
+    next
+  end
+
+  commit = persist(Commit, repository: repository, identifier: c.oid) do |r|
+    r.author = author
+    r.submitted_at = c.time.utc
+  end
+
+  dump_record commit, :commit, 1
+
+  each_file git, c.tree do |f|
+
+    # NOTE: process only Java files
+
+    next unless f[:name].end_with? '.java'
+
+    content, blocks = git.lookup(f[:oid]).content, nil
+
+    # NOTE: extract Java type declarations
+
+    Extise.stream(function: 'TypePositionExtractor', input: content) { |o|
+      blocks = Extise::Parser.parse_blocks o
+    } || abort("#{Commit}:#{commit.id} unexpected failure extracting elements".red)
+
+    if blocks.empty?
+      warn "#{Commit}:#{commit.id} no elements extracted from #{f[:path]}".magenta
+      next
+    end
+
+    # NOTE: select only top level Java type declarations
+
+    blocks.select! { |b| b[:path] !~ /\// }
+
+    if blocks.empty?
+      warn "#{Commit}:#{commit.id} no elements suitable from #{f[:path]}".magenta
+      next
+    end
+
+    blocks.each do |b|
+      element = persist(Element, commit: commit, identifier: f[:oid], path: b[:path]) do |r|
+        r.file = f[:path]
+        r.offset = b[:offset]
+        r.length = b[:length]
+        r.line = b[:line]
+      end
+
+      dump_record element, :element, 2
+    end
+  end
+end

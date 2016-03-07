@@ -86,7 +86,7 @@ Map Extise repositories to projects, fill `extisimo_{repositories}` tables
 
 Import Extise commits from repositories, fill `extisimo_{commits,elements}` tables
 
-    TODO
+    bin/import_extise_commits eclipse.pde.ui
 
 #### `import_extise_interactions`
 
@@ -119,7 +119,7 @@ Export to raw SQL
 TODO
 
     extise --list
-    extise MethodExtractor < spec/fixtures/classes/HashMap.java
+    extise MethodPositionExtractor < spec/fixtures/classes/HashMap.java
     extise CyclomaticComplexity < spec/fixtures/classes/HashMap.java
     extise JavaQualifiedNameTokenizer UnaccentFilter LowercaseFilter PorterStemmer ElasticsearchStopwordsFilter WhitespaceFilter UniqueFilter SortFilter -- spec/fixtures/classes/*
 

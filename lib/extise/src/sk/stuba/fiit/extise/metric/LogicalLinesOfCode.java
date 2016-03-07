@@ -7,10 +7,10 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 
 import sk.stuba.fiit.perconik.core.java.dom.NodeCounters;
-import sk.stuba.fiit.perconik.core.java.dom.TreeParsers;
 
 import static java.util.Arrays.asList;
 
+import static sk.stuba.fiit.extise.Bootstrap.parse;
 import static sk.stuba.fiit.extise.Bootstrap.run;
 
 public final class LogicalLinesOfCode extends NumericMetric<Integer> {
@@ -20,7 +20,7 @@ public final class LogicalLinesOfCode extends NumericMetric<Integer> {
 
   @Override
   public Collection<Integer> apply(final String input) {
-    CompilationUnit unit = (CompilationUnit) TreeParsers.parse(input);
+    CompilationUnit unit = (CompilationUnit) parse(input);
 
     // TODO there can be more statements on a single logical line of code
 

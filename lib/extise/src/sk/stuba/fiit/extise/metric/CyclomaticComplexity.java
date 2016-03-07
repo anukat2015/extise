@@ -29,11 +29,11 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
-import sk.stuba.fiit.perconik.core.java.dom.TreeParsers;
 import sk.stuba.fiit.perconik.core.java.dom.traverse.NodeVisitor;
 
 import static java.util.Arrays.asList;
 
+import static sk.stuba.fiit.extise.Bootstrap.parse;
 import static sk.stuba.fiit.extise.Bootstrap.run;
 
 public final class CyclomaticComplexity extends NumericMetric<Integer> {
@@ -251,7 +251,7 @@ public final class CyclomaticComplexity extends NumericMetric<Integer> {
 
   @Override
   public Collection<Integer> apply(final String input) {
-    CompilationUnit unit = (CompilationUnit) TreeParsers.parse(input);
+    CompilationUnit unit = (CompilationUnit) parse(input);
     Complexer complexer = new Complexer();
 
     complexer.subtreeVisit(unit);

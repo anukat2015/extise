@@ -11,8 +11,6 @@ class CreateElements < ActiveRecord::Migration
 
       t.integer :line, null: false
 
-      t.text :source, null: false
-
       t.timestamps null: false
     end
 

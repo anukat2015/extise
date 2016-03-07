@@ -437,7 +437,6 @@ CREATE TABLE extisimo_elements (
     "offset" integer NOT NULL,
     length integer NOT NULL,
     line integer NOT NULL,
-    source text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -707,8 +706,9 @@ ALTER SEQUENCE extisimo_repositories_id_seq OWNED BY extisimo_repositories.id;
 CREATE TABLE extisimo_sessions (
     id integer NOT NULL,
     user_id integer NOT NULL,
-    original_commit_id integer,
-    revision_commit_id integer NOT NULL,
+    commit_id integer NOT NULL,
+    original_identifier character varying,
+    revision_identifier character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     started_at timestamp without time zone NOT NULL,
@@ -1884,7 +1884,14 @@ CREATE INDEX index_extisimo_repositories_on_project_id ON extisimo_repositories 
 -- Name: index_extisimo_sessions_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_sessions_as_unique ON extisimo_sessions USING btree (revision_commit_id);
+CREATE UNIQUE INDEX index_extisimo_sessions_as_unique ON extisimo_sessions USING btree (commit_id);
+
+
+--
+-- Name: index_extisimo_sessions_on_commit_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_sessions_on_commit_id ON extisimo_sessions USING btree (commit_id);
 
 
 --
@@ -1892,6 +1899,20 @@ CREATE UNIQUE INDEX index_extisimo_sessions_as_unique ON extisimo_sessions USING
 --
 
 CREATE INDEX index_extisimo_sessions_on_finished_at ON extisimo_sessions USING btree (finished_at);
+
+
+--
+-- Name: index_extisimo_sessions_on_original_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_sessions_on_original_identifier ON extisimo_sessions USING btree (original_identifier);
+
+
+--
+-- Name: index_extisimo_sessions_on_revision_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_sessions_on_revision_identifier ON extisimo_sessions USING btree (revision_identifier);
 
 
 --

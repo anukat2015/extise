@@ -37,13 +37,15 @@ abstract class NodeExtractor extends Bootstrap.Unit<String> {
       int offset = STANDARD.getOffset(unit, node);
       int length = STANDARD.getLength(unit, node);
 
+      int line = unit.getLineNumber(offset);
+
       String path = namePathExtractor().apply(node).toString();
       String source = input.substring(offset, offset + length);
 
       StringBuilder block = new StringBuilder(128 + path.length() + source.length());
 
-      block.append("#").append(path);
-      block.append(":").append(offset).append("+").append(length).append(lineSeparator());
+      block.append("# ").append(path).append(":").append(line).append(" ");
+      block.append(offset).append("+").append(length).append(lineSeparator());
       block.append(source).append(lineSeparator());
 
       blocks.add(block.toString());

@@ -433,10 +433,11 @@ CREATE TABLE extisimo_elements (
     id integer NOT NULL,
     commit_id integer NOT NULL,
     file character varying(2048) NOT NULL,
+    line integer NOT NULL,
     path character varying(2048) NOT NULL,
     "offset" integer NOT NULL,
     length integer NOT NULL,
-    line integer NOT NULL,
+    source text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

@@ -3,6 +3,8 @@ class CreateElements < ActiveRecord::Migration
     create_table :extisimo_elements do |t|
       t.references :commit, null: false
 
+      t.string :identifier, null: false, limit: 40
+
       t.string :file, null: false, limit: 2048
       t.string :path, null: false, limit: 2048
 
@@ -14,9 +16,12 @@ class CreateElements < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :extisimo_elements, [:commit_id, :file, :path], unique: true, name: 'index_extisimo_elements_as_unique'
+    add_index :extisimo_elements, [:commit_id, :identifier, :path], unique: true, name: 'index_extisimo_elements_as_unique'
 
     add_index :extisimo_elements, :commit_id
+
+    add_index :extisimo_elements, :identifier
+
     add_index :extisimo_elements, :file
     add_index :extisimo_elements, :path
   end

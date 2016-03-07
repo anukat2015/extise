@@ -1,26 +1,26 @@
 /*
- * Copyright (c) 1995, 2011, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
  *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
  *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
- * or visit www.oracle.com if you need additional information or have any
- * questions.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  */
 package java.awt;
 
@@ -150,7 +150,7 @@ import sun.util.logging.PlatformLogger;
  *    import java.awt.event.*;
  *    import java.io.Serializable;
  *
- *    class MyApp java.io.Serializable
+ *    class MyApp implements java.io.Serializable
  *    {
  *         BigObjectThatShouldNotBeSerializedWithAButton bigOne;
  *         Button aButton = new Button();
@@ -666,9 +666,10 @@ public abstract class Component implements ImageObserver, MenuContainer,
      * can lead to a deadlock if client code also uses synchronization
      * by a component object. For every such situation revealed we should
      * consider possibility of replacing "this" with the package private
-     * objectLock object introduced below. So far there're 2 issues known:
+     * objectLock object introduced below. So far there're 3 issues known:
      * - CR 6708322 (the getName/setName methods);
-     * - CR 6608764 (the PropertyChangeListener machinery).
+     * - CR 6608764 (the PropertyChangeListener machinery);
+     * - CR 7108598 (the Container.paint/KeyboardFocusManager.clearMostRecentFocusOwner methods).
      *
      * Note: this field is considered final, though readObject() prohibits
      * initializing final fields.
@@ -970,6 +971,10 @@ public abstract class Component implements ImageObserver, MenuContainer,
 
             public AccessControlContext getAccessControlContext(Component comp) {
                 return comp.getAccessControlContext();
+            }
+
+            public void revalidateSynchronously(Component comp) {
+                comp.revalidateSynchronously();
             }
         });
     }
@@ -2962,6 +2967,13 @@ public abstract class Component implements ImageObserver, MenuContainer,
      * @since 1.7
      */
     public void revalidate() {
+        revalidateSynchronously();
+    }
+
+    /**
+     * Revalidates the component synchronously.
+     */
+    final void revalidateSynchronously() {
         synchronized (getTreeLock()) {
             invalidate();
 
@@ -3382,7 +3394,7 @@ public abstract class Component implements ImageObserver, MenuContainer,
                 (width > 0) && (height > 0)) {
                 PaintEvent e = new PaintEvent(this, PaintEvent.UPDATE,
                                               new Rectangle(x, y, width, height));
-                Toolkit.getEventQueue().postEvent(e);
+                SunToolkit.postEvent(SunToolkit.targetToAppContext(this), e);
             }
         }
     }
@@ -7910,7 +7922,7 @@ public abstract class Component implements ImageObserver, MenuContainer,
                 res = toFocus.requestFocusInWindow(CausedFocusEvent.Cause.TRAVERSAL_BACKWARD);
             }
         }
-        if (!res) {
+        if (clearOnFailure && !res) {
             if (focusLog.isLoggable(PlatformLogger.FINER)) {
                 focusLog.finer("clear global focus owner");
             }
@@ -10071,11 +10083,12 @@ public abstract class Component implements ImageObserver, MenuContainer,
         }
         Window window = getContainingWindow();
         if (window != null) {
-            if (!window.hasHeavyweightDescendants() || !window.hasLightweightDescendants()) {
+            if (!window.hasHeavyweightDescendants() || !window.hasLightweightDescendants() || window.isDisposing()) {
                 if (mixingLog.isLoggable(PlatformLogger.FINE)) {
                     mixingLog.fine("containing window = " + window +
                             "; has h/w descendants = " + window.hasHeavyweightDescendants() +
-                            "; has l/w descendants = " + window.hasLightweightDescendants());
+                            "; has l/w descendants = " + window.hasLightweightDescendants() +
+                            "; disposing = " + window.isDisposing());
                 }
                 return false;
             }

@@ -4,4 +4,4 @@ $LOAD_PATH.unshift File.expand_path '../../lib', __FILE__
 
 require 'extise'
 
-system("java -jar #{File.join $LOAD_PATH[0], "extise-#{Extise::VERSION}.jar"} #{ARGV * ' '}") || abort
+system(Extise.command ARGV) || abort

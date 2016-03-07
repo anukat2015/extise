@@ -42,7 +42,7 @@ git = Rugged::Repository.new path
 git.checkout 'master'
 
 process git.walk('HEAD').to_a, count: n, worker: w, progress: !n.zero? do |c|
-  author = User.find_by name: c.author[:name]
+  author = User.joins(:bugs_eclipse_org_user).find_by 'login_name = ? OR realnames @> ?', c.author[:name], "{#{c.author[:name]}}"
 
   # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
 

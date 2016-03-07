@@ -107,7 +107,7 @@ public final class Main {
       }
 
       if (line.hasOption("list")) {
-        ClassLoader loader = Main.class.getClassLoader();
+        ClassLoader loader = ClassLoader.getSystemClassLoader();
         ClassPath path = ClassPath.from(loader);
 
         for (String prefix: knownPackages) {
@@ -120,7 +120,7 @@ public final class Main {
               continue;
             }
 
-            Class<?> type = Class.forName(info.getName(), false, loader);
+            Class<?> type = Class.forName(info.getName());
             int modifiers = type.getModifiers();
 
             if (Function.class.isAssignableFrom(type) && !isAbstract(modifiers) && isPublic(modifiers)) {

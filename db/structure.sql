@@ -332,7 +332,7 @@ CREATE TABLE extisimo_commits (
     id integer NOT NULL,
     repository_id integer NOT NULL,
     author_id integer NOT NULL,
-    name character varying(40) NOT NULL,
+    identifier character varying(40) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     submitted_at timestamp without time zone NOT NULL
@@ -433,10 +433,10 @@ CREATE TABLE extisimo_elements (
     id integer NOT NULL,
     commit_id integer NOT NULL,
     file character varying(2048) NOT NULL,
-    line integer NOT NULL,
     path character varying(2048) NOT NULL,
     "offset" integer NOT NULL,
     length integer NOT NULL,
+    line integer NOT NULL,
     source text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1562,7 +1562,7 @@ CREATE INDEX index_extisimo_attachments_on_type ON extisimo_attachments USING bt
 -- Name: index_extisimo_commits_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_commits_as_unique ON extisimo_commits USING btree (repository_id, name);
+CREATE UNIQUE INDEX index_extisimo_commits_as_unique ON extisimo_commits USING btree (repository_id, identifier);
 
 
 --
@@ -1573,10 +1573,10 @@ CREATE INDEX index_extisimo_commits_on_author_id ON extisimo_commits USING btree
 
 
 --
--- Name: index_extisimo_commits_on_name; Type: INDEX; Schema: public; Owner: -
+-- Name: index_extisimo_commits_on_identifier; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_commits_on_name ON extisimo_commits USING btree (name);
+CREATE INDEX index_extisimo_commits_on_identifier ON extisimo_commits USING btree (identifier);
 
 
 --

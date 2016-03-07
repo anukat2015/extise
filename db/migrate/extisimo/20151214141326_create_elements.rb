@@ -4,13 +4,12 @@ class CreateElements < ActiveRecord::Migration
       t.references :commit, null: false
 
       t.string :file, null: false, limit: 2048
-
-      t.integer :line, null: false
-
       t.string :path, null: false, limit: 2048
 
       t.integer :offset, null: false
       t.integer :length, null: false
+
+      t.integer :line, null: false
 
       t.text :source, null: false
 

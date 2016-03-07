@@ -6,12 +6,12 @@ import static sk.stuba.fiit.extise.Bootstrap.run;
 
 import static sk.stuba.fiit.perconik.eclipse.jdt.core.dom.NodeType.METHOD_DECLARATION;
 
-public final class MethodExtractor extends NodeExtractor {
-  public MethodExtractor() {
+public final class MethodSourceExtractor extends NodeSourceExtractor {
+  public MethodSourceExtractor() {
     super(NodeCollectors.ofType(METHOD_DECLARATION));
   }
 
   public static void main(final String ... args) throws Exception {
-    run(new MethodExtractor(), args);
+    run(new MethodSourceExtractor(), args);
   }
 }

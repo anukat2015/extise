@@ -11,13 +11,8 @@ import sk.stuba.fiit.extise.Bootstrap;
 import sk.stuba.fiit.perconik.core.java.dom.TreeParsers;
 import sk.stuba.fiit.perconik.utilities.function.ListCollector;
 
-import static java.lang.System.lineSeparator;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
-
-import static sk.stuba.fiit.perconik.core.java.dom.NodePaths.namePathExtractor;
-import static sk.stuba.fiit.perconik.core.java.dom.NodeRangeType.STANDARD;
 
 abstract class NodeExtractor extends Bootstrap.Unit<String> {
   private final ListCollector<ASTNode, ASTNode> collector;
@@ -26,31 +21,28 @@ abstract class NodeExtractor extends Bootstrap.Unit<String> {
     this.collector = checkNotNull(collector);
   }
 
+  static StringBuilder block(final String path, final int line, final int offset, final int length) {
+    StringBuilder block = new StringBuilder(128 + path.length());
+
+    block.append("# ").append(path).append(":").append(line).append(" ");
+    block.append(offset).append("+").append(length);
+
+    return block;
+  }
+
   @Override
-  protected Collection<String> apply(final String input) {
+  public final Collection<String> apply(final String input) {
     CompilationUnit unit = (CompilationUnit) TreeParsers.parse(input);
 
     List<ASTNode> nodes = this.collector.apply(unit);
     List<String> blocks = newArrayListWithCapacity(nodes.size());
 
     for (ASTNode node: nodes) {
-      int offset = STANDARD.getOffset(unit, node);
-      int length = STANDARD.getLength(unit, node);
-
-      int line = unit.getLineNumber(offset);
-
-      String path = namePathExtractor().apply(node).toString();
-      String source = input.substring(offset, offset + length);
-
-      StringBuilder block = new StringBuilder(128 + path.length() + source.length());
-
-      block.append("# ").append(path).append(":").append(line).append(" ");
-      block.append(offset).append("+").append(length).append(lineSeparator());
-      block.append(source).append(lineSeparator());
-
-      blocks.add(block.toString());
+      blocks.add(this.extract(input, unit, node));
     }
 
     return blocks;
   }
+
+  abstract String extract(String input, CompilationUnit unit, ASTNode node);
 }

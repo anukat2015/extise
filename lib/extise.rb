@@ -17,19 +17,35 @@ module Extise
   def self.open(function: nil, input: STDIN)
     require 'open3'
 
-    functions = [function].flatten.compact
-    files = input.is_a? Array ? ['--'] + input.flatten.compact : []
+    functions, files = [function].flatten.compact, []
+    files = ['--'] + input.flatten.compact if input.is_a? Array
+    input = StringIO.new input if input.is_a? String
 
-    Open3.popen3(command functions + files) do |input, output, error, status|
-      input.tap { input.each { |line| input.puts line } if input.is_a? IO }.close
-      yield output, error, status
+    Open3.popen3(command functions + files) do |i, o, e, s|
+      i.tap { input.each_line { |l| i.puts l } if files.empty? }.close
+      yield(o, e, s).tap { [o, e].each &:close }
     end
   end
 
   def self.stream(function: nil, input: STDIN)
-    open function, input do |output, _, status|
-      Thread.new { yield output }
-      status.value.to_i.zero?
+    open function: function, input: input do |o, _, s|
+      Thread.new { yield o }
+      s.value.to_i.zero?
+    end
+  end
+
+  module Parser
+    def self.parse_blocks(input)
+      input.each_line.inject([]) do |blocks, l|
+        if l.start_with? '#'
+          path, line, offset, length = *l[1..-1].strip.split(/[:\s\+]/)
+          blocks << { path: path, line: line, offset: offset, length: length, content: nil }
+        else
+          (blocks.last[:content] ||= '') << l
+        end
+
+        blocks
+      end
     end
   end
 end

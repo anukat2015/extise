@@ -1,67 +1,104 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-c, s, t, v, q = true, false, 80, true, false
+d, n, w = nil, 4, :thread
+c, s, t, v, q, r = true, false, 80, true, false, nil
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>]'
+  use '[<options>] <project>'
+  opt 'd -d --directory=<path>'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
+  arg 'r <repository>'
 end
+
+d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
-i = 0
+include Extisimo
 
-#TODO import only kind:
-# selection
-# edit
-# command
+def parse_structure_handle(h)
+  d, p, n, e = *h[1..-1].split(/&lt;|\{|\[/)
+  f = File.join d, p.split(/\./), n
+  e = File.join e.split(/[~;]/).select { |s| s =~ /\A[^Q]/ } if e
+  { directory: d, package: p, name: n, file: f, element: e }
+end
 
-#TODO import only structure_kind
-# resource
-# java
-# aspectj
-# plugin.xml
-# build.xml
-# DLTK ???
-# http ???
-# html
+repository = Repository.find_by name: r
 
-#TODO import only originid:
-# - sure:
-# org.eclipse.jdt.ui.CompilationUnitEditor
-# org.eclipse.jdt.ui.ClassFileEditor
-# org.eclipse.jdt.ui.PackageExplorer
-# org.eclipse.ui.navigator.ProjectExplorer
-# org.eclipse.ui.views.ResourceNavigator
-# - maybe:
-# org.eclipse.ajdt.internal.ui.editor.CompilationUnitEditor
-# org.eclipse.mylar.java.ui.editor.MylarCompilationUnitEditor
-# org.eclipse.wst.jsdt.ui.CompilationUnitEditor
-# - less-likely:
-# org.eclipse.ui.views.ContentOutline
-# org.eclipse.search.ui.views.SearchView
-# org.eclipse.ui.DefaultTextEditor
-# org.eclipse.pde.ui.manifestEditor
-# org.eclipse.jdt.callhierarchy.view
-# org.eclipse.jdt.ui.PropertiesFileEditor
-# org.eclipse.ant.ui.internal.editor.AntEditor
-# org.eclipse.jdt.ui.TypeHierarchy
-# org.eclipse.wst.xml.ui.internal.tabletree.XMLMultiPageEditorPart
-# org.eclipse.compare.CompareEditor
-# org.eclipse.pde.ui.featureEditor
-# org.eclipse.pde.ui.buildEditor
-# org.eclipse.pde.ui.schemaEditor
-# org.eclipse.mylyn.tasks.ui.editors.task
-# org.eclipse.pde.ui.productEditor
-# org.eclipse.m2e.editor.MavenPomEditor
-# - and more with < 100 interactions
+abort "#{Repository}:? not found by #{r}".red unless repository
 
-#TODO note delta is always null
-#TODO note navigation can be ignored
-#TODO note original data have only: propagation, manipulation, selection, edit, prediction
-# missing: Command, Preference, Attention
+dump_record repository, :repository
+
+path = File.join d, repository.name
+git = Rugged::Repository.new path
+
+# NOTE: command, preference, and attention kinds are completely missing from original data
+# NOTE: navigation does not hold any information value in original data and can be ignored
+# NOTE: interaction delta in original data is always blank and therefore can be ignored
+# NOTE: select only interactions with non empty structure handle
+
+interactions = BugsEclipseOrg::Interaction.joins(attachment: [extisimo_attachment: [task: [project: :repositories]]]).where(
+  Repository.table_name => { id: repository },
+  kind: %w(command edit selection),
+  structure_kind: %w(java),
+  originid: %w(
+    org.eclipse.jdt.ui.ClassFileEditor
+    org.eclipse.jdt.ui.CompilationUnitEditor
+    org.eclipse.jdt.ui.PackageExplorer
+  )
+).where.not(structure_handle: nil).order(start_date: :asc)
+
+previous_session = nil
+
+process interactions, count: n, worker: w, progress: !n.zero? do |i|
+  attachment = i.attachment.extisimo_attachment
+  user = attachment.author
+  revision = Extisimo::Commit.where('submitted_at > ?', i.start_date).order(submitted_at: :asc).first
+
+  abort "#{BugsEclipseOrg::Interaction}:#{i.id} unable to find revision commit".red unless revision
+  #abort "#{BugsEclipseOrg::Interaction}:#{i.id} interaction attacher and revision author do not match".red unless user != revision.author
+
+  #TODO should each user have his own individual sessions? if so, then session unique key should be [user, commit], see commented assertion check above!
+
+  original = git.rev_parse "#{revision.identifier}^"
+
+  session = persist(Session, commit: revision) do |r|
+    r.user = user
+    r.original_identifier = original.oid
+    r.revision_identifier = revision.identifier
+    r.started_at = original.time.utc
+    r.finished_at = revision.submitted_at
+  end
+
+  dump_record previous_session = session, :session, 1 unless previous_session == session
+
+  handle = parse_structure_handle i.structure_handle
+
+  # NOTE: skip interactions without element specified in structure handle
+
+  unless handle[:element]
+    warn "#{BugsEclipseOrg::Interaction}:#{i.id} element missing in structure handle".magenta
+    next
+  end
+
+  element = Element.find_by commit: revision, file: handle[:file], path: handle[:element]
+
+  abort "#{BugsEclipseOrg::Interaction}:#{i.id} unable to find element".red unless element
+
+  interaction = persist(Extisimo::Interaction, started_at: i.start_date, element: element, session: session) do |r|
+    r.attachment = attachment
+    r.kind = i.kind
+    r.finished_at = i.end_date
+  end
+
+  dump_record interaction, :interaction, 2
+end

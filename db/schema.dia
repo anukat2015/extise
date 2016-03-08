@@ -5311,7 +5311,6 @@ bug, comment or attachment#</dia:string>
         <dia:color val="#000000"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O36" connection="13"/>
         <dia:connection handle="1" to="O20" connection="8"/>
       </dia:connections>
     </dia:object>
@@ -7343,7 +7342,7 @@ if possible#</dia:string>
         <dia:point val="69,62"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.95,61.95;93.05,67.75"/>
+        <dia:rectangle val="68.95,61.95;94.59,69.35"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -7352,10 +7351,10 @@ if possible#</dia:string>
         <dia:point val="69,62"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="24.000000000000004"/>
+        <dia:real val="25.540000000000003"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="5.7000000000000002"/>
+        <dia:real val="7.2999999999999998"/>
       </dia:attribute>
       <dia:attribute name="line_width">
         <dia:real val="0.10000000000000001"/>
@@ -7369,12 +7368,14 @@ if possible#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#session.user ≠ session.original_commit.author
+            <dia:string>#session.user = session.previous_commit.author
 session.user = session.revision_commit.author
 session.user = session.interactions.attachment.author
 session.commit = session.revision_commit
-session.started_at = session.interactions.first.started_at
-session.finished_at = session.interactions.last.finished_at #</dia:string>
+session.previous_identifier = session.previous_commit.identifier
+session.revision_identifier = session.revision_commit.identifier
+session.started_at = session.previous_commit.submitted_at
+session.finished_at = session.revision_commit.submitted_at #</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="monospace" style="0" name="Courier"/>
@@ -7399,7 +7400,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:point val="69,35"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.95,34.95;80.33,43.65"/>
+        <dia:rectangle val="68.95,34.95;80.33,44.45"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="69,35"/>
@@ -7408,7 +7409,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         <dia:real val="11.279999999999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="8.5999999999999996"/>
+        <dia:real val="9.3999999999999986"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#extisimo::sessions#</dia:string>
@@ -7546,7 +7547,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#commit_id#</dia:string>
+            <dia:string>#previous_commit_id#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#integer#</dia:string>
@@ -7569,7 +7570,30 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#original_identifier#</dia:string>
+            <dia:string>#revision_commit_id#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#integer#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#previous_identifier#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#string#</dia:string>
@@ -7581,7 +7605,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
-            <dia:enum val="0"/>
+            <dia:enum val="3"/>
           </dia:attribute>
           <dia:attribute name="abstract">
             <dia:boolean val="false"/>
@@ -7604,7 +7628,7 @@ session.finished_at = session.interactions.last.finished_at #</dia:string>
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
-            <dia:enum val="0"/>
+            <dia:enum val="3"/>
           </dia:attribute>
           <dia:attribute name="abstract">
             <dia:boolean val="false"/>

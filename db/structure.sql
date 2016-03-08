@@ -707,8 +707,9 @@ ALTER SEQUENCE extisimo_repositories_id_seq OWNED BY extisimo_repositories.id;
 CREATE TABLE extisimo_sessions (
     id integer NOT NULL,
     user_id integer NOT NULL,
-    commit_id integer NOT NULL,
-    original_identifier character varying,
+    previous_commit_id integer NOT NULL,
+    revision_commit_id integer NOT NULL,
+    previous_identifier character varying NOT NULL,
     revision_identifier character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -1892,14 +1893,7 @@ CREATE INDEX index_extisimo_repositories_on_project_id ON extisimo_repositories 
 -- Name: index_extisimo_sessions_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_sessions_as_unique ON extisimo_sessions USING btree (commit_id);
-
-
---
--- Name: index_extisimo_sessions_on_commit_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_extisimo_sessions_on_commit_id ON extisimo_sessions USING btree (commit_id);
+CREATE UNIQUE INDEX index_extisimo_sessions_as_unique ON extisimo_sessions USING btree (revision_commit_id, user_id);
 
 
 --
@@ -1910,10 +1904,24 @@ CREATE INDEX index_extisimo_sessions_on_finished_at ON extisimo_sessions USING b
 
 
 --
--- Name: index_extisimo_sessions_on_original_identifier; Type: INDEX; Schema: public; Owner: -
+-- Name: index_extisimo_sessions_on_previous_commit_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_sessions_on_original_identifier ON extisimo_sessions USING btree (original_identifier);
+CREATE INDEX index_extisimo_sessions_on_previous_commit_id ON extisimo_sessions USING btree (previous_commit_id);
+
+
+--
+-- Name: index_extisimo_sessions_on_previous_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_sessions_on_previous_identifier ON extisimo_sessions USING btree (previous_identifier);
+
+
+--
+-- Name: index_extisimo_sessions_on_revision_commit_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_sessions_on_revision_commit_id ON extisimo_sessions USING btree (revision_commit_id);
 
 
 --

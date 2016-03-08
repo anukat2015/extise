@@ -30,6 +30,9 @@ def each_file(git, tree, path = '.', &block)
   tree.each_tree { |t| each_file git, git.lookup(t[:oid]), File.join(path, t[:name]), &block }
 end
 
+# NOTE: since the sum of interactions is far greater than the sum commits,
+# we first process commits and leave interactions for later processing
+
 repository = Repository.find_by name: r
 
 abort "#{Repository}:? not found by #{r}".red unless repository
@@ -40,6 +43,11 @@ path = File.join d, repository.name
 git = Rugged::Repository.new path
 
 git.checkout 'master'
+
+#TODO speedup: for each repository we process only commits bound by interactions:
+# commits: a,b,c,d
+# a -- b -> get time -> no interactions from bugs_eclipse_org
+# b -- c -> get time -> some interactions => process a and b
 
 process git.walk('HEAD').to_a, count: n, worker: w, progress: !n.zero? do |c|
   author = User.joins(:bugs_eclipse_org_user).find_by 'login_name = ? OR realnames @> ?', c.author[:name], "{#{c.author[:name]}}"
@@ -64,15 +72,17 @@ process git.walk('HEAD').to_a, count: n, worker: w, progress: !n.zero? do |c|
 
     next unless f[:name].end_with? '.java'
 
-    content, blocks = git.lookup(f[:oid]).content, nil
+    content, extractor, blocks = git.lookup(f[:oid]).content, 'TypePositionExtractor', nil
 
     # NOTE: extract Java type declarations
 
-    Extise.stream(function: 'TypePositionExtractor', input: content) { |o|
+    puts "#{'  ' * 2}" << "#{Extise.command(extractor)} < #{File.join path, f[:path]}".cyan if v unless q
+
+    Extise.stream(function: extractor, input: content) { |o|
       blocks = Extise::Parser.parse_blocks o
     } || abort("#{Commit}:#{commit.id} unexpected failure extracting elements".red)
 
-    if blocks.empty?
+    if blocks.nil?
       warn "#{Commit}:#{commit.id} no elements extracted from #{f[:path]}".magenta
       next
     end

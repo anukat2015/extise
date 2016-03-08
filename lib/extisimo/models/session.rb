@@ -2,8 +2,7 @@ class Extisimo::Session < ActiveRecord::Base
   include Extisimo::Measurable
 
   belongs_to :user
-
-  has_one :commit
+  belongs_to :commit
 
   delegate :elements, to: :commit
 

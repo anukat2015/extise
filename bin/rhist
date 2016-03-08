@@ -3,8 +3,6 @@ require_relative 'common' and load_extise!
 
 e, c, s, t, v, m, a = false, true, true, 80, true, nil, nil
 
-non_blank = -> (x) { x.blank? ? (raise OptionParser::MissingArgument.new '<model> <attribute>' unless e) : x }
-
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <model> <attribute>'
   use '[<options>] -e [<command>...]'
@@ -13,8 +11,8 @@ ARGV.bind_and_parse! to: :locals do
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
-  arg 'm <model>', &non_blank
-  arg 'a <attribute>', &non_blank
+  arg 'm <model>'
+  arg 'a <attribute>'
 end
 
 AutoColor.disable on: self unless c

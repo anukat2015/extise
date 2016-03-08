@@ -8,6 +8,23 @@ https://www.bugzilla.org/docs/2.16/html/dbschema.html
 http://www.ravenbrook.com/tool/bugzilla-schema/?action=single&version=3.4.2&view=View+schema
 
 
+general (in slovak):
+
+  # TODO produktivita a familiarita su 2 nezavisle veci, asi to nie je dobre kombinovat, resp. nie je vhodne
+  # to overit rozdeleniem na train + test -> overenie / porovnanie
+
+  # TODO zakomponovat dolezitost ulohy ako dalsiu metriku (priority + severity, obe, alebo jednu iba)
+  # TODO zakomponovat relativny zlozitost ako dalsiu metriku (interval 0..1), mozno pouzit vahovane zmeny riadkov. vziat max a min a pre kazde prepocitat (normalizacna funkcia?)
+  # TODO familiarita by bola zvlast a prpduktivita by bola vynasobena rel. zlozitostou, otazka je, ako to overit?
+  # TODO dalsia metrika: produktivita * rel  zlozitost ulohy -> a to je aproximacia na zaklade poctu not-affected-entit (tried, selekcia na nej bola ale nie modifikacia) * #ADM vazene riadky zmien
+
+  # TODO gerrit ma review history -> pocet "oprav" kodu autorom kym bol akceptovny, da sa prepojit na tasky, reviewer je clovek nezavisly
+  # vieme porovnat napr na urovni tasku -> nasa produktivita (ina metrika / kombinacia) vs suma oprav v gerrite
+
+  # TODO suma oprav review vs produktivita -> ci nie je znovu to iste v overeni postavene vedla seba, ale nie je, lebo vzhladom na mnozstvo vyprodukovaneho kodu je interakcii ovela viac
+
+
+
 import_tasks:
 
 #TODO after this filter review data and maybe filter even by classification, component + product

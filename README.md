@@ -150,6 +150,13 @@ TODO
     rhist BugsEclipseOrg::Bug priority'
     rhist -e 'BugsEclipseOrg::Bug.pluck(:priority)'
 
+#### `ropen`
+
+    ropen project PDE UI
+    ropen repository eclipse.pde.ui
+    ropen commit eclipse.pde.ui 95ad7b194d9a98b93cd129f464dd5380842cf3a9 -s gerrit
+    ropen element eclipse.pde.ui 1837573ce7fdb32310064e06230cd995173dc2f6 5694e314bed2ebc911ff9643e6961b848bd35bb6 EEDescriptionGenerator
+
 ## Contributing
 
 1. Fork it

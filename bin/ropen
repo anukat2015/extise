@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise!
+
+models = %w(user task post attachment project repository commit element)
+services = %w(bugzilla gerrit github)
+
+s, m, k = nil, nil, nil
+
+ARGV.bind_and_parse! to: :locals do
+  a = "(#{models * '|'})"
+  use "[<options>] #{a} <identifier>..."
+  opt "s -s --service=(#{services * '|'})"
+  arg "m #{a}", &-> (v) { models.include?(v) ? v : raise(OptionParser::InvalidArgument.new a) }
+  arg 'k <identifier>...'
+end
+
+include Extisimo
+
+def find(model, identifier)
+  record = model.where(id: identifier).first
+  return record if record
+  if model == User
+    User.find_by name: identifier
+  elsif model == Project
+    p, c = identifier.split(/\s+/)
+    Project.find_by product: p, component: c
+  elsif model == Repository
+    Repository.find_by name: identifier
+  elsif model == Commit
+    r, i = identifier.split(/\s+/)
+    repository = find Repository, r
+    Commit.find_by repository: repository, identifier: i
+  elsif model == Element
+    r, c, i, p = identifier.split(/\s+/)
+    commit = find Commit, "#{r} #{c}"
+    puts commit
+    puts commit: commit, identifier: i, path: p
+    Element.find_by commit: commit, identifier: i, path: p
+  end
+rescue
+  nil
+end
+
+model = m.camelize.constantize
+record = find model, k * ' '
+
+abort "#{model}:? record not found by #{k * ' '}".red unless record
+
+model, record = Project, record.project if record.is_a? Repository
+
+suffix = "url#{'s' if model == Project}"
+method = s ? "#{s}_#{suffix}" : services.reverse.map { |s| "#{s}_#{suffix}" }.find { |s| record.respond_to? s }
+
+abort "#{model}:#{record.id} unable to open#{" via #{s}" if s}".red unless record.respond_to? method
+
+url = [record.send(method)].flatten.first
+
+abort "#{model}:#{record.id} no URL available".red unless url
+
+`open #{url}`

@@ -42,7 +42,7 @@ i = 0
 
 # NOTE: import only confirmed, resolved, and fixed bugs
 
-bugs = BugsEclipseOrg::Bug.where(everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED)
+bugs = BugsEclipseOrg::Bug.where(everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED).order(creation_ts: :asc)
 
 process bugs, count: n, worker: w, progress: !n.zero? do |b|
   abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent reporter".red if b.reporter != b.author.login_name
@@ -77,7 +77,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   dump_record assignee, :assignee, i + 1
   dump_record project, :project, i + 1
 
-  b.comments.find_each do |c|
+  b.comments.order(bug_when: :asc).find_each do |c|
     abort "#{BugsEclipseOrg::Comment}:#{c.id} inconsistent author".red if c.who != c.author.login_name
 
     author = persist_user(c.author)
@@ -94,7 +94,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
     dump_record author, :author, i + 2
   end
 
-  b.attachments.find_each do |a|
+  b.attachments.order(date: :asc).find_each do |a|
     abort "#{BugsEclipseOrg::Attachment}:#{a.id} inconsistent author".red if a.attacher != a.submitter.login_name
 
     author = persist_user(a.submitter)

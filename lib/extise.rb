@@ -38,8 +38,8 @@ module Extise
     def self.parse_blocks(input)
       input.each_line.inject([]) do |blocks, l|
         if l.start_with? '#'
-          path, line, offset, length = *l[1..-1].strip.split(/[:\s\+]/)
-          blocks << { path: path, line: line, offset: offset, length: length, content: nil }
+          file, path, line, offset, length = *l[1..-1].strip.split(/[:\s\+]/)
+          blocks << { file: file, path: path, line: line, offset: offset, length: length, content: nil }
         else
           (blocks.last[:content] ||= '') << l
         end

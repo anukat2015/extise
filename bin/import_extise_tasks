@@ -45,8 +45,8 @@ i = 0
 bugs = BugsEclipseOrg::Bug.where(everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED)
 
 process bugs, count: n, worker: w, progress: !n.zero? do |b|
-  abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent reporter".red if b.reporter != b.author.login_name
-  abort "#{BugsEclipseOrg::Bug}:#{b.bugid} inconsistent assignee".red if b.assigned_to != b.assignee.login_name
+  abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent reporter".red if b.reporter != b.author.login_name
+  abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent assignee".red if b.assigned_to != b.assignee.login_name
 
   reporter = persist_user(b.author)
   assignee = persist_user(b.assignee)
@@ -78,7 +78,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   dump_record project, :project, i + 1
 
   b.comments.find_each do |c|
-    abort "#{BugsEclipseOrg::Comment}:#{c.commentid} inconsistent author".red if c.who != c.author.login_name
+    abort "#{BugsEclipseOrg::Comment}:#{c.id} inconsistent author".red if c.who != c.author.login_name
 
     author = persist_user(c.author)
 
@@ -95,7 +95,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   end
 
   b.attachments.find_each do |a|
-    abort "#{BugsEclipseOrg::Attachment}:#{a.attachid} inconsistent author".red if a.attacher != a.submitter.login_name
+    abort "#{BugsEclipseOrg::Attachment}:#{a.id} inconsistent author".red if a.attacher != a.submitter.login_name
 
     author = persist_user(a.submitter)
 

@@ -39,9 +39,9 @@ module Extise
       input.each_line.inject([]) do |blocks, l|
         if l.start_with? '#'
           file, path, line, offset, length = *l[1..-1].strip.split(/[:\s\+]/)
-          blocks << { file: file, path: path, line: line, offset: offset, length: length, content: nil }
+          blocks << { file: file, path: path, line: line, offset: offset, length: length, source: nil }
         else
-          (blocks.last[:content] ||= '') << l
+          (blocks.last[:source] ||= '') << l
         end
 
         blocks

@@ -25,9 +25,9 @@ AutoColor.disable on: self unless c
 
 include Extisimo
 
-def each_file(git, tree, path = '.', &block)
+def walk_files(git, tree, path = '.', &block)
   tree.each_blob { |f| block.call f.merge(path: File.join(path, f[:name]).sub(/\A\.\//, '')) }
-  tree.each_tree { |t| each_file git, git.lookup(t[:oid]), File.join(path, t[:name]), &block }
+  tree.each_tree { |t| walk_files git, git.lookup(t[:oid]), File.join(path, t[:name]), &block }
 end
 
 # NOTE: since the sum of interactions is far greater than the sum commits,
@@ -61,37 +61,46 @@ process git.walk('HEAD', Rugged::SORT_REVERSE).to_a, count: n, worker: w, progre
 
   dump_record commit, :commit, 1
 
-  each_file git, c.tree do |f|
+  files, sources = [], ''
 
-    # NOTE: process only Java files
+  walk_files(git, c.tree) do |f|
+
+    # NOTE: select only Java files to process
 
     next unless f[:name].end_with? '.java'
 
-    content, extractor, blocks = git.lookup(f[:oid]).content, 'TypePositionExtractor', nil
+    files << f
+    sources << "# #{f[:path]}\n#{git.lookup(f[:oid]).content}"
+  end
 
-    # NOTE: extract Java type declarations
+  extractor, blocks = 'TypePositionExtractor', nil
 
-    puts "#{'  ' * 2}" << "#{Extise.command(extractor)} < #{File.join path, f[:path]}".cyan if v unless q
+  puts "#{'  ' * 2}" << "#{Extise.command extractor} < …".cyan if v unless q
 
-    Extise.stream(function: extractor, input: content) { |o|
-      blocks = Extise::Parser.parse_blocks o
-    } || abort("#{Commit}:#{commit.id} unexpected failure extracting elements".red)
+  # NOTE: extract Java type declarations for all files at once
 
-    if blocks.nil?
-      warn "#{Commit}:#{commit.id} no elements extracted from #{f[:path]}".magenta
-      next
-    end
+  Extise.stream(function: extractor, input: sources) do |o|
+    blocks = Extise::Parser.parse_blocks o
+  end or abort("#{Commit}:#{commit.id} unexpected failure extracting elements".red)
+
+  abort "#{Commit}:#{commit.id} no elements extracted".red if blocks.nil?
+
+  blocks = blocks.inject({}) { |h, b| (h[b[:file]] ||= []) << b; h }
+
+  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.count < files.count
+
+  files.each do |f|
 
     # NOTE: select only top level Java type declarations
 
-    blocks.select! { |b| b[:path] !~ /\// }
+    blocks[f[:path]].select! { |b| b[:path] !~ /\// }
 
-    if blocks.empty?
-      warn "#{Commit}:#{commit.id} no elements suitable from #{f[:path]}".magenta
+    if blocks[f[:path]].empty?
+      warn "#{Commit}:#{commit.id} no suitable elements in #{f[:path]}".magenta
       next
     end
 
-    blocks.each do |b|
+    blocks[f[:path]].each do |b|
       element = persist(Element, commit: commit, identifier: f[:oid], path: b[:path]) do |r|
         r.file = f[:path]
         r.offset = b[:offset]

@@ -13,7 +13,7 @@ import sk.stuba.fiit.perconik.utilities.function.ListCollector;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 
-import static sk.stuba.fiit.extise.Bootstrap.parse;
+import static sk.stuba.fiit.extise.Java.parse;
 
 abstract class NodeExtractor extends Bootstrap.Unit<String> {
   private final ListCollector<ASTNode, ASTNode> collector;

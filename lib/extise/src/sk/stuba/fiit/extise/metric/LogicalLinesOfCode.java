@@ -1,17 +1,22 @@
 package sk.stuba.fiit.extise.metric;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 
-import sk.stuba.fiit.perconik.core.java.dom.NodeCounters;
+import sk.stuba.fiit.extise.dom.NodeRegion;
+
+import sk.stuba.fiit.perconik.core.java.dom.NodeCollectors;
 
 import static java.util.Arrays.asList;
 
-import static sk.stuba.fiit.extise.Bootstrap.parse;
+import static com.google.common.collect.Sets.newLinkedHashSetWithExpectedSize;
+
 import static sk.stuba.fiit.extise.Bootstrap.run;
+import static sk.stuba.fiit.extise.Java.parse;
 
 public final class LogicalLinesOfCode extends NumericMetric<Integer> {
   public static void main(final String ... args) throws Exception {
@@ -22,8 +27,17 @@ public final class LogicalLinesOfCode extends NumericMetric<Integer> {
   public Collection<Integer> apply(final String input) {
     CompilationUnit unit = (CompilationUnit) parse(input);
 
-    // TODO there can be more statements on a single logical line of code
+    List<Statement> statements = NodeCollectors.ofClass(Statement.class).apply(unit);
+    Set<Integer> lines = newLinkedHashSetWithExpectedSize(statements.size());
 
-    return asList(NodeCounters.<ASTNode>ofClass(Statement.class).apply(unit));
+    for (Statement statement: statements) {
+      NodeRegion region = NodeRegion.of(unit, statement);
+
+      for (int line: region.getLines(input, unit)) {
+        lines.add(line);
+      }
+    }
+
+    return asList(lines.size());
   }
 }

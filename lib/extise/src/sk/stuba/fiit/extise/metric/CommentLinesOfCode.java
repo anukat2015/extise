@@ -1,17 +1,20 @@
 package sk.stuba.fiit.extise.metric;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import sk.stuba.fiit.perconik.core.java.dom.NodeCounters;
+import sk.stuba.fiit.extise.dom.NodeRegion;
 
 import static java.util.Arrays.asList;
 
-import static sk.stuba.fiit.extise.Bootstrap.parse;
+import static com.google.common.collect.Sets.newLinkedHashSetWithExpectedSize;
+
 import static sk.stuba.fiit.extise.Bootstrap.run;
+import static sk.stuba.fiit.extise.Java.parse;
 
 public final class CommentLinesOfCode extends NumericMetric<Integer> {
   public static void main(final String ... args) throws Exception {
@@ -22,9 +25,17 @@ public final class CommentLinesOfCode extends NumericMetric<Integer> {
   public Collection<Integer> apply(final String input) {
     CompilationUnit unit = (CompilationUnit) parse(input);
 
-    // TODO JDT somehow does not parse line & block comments
-    // TODO number of comment nodes does not correspond with comment lines of code
+    List<Comment> comments = unit.getCommentList();
+    Set<Integer> lines = newLinkedHashSetWithExpectedSize(comments.size());
 
-    return asList(NodeCounters.<ASTNode>ofClass(Comment.class).apply(unit));
+    for (Comment comment: comments) {
+      NodeRegion region = NodeRegion.of(unit, comment);
+
+      for (int line: region.getLines(input, unit)) {
+        lines.add(line);
+      }
+    }
+
+    return asList(lines.size());
   }
 }

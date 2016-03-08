@@ -33,8 +33,8 @@ import sk.stuba.fiit.perconik.core.java.dom.traverse.NodeVisitor;
 
 import static java.util.Arrays.asList;
 
-import static sk.stuba.fiit.extise.Bootstrap.parse;
 import static sk.stuba.fiit.extise.Bootstrap.run;
+import static sk.stuba.fiit.extise.Java.parse;
 
 public final class CyclomaticComplexity extends NumericMetric<Integer> {
   public static void main(final String ... args) throws Exception {

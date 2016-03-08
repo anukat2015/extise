@@ -1,14 +1,12 @@
 package sk.stuba.fiit.extise.map;
 
-import sk.stuba.fiit.perconik.core.java.dom.NodeCollectors;
-import sk.stuba.fiit.perconik.core.java.dom.NodeTokenizer;
-import sk.stuba.fiit.perconik.eclipse.jdt.core.dom.NodeType;
-
 import static sk.stuba.fiit.extise.Bootstrap.run;
+
+import static sk.stuba.fiit.perconik.eclipse.jdt.core.dom.NodeType.JAVADOC;
 
 public final class JavadocTokenizer extends JavaTokenizer {
   public JavadocTokenizer() {
-    super(NodeTokenizer.using(NodeCollectors.ofType(NodeType.JAVADOC)));
+    super(nodeTokenizerFactory(JAVADOC));
   }
 
   public static void main(final String ... args) throws Exception {

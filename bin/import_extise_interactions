@@ -79,8 +79,6 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
     r.finished_at = revision.submitted_at
   end
 
-  #TODO previous session should be utilized via find and not be saved when unchanged!
-
   dump_record previous_session = session, :session, 1 unless previous_session == session
 
   handle = parse_structure_handle i.structure_handle

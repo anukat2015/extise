@@ -3,6 +3,10 @@ package sk.stuba.fiit.extise.dom;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import com.google.common.base.Splitter;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -15,6 +19,8 @@ import static com.google.common.collect.Lists.newArrayListWithCapacity;
 
 import static sk.stuba.fiit.extise.Java.parse;
 
+import static sk.stuba.fiit.perconik.utilities.MoreStrings.lineSeparatorRegex;
+
 abstract class NodeExtractor extends Bootstrap.Unit<String> {
   private final ListCollector<ASTNode, ASTNode> collector;
 
@@ -22,28 +28,38 @@ abstract class NodeExtractor extends Bootstrap.Unit<String> {
     this.collector = checkNotNull(collector);
   }
 
-  static StringBuilder block(final String path, final int line, final int offset, final int length) {
+  static StringBuilder block(@Nullable final String file, final String path, final int line, final int offset, final int length) {
     StringBuilder block = new StringBuilder(128 + path.length());
 
-    block.append("# ").append(path).append(":").append(line).append(" ");
-    block.append(offset).append("+").append(length);
+    block.append("# ").append(file != null ? file : "?").append(":").append(path).append(":");
+    block.append(line).append(" ").append(offset).append("+").append(length);
 
     return block;
   }
 
   @Override
   public final Collection<String> apply(final String input) {
-    CompilationUnit unit = (CompilationUnit) parse(input);
+    String file = null, source = input;
+
+    if (input.startsWith("#")) {
+      List<String> parts = Splitter.onPattern(lineSeparatorRegex()).limit(2).splitToList(input);
+
+      file = parts.get(0);
+      file = file.substring(1, file.length()).trim();
+      source = parts.size() == 2 ? parts.get(1) : "";
+    }
+
+    CompilationUnit unit = (CompilationUnit) parse(source);
 
     List<ASTNode> nodes = this.collector.apply(unit);
     List<String> blocks = newArrayListWithCapacity(nodes.size());
 
     for (ASTNode node: nodes) {
-      blocks.add(this.extract(input, unit, node));
+      blocks.add(this.extract(file, source, unit, node));
     }
 
     return blocks;
   }
 
-  abstract String extract(String input, CompilationUnit unit, ASTNode node);
+  abstract String extract(@Nullable String path, String input, CompilationUnit unit, ASTNode node);
 }

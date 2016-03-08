@@ -40,8 +40,6 @@ end
 
 i = 0
 
-#TODO after this filter review data and maybe filter even by classification, component + product
-
 # NOTE: import only confirmed, resolved, and fixed bugs
 
 bugs = BugsEclipseOrg::Bug.where(everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED)

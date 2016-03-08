@@ -44,11 +44,6 @@ git = Rugged::Repository.new path
 
 git.checkout 'master'
 
-#TODO speedup: for each repository we process only commits bound by interactions:
-# commits: a,b,c,d
-# a -- b -> get time -> no interactions from bugs_eclipse_org
-# b -- c -> get time -> some interactions => process a and b
-
 process git.walk('HEAD').to_a, count: n, worker: w, progress: !n.zero? do |c|
   author = User.joins(:bugs_eclipse_org_user).find_by 'login_name = ? OR realnames @> ?', c.author[:name], "{#{c.author[:name]}}"
 

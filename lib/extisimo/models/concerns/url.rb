@@ -83,11 +83,11 @@ module Extisimo::URL
     include Extisimo::URL
 
     def gerrit_url
-      GERRIT_COMMIT.gsub(/%(product|repository|commit)/, '%product' => repository.git_eclipse_org_product, '%repository' => repository.name, '%commit' => name)
+      GERRIT_COMMIT.gsub(/%(product|repository|commit)/, '%product' => repository.git_eclipse_org_product, '%repository' => repository.name, '%commit' => identifier)
     end
 
     def github_url
-      GITHUB_COMMIT.gsub(/%(repository|commit)/, '%repository' => repository.name, '%commit' => name)
+      GITHUB_COMMIT.gsub(/%(repository|commit)/, '%repository' => repository.name, '%commit' => identifier)
     end
   end
 
@@ -95,7 +95,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def github_url
-      GITHUB_COMMIT.gsub(/%(repository|commit|file|line)/, '%repository' => commit.repository.name, '%commit' => commit.name, '%file' => file, '%line' => line)
+      GITHUB_LINE.gsub(/%(repository|commit|file|line)/, '%repository' => commit.repository.name, '%commit' => commit.identifier, '%file' => file, '%line' => line)
     end
   end
 end

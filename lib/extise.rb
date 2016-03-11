@@ -29,12 +29,18 @@ module Extise
 
   def self.stream(function: nil, input: STDIN)
     open function: function, input: input do |o, _, s|
-      Thread.new { yield o }
-      s.value.to_i.zero?
+      t = Thread.new { yield o }
+      s.value.to_i == 0 ? t.value : false
     end
   end
 
-  module Parser
+  module Data
+    FS, US = 28, 31
+
+    def self.pack_files(files)
+      files.map { |file, source| "#{file}#{US.chr}#{source}" } * FS.chr
+    end
+
     def self.parse_blocks(input)
       input.each_line.inject([]) do |blocks, l|
         if l.start_with? '#'

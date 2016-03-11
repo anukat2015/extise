@@ -1,20 +1,27 @@
 package sk.stuba.fiit.extise;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
 import static java.lang.System.in;
 import static java.lang.System.out;
-import static java.util.Arrays.asList;
 
+import static com.google.common.base.Ascii.FS;
+import static com.google.common.base.Ascii.US;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
@@ -31,10 +38,12 @@ public final class Bootstrap {
       inputs = newArrayListWithCapacity(files.length);
 
       for (String file: files) {
-        inputs.add(Files.toString(new File(file), UTF_8));
+        inputs.add(file + ((char) US) + Files.toString(new File(file), UTF_8));
       }
     } else {
-      inputs = asList(CharStreams.toString(new InputStreamReader(in, UTF_8)));
+      Reader reader = new BufferedReader(new InputStreamReader(in, UTF_8));
+
+      inputs = Splitter.on((char) FS).splitToList(CharStreams.toString(reader));
     }
 
     Collection<?> outputs = function.apply(inputs);
@@ -46,6 +55,8 @@ public final class Bootstrap {
 
   static abstract class AbstractUnit<T> implements Function<Collection<String>, Collection<T>> {
     AbstractUnit() {}
+
+    abstract Collection<T> apply(final String input, @Nullable final String file);
 
     abstract Collection<T> apply(final String input);
 
@@ -64,6 +75,8 @@ public final class Bootstrap {
   }
 
   public static abstract class Unit<T> extends AbstractUnit<T> {
+    private static final Splitter splitter = Splitter.on((char) US).limit(2);
+
     protected Unit() {}
 
     @Override
@@ -71,10 +84,20 @@ public final class Bootstrap {
       List<T> output = newArrayListWithExpectedSize(16 * inputs.size());
 
       for (String input: inputs) {
-        output.addAll(this.apply(input));
+        Iterator<String> parts = Unit.splitter.split(input).iterator();
+
+        String first = parts.next();
+        String second = parts.hasNext() ? parts.next() : null;
+
+        output.addAll(second == null ? this.apply(first, null) : this.apply(second, first));
       }
 
       return output;
+    }
+
+    @Override
+    protected Collection<T> apply(final String input, @Nullable final String file) {
+      return this.apply(input);
     }
 
     @Override

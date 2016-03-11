@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Splitter;
-
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -18,8 +16,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 
 import static sk.stuba.fiit.extise.Java.parse;
-
-import static sk.stuba.fiit.perconik.utilities.MoreStrings.lineSeparatorRegex;
 
 abstract class NodeExtractor extends Bootstrap.Unit<String> {
   private final ListCollector<ASTNode, ASTNode> collector;
@@ -38,24 +34,14 @@ abstract class NodeExtractor extends Bootstrap.Unit<String> {
   }
 
   @Override
-  public final Collection<String> apply(final String input) {
-    String file = null, source = input;
-
-    if (input.startsWith("#")) {
-      List<String> parts = Splitter.onPattern(lineSeparatorRegex()).limit(2).splitToList(input);
-
-      file = parts.get(0);
-      file = file.substring(1, file.length()).trim();
-      source = parts.size() == 2 ? parts.get(1) : "";
-    }
-
-    CompilationUnit unit = (CompilationUnit) parse(source);
+  public final Collection<String> apply(final String input, @Nullable final String file) {
+    CompilationUnit unit = (CompilationUnit) parse(input);
 
     List<ASTNode> nodes = this.collector.apply(unit);
     List<String> blocks = newArrayListWithCapacity(nodes.size());
 
     for (ASTNode node: nodes) {
-      blocks.add(this.extract(file, source, unit, node));
+      blocks.add(this.extract(file, input, unit, node));
     }
 
     return blocks;

@@ -2,7 +2,7 @@
 require_relative 'common' and load_extise!
 
 models = %w(user task post attachment project repository commit element)
-services = %w(bugzilla gerrit github)
+services = %w(bugzilla egit gerrit github)
 
 s, m, k = nil, nil, nil
 

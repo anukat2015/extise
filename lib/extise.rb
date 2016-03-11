@@ -37,15 +37,16 @@ module Extise
   module Data
     FS, US = 28, 31
 
-    def self.pack_files(files)
-      files.map { |file, source| "#{file}#{US.chr}#{source}" } * FS.chr
+    def self.pack_inputs(inputs)
+      inputs.map { |id, input| "#{id}#{US.chr}#{input}" } * FS.chr
     end
 
     def self.parse_blocks(input)
       input.each_line.inject([]) do |blocks, l|
         if l.start_with? '#'
-          file, path, line, offset, length = *l[1..-1].strip.split(/[:\s\+]/)
-          blocks << { file: file, path: path, line: line, offset: offset, length: length, source: nil }
+          id, path, rest = *l[2..-1].strip.split(/:/)
+          line, offset, length = *rest.split(/[\s\+]/)
+          blocks << { id: id, path: path, line: line, offset: offset, length: length, source: nil }
         else
           (blocks.last[:source] ||= '') << l
         end

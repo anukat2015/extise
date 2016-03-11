@@ -56,7 +56,7 @@ public final class Bootstrap {
   static abstract class AbstractUnit<T> implements Function<Collection<String>, Collection<T>> {
     AbstractUnit() {}
 
-    abstract Collection<T> apply(final String input, @Nullable final String file);
+    abstract Collection<T> apply(final String input, @Nullable final String identifier);
 
     abstract Collection<T> apply(final String input);
 
@@ -96,7 +96,7 @@ public final class Bootstrap {
     }
 
     @Override
-    protected Collection<T> apply(final String input, @Nullable final String file) {
+    protected Collection<T> apply(final String input, @Nullable final String identifier) {
       return this.apply(input);
     }
 

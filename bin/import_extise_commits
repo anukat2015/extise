@@ -25,11 +25,6 @@ AutoColor.disable on: self unless c
 
 include Extisimo
 
-def walk_files(git, tree, path = '.', &block)
-  tree.each_blob { |f| block.call f.merge(path: File.join(path, f[:name]).sub(/\A\.\//, '')) }
-  tree.each_tree { |t| walk_files git, git.lookup(t[:oid]), File.join(path, t[:name]), &block }
-end
-
 # NOTE: since the sum of interactions is far greater than the sum commits,
 # we first process commits and leave interactions for later processing
 
@@ -41,10 +36,18 @@ dump_record repository, :repository
 
 path = File.join d, repository.name
 git = Rugged::Repository.new path
+sort = Rugged::SORT_DATE | Rugged::SORT_REVERSE
+
+# NOTE: always process master commits only
 
 git.checkout 'master'
 
-process git.walk('HEAD', Rugged::SORT_REVERSE).to_a, count: n, worker: w, progress: !n.zero? do |c|
+process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do |c|
+
+  # NOTE: skip first commit and all merge commits
+
+  next if c.parents.count != 1
+
   author = User.joins(:bugs_eclipse_org_user).find_by 'login_name = ? OR realnames @> ?', c.author[:name], "{#{c.author[:name]}}"
 
   # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
@@ -61,46 +64,44 @@ process git.walk('HEAD', Rugged::SORT_REVERSE).to_a, count: n, worker: w, progre
 
   dump_record commit, :commit, 1
 
-  files, sources = [], ''
+  # NOTE: since each commit includes all affected elements both original and revision files need to be considered
 
-  walk_files(git, c.tree) do |f|
+  files = c.parents.first.diff(c).deltas.map { |d| [d.old_file, d.new_file] }.flatten
 
-    # NOTE: select only Java files to process
+  # NOTE: select only Java files to process
 
-    next unless f[:name].end_with? '.java'
+  files.select! { |f| f[:oid] !~ /0{40}/ && !f[:path].ends_with?('package-info.java') && f[:path].end_with?('.java') }
 
-    files << f
-    sources << "# #{f[:path]}\n#{git.lookup(f[:oid]).content}"
-  end
+  next if files.empty?
+  
+  # NOTE: extract Java type declarations for all files at once
 
-  extractor, blocks = 'TypePositionExtractor', nil
+  extractor = 'TypePositionExtractor'
+  data = Extise::Data.pack_inputs files.inject([]) { |a, f| a << [f[:oid], git.lookup(f[:oid]).content] }
 
   puts "#{'  ' * 2}" << "#{Extise.command extractor} < …".cyan if v unless q
 
-  # NOTE: extract Java type declarations for all files at once
+  blocks = Extise.stream(function: extractor, input: data) do |o|
+    Extise::Data.parse_blocks(o).group_by { |b| b[:id] }
+  end
 
-  Extise.stream(function: extractor, input: sources) do |o|
-    blocks = Extise::Parser.parse_blocks o
-  end or abort("#{Commit}:#{commit.id} unexpected failure extracting elements".red)
-
-  abort "#{Commit}:#{commit.id} no elements extracted".red if blocks.nil?
-
-  blocks = blocks.inject({}) { |h, b| (h[b[:file]] ||= []) << b; h }
-
-  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.count < files.count
+  abort("#{Commit}:#{commit.id} elements extraction failed".red) if blocks === false
+  abort "#{Commit}:#{commit.id} no elements extracted".red if blocks.empty?
+  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.count != files.count
 
   files.each do |f|
+    id = f[:oid]
 
     # NOTE: select only top level Java type declarations
 
-    blocks[f[:path]].select! { |b| b[:path] !~ /\// }
+    blocks[id].select! { |b| b[:path] !~ /\// }
 
-    if blocks[f[:path]].empty?
+    if blocks[id].empty?
       warn "#{Commit}:#{commit.id} no suitable elements in #{f[:path]}".magenta
       next
     end
 
-    blocks[f[:path]].each do |b|
+    blocks[id].each do |b|
       element = persist(Element, commit: commit, identifier: f[:oid], path: b[:path]) do |r|
         r.file = f[:path]
         r.offset = b[:offset]

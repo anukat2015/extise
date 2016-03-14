@@ -64,9 +64,10 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   dump_record commit, :commit, 1
 
-  # NOTE: since each commit includes all affected elements both original and revision files need to be considered
+  # NOTE: consider only elements from the revision file, the actual difference itself is not included implicitly
+  # in the the model but rather computed later between the original (not previous) and revision commit files
 
-  files = c.parents.first.diff(c).deltas.map { |d| [d.old_file, d.new_file] }.flatten
+  files = c.parents.first.diff(c).deltas.map &:new_file
 
   # NOTE: select only Java files to process
 
@@ -77,33 +78,32 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
   # NOTE: extract Java type declarations for all files at once
 
   extractor = 'TypePositionExtractor'
-  data = Extise::Data.pack_inputs files.inject([]) { |a, f| a << [f[:oid], git.lookup(f[:oid]).content] }
+  data = Extise::Data.pack_files files.inject([]) { |a, f| a << [f[:path], git.lookup(f[:oid]).content] }
 
   puts "#{'  ' * 2}" << "#{Extise.command extractor} < …".cyan if v unless q
 
   blocks = Extise.stream(function: extractor, input: data) do |o|
-    Extise::Data.parse_blocks(o).group_by { |b| b[:id] }
+    Extise::Data.parse_blocks(o).group_by { |b| b[:file] }
   end
 
   abort("#{Commit}:#{commit.id} elements extraction failed".red) if blocks === false
   abort "#{Commit}:#{commit.id} no elements extracted".red if blocks.empty?
-  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.count != files.count
+  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.size < files.size
 
   files.each do |f|
-    id = f[:oid]
+    path = f[:path]
 
     # NOTE: select only top level Java type declarations
 
-    blocks[id].select! { |b| b[:path] !~ /\// }
+    blocks[path].select! { |b| b[:path] !~ /\// }
 
-    if blocks[id].empty?
+    if blocks[path].empty?
       warn "#{Commit}:#{commit.id} no suitable elements in #{f[:path]}".magenta
       next
     end
 
-    blocks[id].each do |b|
-      element = persist(Element, commit: commit, identifier: f[:oid], path: b[:path]) do |r|
-        r.file = f[:path]
+    blocks[path].each do |b|
+      element = persist(Element, commit: commit, file: f[:path], path: b[:path]) do |r|
         r.offset = b[:offset]
         r.length = b[:length]
         r.line = b[:line]

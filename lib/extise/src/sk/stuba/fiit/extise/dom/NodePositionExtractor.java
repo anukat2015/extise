@@ -15,11 +15,11 @@ abstract class NodePositionExtractor extends NodeExtractor {
   }
 
   @Override
-  final String extract(@Nullable final String identifier, final String input, final CompilationUnit unit, final ASTNode node) {
+  final String extract(@Nullable final String file, final String input, final CompilationUnit unit, final ASTNode node) {
     String path = namePathExtractor().apply(node).toString();
 
     NodeRegion region = NodeRegion.of(unit, node);
 
-    return block(identifier, path, region.getLine(unit), region.offset, region.length).toString();
+    return block(file, path, region.getLine(unit), region.offset, region.length).toString();
   }
 }

@@ -17,13 +17,13 @@ abstract class NodeSourceExtractor extends NodeExtractor {
   }
 
   @Override
-  final String extract(@Nullable final String identifier, final String input, final CompilationUnit unit, final ASTNode node) {
+  final String extract(@Nullable final String file, final String input, final CompilationUnit unit, final ASTNode node) {
     String path = namePathExtractor().apply(node).toString();
 
     NodeRegion region = NodeRegion.of(unit, node);
 
     String source = region.getSource(input);
 
-    return block(identifier, path, region.getLine(unit), region.offset, region.length).append(lineSeparator()).append(source).toString();
+    return block(file, path, region.getLine(unit), region.offset, region.length).append(lineSeparator()).append(source).toString();
   }
 }

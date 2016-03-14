@@ -24,24 +24,24 @@ abstract class NodeExtractor extends Bootstrap.Unit<String> {
     this.collector = checkNotNull(collector);
   }
 
-  static StringBuilder block(@Nullable final String identifier, final String path, final int line, final int offset, final int length) {
+  static StringBuilder block(@Nullable final String file, final String path, final int line, final int offset, final int length) {
     StringBuilder block = new StringBuilder(128 + path.length());
 
-    block.append("# ").append(identifier != null ? identifier : "?").append(":").append(path);
+    block.append("# ").append(file != null ? file : "?").append(":").append(path);
     block.append(":").append(line).append(" ").append(offset).append("+").append(length);
 
     return block;
   }
 
   @Override
-  public final Collection<String> apply(final String input, @Nullable final String identifier) {
+  public final Collection<String> apply(final String input, @Nullable final String file) {
     CompilationUnit unit = (CompilationUnit) parse(input);
 
     List<ASTNode> nodes = this.collector.apply(unit);
     List<String> blocks = newArrayListWithCapacity(nodes.size());
 
     for (ASTNode node: nodes) {
-      blocks.add(this.extract(identifier, input, unit, node));
+      blocks.add(this.extract(file, input, unit, node));
     }
 
     return blocks;

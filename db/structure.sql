@@ -432,7 +432,6 @@ ALTER SEQUENCE extisimo_conceptualities_id_seq OWNED BY extisimo_conceptualities
 CREATE TABLE extisimo_elements (
     id integer NOT NULL,
     commit_id integer NOT NULL,
-    identifier character varying(40) NOT NULL,
     file character varying(2048) NOT NULL,
     path character varying(2048) NOT NULL,
     "offset" integer NOT NULL,
@@ -1641,7 +1640,7 @@ CREATE INDEX index_extisimo_conceptualities_on_subject_type ON extisimo_conceptu
 -- Name: index_extisimo_elements_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_elements_as_unique ON extisimo_elements USING btree (commit_id, identifier, path);
+CREATE UNIQUE INDEX index_extisimo_elements_as_unique ON extisimo_elements USING btree (commit_id, file, path);
 
 
 --
@@ -1656,13 +1655,6 @@ CREATE INDEX index_extisimo_elements_on_commit_id ON extisimo_elements USING btr
 --
 
 CREATE INDEX index_extisimo_elements_on_file ON extisimo_elements USING btree (file);
-
-
---
--- Name: index_extisimo_elements_on_identifier; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_extisimo_elements_on_identifier ON extisimo_elements USING btree (identifier);
 
 
 --

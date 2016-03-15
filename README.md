@@ -94,6 +94,7 @@ Import Extise commits from repositories, fill `extisimo_{commits,elements}` tabl
 Import Extise interactions from tasks and commits, fill `extisimo_{sessions,interactions}` tables
 
     import_extise_interactions eclipse.pde.ui
+    import_extise_interactions eclipse.pde.ui --match=method
 
 ### Raw import
 

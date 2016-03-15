@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-d, n, w = nil, 4, :thread
+m, d, n, w = :unit, nil, 4, :thread
 c, s, t, v, q, r = true, false, 80, true, false, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <project>'
+  opt 'm -m --match=(method|unit|type)'
   opt 'd -d --directory=<path>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
@@ -17,6 +18,7 @@ ARGV.bind_and_parse! to: :locals do
   arg 'r <repository>'
 end
 
+m = m.to_sym
 d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
@@ -25,10 +27,17 @@ AutoColor.disable on: self unless c
 
 include Extisimo
 
+#TODO method pairing is not effective, all Elements (methods also) are exactly identified
+# by "offset+length in file at commit" not name, but methods in interactions' structure_handle
+# are identified by name and params list (and this list is stripped in parse_structure_handle)
+#TODO parse_structure_handle also ignores constants and therefore possible methods in anonymous
+# classes used in constant field declarations
+
 def parse_structure_handle(h)
   d, p, n, e = *h[1..-1].split(/&lt;|\{|\[/)
+  return unless n && e
   f = File.join d, p.split(/\./), n
-  e = File.join e.split(/[~;]/).select { |s| s =~ /\A[^Q]/ } if e
+  e = File.join e.sub(/\^.*\z/, '').sub(/~[^;]+;.*\z/, '').split(/~/) if e
   { directory: d, package: p, name: n, file: f, element: e }
 end
 
@@ -37,9 +46,6 @@ repository = Repository.find_by name: r
 abort "#{Repository}:? not found by #{r}".red unless repository
 
 dump_record repository, :repository
-
-path = File.join d, repository.name
-git = Rugged::Repository.new path
 
 # NOTE: command, preference, and attention kinds are completely missing from original data
 # NOTE: navigation does not hold any information value in original data and can be ignored
@@ -62,20 +68,25 @@ previous_session = nil
 process interactions, count: n, worker: w, progress: !n.zero? do |i|
   attachment = i.attachment.extisimo_attachment
   user = attachment.author
-  revision = Extisimo::Commit.where('submitted_at > ?', i.start_date).order(submitted_at: :asc).first
+  commits = Extisimo::Commit.where(author: user).where('submitted_at > ?', i.start_date).order(submitted_at: :asc)
 
-  abort "#{BugsEclipseOrg::Interaction}:#{i.id} unable to find revision commit".red unless revision
-  #abort "#{BugsEclipseOrg::Interaction}:#{i.id} interaction attacher and revision author do not match".red unless user != revision.author
+  # NOTE: consider consecutive commits A, B, C where A and C have the same author and B is authored by someone else,
+  # and a session identified by commit C is created, then C is revision commit, B is original commit, and A is a commit
+  # by the same author previous to revision, the session is then bounded by A and C
 
-  #TODO should each user have his own individual sessions? if so, then session unique key should be [user, commit], see commented assertion check above!
+  previous, revision = *commits.limit(3)
 
-  original = git.rev_parse "#{revision.identifier}^"
+  # NOTE: skip all interactions of initial session, i.e. ignore all unbounded sessions
 
-  session = persist(Session, commit: revision) do |r|
-    r.user = user
-    r.original_identifier = original.oid
+  next unless previous
+
+  abort "#{BugsEclipseOrg::Interaction}:#{i.id} revision commit not found".red unless revision
+
+  session = persist(Session, user: user, revision_commit: revision) do |r|
+    r.previous_commit = previous
+    r.previous_identifier = previous.identifier
     r.revision_identifier = revision.identifier
-    r.started_at = original.time.utc
+    r.started_at = previous.submitted_at
     r.finished_at = revision.submitted_at
   end
 
@@ -85,21 +96,44 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   # NOTE: skip interactions without element specified in structure handle
 
-  unless handle[:element]
-    warn "#{BugsEclipseOrg::Interaction}:#{i.id} element missing in structure handle".magenta
+  unless handle
+    warn "#{BugsEclipseOrg::Interaction}:#{i.id} missing data in structure handle".magenta
     next
   end
 
-  element = Element.find_by commit: revision, file: handle[:file], path: handle[:element]
+  # NOTE: crop node paths to match elements according to element type during node extraction
 
-  #TODO handle elemnt probably does not match DB data
+  path = handle[:element]
+  path = path.sub(/\/.*\z/, '') if m == :unit
+  path = path.sub(/\/[a-z].*\z/, '') if m == :type
 
-  abort "#{BugsEclipseOrg::Interaction}:#{i.id} unable to find element".red unless element
+  # NOTE: skip possible top level package-private classes (this should not affect rename refactorings)
+
+  next if m == :unit && File.basename(handle[:file], '.java') != path
+
+  # NOTE: find potential elements by previous commit since interactions were most likely done on such files
+  # NOTE: use file path suffix since file paths in interactions are relative to projects not to repository
+
+  relation = Element.where(commit: previous).where('file LIKE ?', "%#{handle[:file]}")
+  elements = relation.where(path: path).all
+  element = elements.first
+
+  # NOTE: skip selections with no modifications, i.e. with missing elements extracted from commit
+
+  next if element.nil? && i.kind == 'selection'
+
+  # NOTE: skip interactions for elements unmatched by file, i.e. completely unmatchable interactions
+
+  next if element.nil? && relation.count.zero?
+
+  abort "#{BugsEclipseOrg::Interaction}:#{i.id} element not found".red unless element
+  abort "#{BugsEclipseOrg::Interaction}:#{i.id} too many elements".red if elements.size > 1
 
   interaction = persist(Extisimo::Interaction, started_at: i.start_date, element: element, session: session) do |r|
     r.attachment = attachment
     r.kind = i.kind
     r.finished_at = i.end_date
+    r.bugs_eclipse_org_interaction_id = i.id
   end
 
   dump_record interaction, :interaction, 2

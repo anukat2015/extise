@@ -113,11 +113,16 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
     blocks[k].select! { |b| b[:path] !~ /\// }
 
     if blocks[k].empty?
-      warn "#{Commit}:#{commit.id} no suitable elements in #{f}".magenta
+      warn "#{Commit}:#{commit.id} no elements in #{f[:path]}".magenta
       next
     end
 
     blocks[k].each do |b|
+      if b[:path] == '!'
+        warn "#{Commit}:#{commit.id} problematic node in #{f[:path]}".magenta
+        next
+      end
+
       element = persist(Element, commit: commit, file: f[:path], path: b[:path]) do |r|
         r.offset = b[:offset]
         r.length = b[:length]

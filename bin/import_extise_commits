@@ -69,16 +69,31 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   files = c.parents.first.diff(c).deltas.map &:new_file
 
-  # NOTE: select only Java files to process
+  # NOTE: select only Java files to process (also filter out binary files)
 
-  files.select! { |f| f[:oid] !~ /0{40}/ && !f[:path].ends_with?('package-info.java') && f[:path].end_with?('.java') }
+  sources = {}
+
+  files.select! do |f|
+    next if f[:oid] =~ /0{40}/
+    next if f[:path].ends_with?('package-info.java')
+    next unless f[:path].end_with?('.java')
+
+    if (b = git.lookup f[:oid]).binary?
+      warn "#{Commit}:#{commit.id} binary content in #{f[:path]}".magenta
+      next
+    end
+
+    sources[f[:path]] = b.text
+  end
+
+  # NOTE: move to next commit if no Java files are present and leave
+  # the current commit persisted since it still indicates a session boundary
 
   next if files.empty?
 
   # NOTE: extract Java type declarations for all files at once
 
-  extractor = 'TypePositionExtractor'
-  data = Extise::Data.pack_files files.inject([]) { |a, f| a << [f[:path], git.lookup(f[:oid]).content] }
+  extractor, data = 'TypePositionExtractor', Extise::Data.pack_files(sources)
 
   puts "#{'  ' * 2}" << "#{Extise.command extractor} < …".cyan if v unless q
 
@@ -91,18 +106,18 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
   abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.size < files.size
 
   files.each do |f|
-    path = f[:path]
+    k = f[:path]
 
     # NOTE: select only top level Java type declarations
 
-    blocks[path].select! { |b| b[:path] !~ /\// }
+    blocks[k].select! { |b| b[:path] !~ /\// }
 
-    if blocks[path].empty?
-      warn "#{Commit}:#{commit.id} no suitable elements in #{f[:path]}".magenta
+    if blocks[k].empty?
+      warn "#{Commit}:#{commit.id} no suitable elements in #{f}".magenta
       next
     end
 
-    blocks[path].each do |b|
+    blocks[k].each do |b|
       element = persist(Element, commit: commit, file: f[:path], path: b[:path]) do |r|
         r.offset = b[:offset]
         r.length = b[:length]

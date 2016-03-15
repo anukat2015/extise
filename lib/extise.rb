@@ -35,7 +35,7 @@ module Extise
     FS, US = 28, 31
 
     def self.pack_files(files)
-      files.map { |file, content| "#{file}#{US.chr}#{content}" } * FS.chr
+      files.map { |file, source| "#{file}#{US.chr}#{source}" } * FS.chr
     end
 
     def self.parse_blocks(input)

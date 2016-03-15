@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-d, n, w = nil, 4, :thread
+e, d, n, w = :unit, nil, 4, :thread
 c, s, t, v, q, r = true, false, 80, true, false, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <repository>'
+  opt 'e -e --extract=(method|unit|type)'
   opt 'd -d --directory=<path>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
@@ -17,6 +18,7 @@ ARGV.bind_and_parse! to: :locals do
   arg 'r <repository>'
 end
 
+e = e.to_sym
 d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
@@ -93,7 +95,9 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   # NOTE: extract Java type declarations for all files at once
 
-  extractor, data = 'TypePositionExtractor', Extise::Data.pack_files(sources)
+  extractor, data = "#{e == :method ? 'Method' : 'Type'}PositionExtractor", Extise::Data.pack_files(sources)
+
+  sources.clear
 
   puts "#{'  ' * 2}" << "#{Extise.command extractor} < …".cyan if v unless q
 
@@ -103,14 +107,14 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   abort("#{Commit}:#{commit.id} elements extraction failed".red) if blocks === false
   abort "#{Commit}:#{commit.id} no elements extracted".red if blocks.empty?
-  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.size < files.size
+  abort "#{Commit}:#{commit.id} some elements not extracted".red if e == :unit && blocks.size < files.size
 
   files.each do |f|
     k = f[:path]
 
-    # NOTE: select only top level Java type declarations
+    # NOTE: select only top level Java type declarations in case of unit node extraction
 
-    blocks[k].select! { |b| b[:path] !~ /\// }
+    blocks[k].select! { |b| b[:path] !~ /\// } if e == :unit
 
     if blocks[k].empty?
       warn "#{Commit}:#{commit.id} no elements in #{f[:path]}".magenta

@@ -536,9 +536,10 @@ ALTER SEQUENCE extisimo_inferencers_id_seq OWNED BY extisimo_inferencers.id;
 CREATE TABLE extisimo_interactions (
     id integer NOT NULL,
     attachment_id integer NOT NULL,
-    element_id integer NOT NULL,
     session_id integer NOT NULL,
     kind character varying NOT NULL,
+    file character varying(2048) NOT NULL,
+    path character varying(2048) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     started_at timestamp without time zone NOT NULL,
@@ -1721,13 +1722,6 @@ CREATE INDEX index_extisimo_inferencers_on_target ON extisimo_inferencers USING 
 
 
 --
--- Name: index_extisimo_interactions_as_unique; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_extisimo_interactions_as_unique ON extisimo_interactions USING btree (started_at, element_id, session_id);
-
-
---
 -- Name: index_extisimo_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1742,10 +1736,10 @@ CREATE UNIQUE INDEX index_extisimo_interactions_on_bugs_eclipse_org_interaction_
 
 
 --
--- Name: index_extisimo_interactions_on_element_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_extisimo_interactions_on_file; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_interactions_on_element_id ON extisimo_interactions USING btree (element_id);
+CREATE INDEX index_extisimo_interactions_on_file ON extisimo_interactions USING btree (file);
 
 
 --
@@ -1760,6 +1754,13 @@ CREATE INDEX index_extisimo_interactions_on_finished_at ON extisimo_interactions
 --
 
 CREATE INDEX index_extisimo_interactions_on_kind ON extisimo_interactions USING btree (kind);
+
+
+--
+-- Name: index_extisimo_interactions_on_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_interactions_on_path ON extisimo_interactions USING btree (path);
 
 
 --

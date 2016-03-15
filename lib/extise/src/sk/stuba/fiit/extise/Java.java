@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 
 import sk.stuba.fiit.perconik.core.java.dom.Nodes;
+import sk.stuba.fiit.perconik.eclipse.jdt.core.JavaException;
 
 import static org.eclipse.jdt.core.JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM;
 import static org.eclipse.jdt.core.JavaCore.COMPILER_COMPLIANCE;
@@ -29,6 +30,12 @@ public final class Java {
 
     parser.setCompilerOptions(options);
 
-    return Nodes.create(parser, source);
+    ASTNode node = Nodes.create(parser, source);
+
+    if (Nodes.isProblematic(node)) {
+      throw new JavaException("Problematic AST node");
+    }
+
+    return node;
   }
 }

@@ -1,18 +1,15 @@
+require 'jarun'
+
 module Extise
-  MANIFEST = File.expand_path '../extise/META-INF/MANIFEST.MF', __FILE__
+  MANIFEST = File.expand_path 'extise/META-INF/MANIFEST.MF', __dir__
   VERSION = File.read(MANIFEST).match(/Bundle-Version:\s*(\d+\.\d+\.\d+)/)[1] || raise
 
-  def self.binary
-    @binary ||= "java -jar #{File.join __dir__, "extise-#{VERSION}.jar"}"
-  end
+  extend Jarun
 
-  def self.command(*args)
-    "#{binary} #{args * ' '}"
-  end
+  self.binary = File.expand_path "extise-#{VERSION}.jar", __dir__
 
-  def self.call(*args)
-    `#{command args}`
-  end
+  self.max_heap_size = '512m'
+  self.max_perm_size = '64m'
 
   def self.open(function: nil, input: STDIN)
     require 'open3'

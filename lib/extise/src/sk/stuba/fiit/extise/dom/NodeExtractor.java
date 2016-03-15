@@ -10,7 +10,10 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import sk.stuba.fiit.extise.Bootstrap;
 
+import sk.stuba.fiit.perconik.eclipse.jdt.core.JavaException;
 import sk.stuba.fiit.perconik.utilities.function.ListCollector;
+
+import static java.util.Arrays.asList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
@@ -35,16 +38,20 @@ abstract class NodeExtractor extends Bootstrap.Unit<String> {
 
   @Override
   public final Collection<String> apply(final String input, @Nullable final String file) {
-    CompilationUnit unit = (CompilationUnit) parse(input);
+    try {
+      CompilationUnit unit = (CompilationUnit) parse(input);
 
-    List<ASTNode> nodes = this.collector.apply(unit);
-    List<String> blocks = newArrayListWithCapacity(nodes.size());
+      List<ASTNode> nodes = this.collector.apply(unit);
+      List<String> blocks = newArrayListWithCapacity(nodes.size());
 
-    for (ASTNode node: nodes) {
-      blocks.add(this.extract(file, input, unit, node));
+      for (ASTNode node: nodes) {
+        blocks.add(this.extract(file, input, unit, node));
+      }
+
+      return blocks;
+    } catch (JavaException failure) {
+      return asList(block(file, "!", 0, 0, 0).toString());
     }
-
-    return blocks;
   }
 
   abstract String extract(@Nullable String path, String input, CompilationUnit unit, ASTNode node);

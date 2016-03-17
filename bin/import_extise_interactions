@@ -3,12 +3,11 @@ require_relative 'common' and load_extise!
 
 #TODO check uniqueness possibilities on interactions
 
-m, d, n, w = :unit, nil, 4, :thread
+d, n, w = nil, 4, :thread
 c, s, t, v, q, r = true, false, 80, true, false, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <project>'
-  opt 'm -m --match=(method|unit|type)'
   opt 'd -d --directory=<path>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
@@ -20,7 +19,6 @@ ARGV.bind_and_parse! to: :locals do
   arg 'r <repository>'
 end
 
-m = m.to_sym
 d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
@@ -109,13 +107,11 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   # NOTE: crop node paths to match elements according to element type during node extraction
 
-  path = handle[:element]
-  path = path.sub(/\/.*\z/, '') if m == :unit
-  path = path.sub(/\/[a-z].*\z/, '') if m == :type
+  path = handle[:element].sub(/\/.*\z/, '')
 
   # NOTE: skip possible top level package-private classes (this should not affect rename refactorings)
 
-  next if m == :unit && File.basename(handle[:file], '.java') != path
+  next if File.basename(handle[:file], '.java') != path
 
   # NOTE: find potential elements by previous commit since interactions were most likely done on such files
   # NOTE: use file path suffix since file paths in interactions are relative to projects not to repository

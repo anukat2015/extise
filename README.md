@@ -87,14 +87,12 @@ Map Extise repositories to projects, fill `extisimo_{repositories}` tables
 Import Extise commits from repositories, fill `extisimo_{commits,elements}` tables
 
     import_extise_commits eclipse.pde.ui
-    import_extise_commits eclipse.pde.ui --extract=method
 
 #### `import_extise_interactions`
 
 Import Extise interactions from tasks and commits, fill `extisimo_{sessions,interactions}` tables
 
     import_extise_interactions eclipse.pde.ui
-    import_extise_interactions eclipse.pde.ui --match=method
 
 ### Raw import
 

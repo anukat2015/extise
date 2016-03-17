@@ -125,7 +125,7 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
     blocks[k].each do |b|
       if b[:path] == '!'
-        warn "#{Commit}:#{commit.id} problematic node in #{f[:path]}".magenta
+        warn "#{Commit}:#{commit.id} problematic element in #{f[:path]}".magenta
         next
       end
 

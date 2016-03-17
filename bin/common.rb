@@ -67,7 +67,6 @@ def load_extise!
 
   $LOAD_PATH.uniq!
 
-  # TODO mv methods below, load them only for extise import scripts
   def dump_attribute(k, v = nil, i = 0, o = options.bound)
     return if o[:q]
     puts "#{'  ' * i}#{k.to_s.blue}: #{v == nil ? 'nil'.black : v.to_s.yellow}"

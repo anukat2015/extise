@@ -17,6 +17,10 @@ ARGV.bind_and_parse! to: :locals do
   arg 'r <repository>'
 end
 
+# NOTE: extraction of method declaration nodes requires more accurate node path computation which will include
+# method parameters, as well as proper interactions' structure handle parsing to be able to, at least partially,
+# match elements of commits with those of interactions
+
 d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?

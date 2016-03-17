@@ -16,15 +16,12 @@ module AutoColor
     attr_accessor :colored
     attr_accessor :colorings
 
-    alias_method :default_print, :print
-    alias_method :default_puts, :puts
+    [:abort, :warn, :print, :puts].each do |method|
+      alias_method "uncolored_#{method}", method
 
-    def puts(*args)
-      default_puts *enrich(args)
-    end
-
-    def print(*args)
-      default_print *enrich(args)
+      define_method method do |*args|
+        send "uncolored_#{method}", *enrich(args)
+      end
     end
 
     private

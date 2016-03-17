@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
+#TODO check uniqueness possibilities on interactions
+
 m, d, n, w = :unit, nil, 4, :thread
 c, s, t, v, q, r = true, false, 80, true, false, nil
 
@@ -33,11 +35,13 @@ include Extisimo
 #TODO parse_structure_handle also ignores constants and therefore possible methods in anonymous
 # classes used in constant field declarations
 
+
+#TODO add params to method paths & do not ignore constant declarations
 def parse_structure_handle(h)
   d, p, n, e = *h[1..-1].split(/&lt;|\{|\[/)
-  return unless n && e
+  return unless n
   f = File.join d, p.split(/\./), n
-  e = File.join e.sub(/\^.*\z/, '').sub(/~[^;]+;.*\z/, '').split(/~/) if e
+  e = e ? File.join(e.sub(/\^.*\z/, '').sub(/~[^;]+;.*\z/, '').split(/~/)) : File.basename(f, '.java')
   { directory: d, package: p, name: n, file: f, element: e }
 end
 
@@ -92,6 +96,8 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   dump_record previous_session = session, :session, 1 unless previous_session == session
 
+  # NOTE: infers element path from file when missing
+
   handle = parse_structure_handle i.structure_handle
 
   # NOTE: skip interactions without element specified in structure handle
@@ -121,10 +127,6 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
   # NOTE: skip selections with no modifications, i.e. with missing elements extracted from commit
 
   next if element.nil? && i.kind == 'selection'
-
-  # NOTE: skip interactions for elements unmatched by file, i.e. completely unmatchable interactions
-
-  next if element.nil? && relation.count.zero?
 
   abort "#{BugsEclipseOrg::Interaction}:#{i.id} element not found".red unless element
   abort "#{BugsEclipseOrg::Interaction}:#{i.id} too many elements".red if elements.size > 1

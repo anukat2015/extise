@@ -83,7 +83,7 @@ p.each do |f|
       r.version = version
 
       r.kind = e.attributes['Kind'].text.presence
-      r.start_date = Time.parse(e.attributes['StartDate'].text).utc
+      r.start_date = e.attributes['StartDate'].text.presence
       r.end_date = e.attributes['EndDate'].text.presence
       r.originid = e.attributes['OriginId'].text.presence
       r.structure_kind = e.attributes['StructureKind'].text.presence

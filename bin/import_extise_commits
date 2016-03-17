@@ -109,7 +109,7 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   abort("#{Commit}:#{commit.id} elements extraction failed".red) if blocks === false
   abort "#{Commit}:#{commit.id} no elements extracted".red if blocks.empty?
-  abort "#{Commit}:#{commit.id} some elements not extracted".red blocks.size < files.size
+  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.size < files.size
 
   files.each do |f|
     k = f[:path]

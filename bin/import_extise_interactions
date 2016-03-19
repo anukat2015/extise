@@ -1,14 +1,11 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-#TODO check uniqueness possibilities on interactions
-
-d, n, w = nil, 4, :thread
+n, w = 4, :thread
 c, s, t, v, q, r = true, false, 80, true, false, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <project>'
-  opt 'd -d --directory=<path>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -19,7 +16,6 @@ ARGV.bind_and_parse! to: :locals do
   arg 'r <repository>'
 end
 
-d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
@@ -27,14 +23,19 @@ AutoColor.disable on: self unless c
 
 include Extisimo
 
-#TODO method pairing is not effective, all Elements (methods also) are exactly identified
-# by "offset+length in file at commit" not name, but methods in interactions' structure_handle
-# are identified by name and params list (and this list is stripped in parse_structure_handle)
-#TODO parse_structure_handle also ignores constants and therefore possible methods in anonymous
-# classes used in constant field declarations
+# NOTE: interaction file path is relative to Eclipse project whereas element file path is relative
+# to Git repository root, interaction file path relative root can not be recomputed to Git repository
+# root since the interaction may refer to an uncommitted file
 
+# NOTE: to connect interactions with elements not only file paths must be matched but node paths must
+# be matched also, hence node paths should include method parameters in comparable format and should
+# also cover all possible nested nodes
 
-#TODO add params to method paths & do not ignore constant declarations
+# NOTE: ignore constant declarations and all possibly nested elements
+# NOTE: ignore type and method declarations nested in anonymous classes
+# NOTE: infer node path from file when missing
+# NOTE: strip method parameters
+
 def parse_structure_handle(h)
   d, p, n, e = *h[1..-1].split(/&lt;|\{|\[/)
   return unless n
@@ -94,44 +95,31 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   dump_record previous_session = session, :session, 1 unless previous_session == session
 
-  # NOTE: infers element path from file when missing
-
   handle = parse_structure_handle i.structure_handle
 
-  # NOTE: skip interactions without element specified in structure handle
+  # NOTE: skip interactions with missing data in structure handle
 
   unless handle
     warn "#{BugsEclipseOrg::Interaction}:#{i.id} missing data in structure handle".magenta
     next
   end
 
-  # NOTE: crop node paths to match elements according to element type during node extraction
+  # NOTE: crop node paths to match top level Java type declarations
 
-  path = handle[:element].sub(/\/.*\z/, '')
+  p = handle[:element].sub(/\/.*\z/, '')
 
-  # NOTE: skip possible top level package-private classes (this should not affect rename refactorings)
+  # NOTE: skip possible top level package-private classes (should not affect rename refactorings)
 
-  next if File.basename(handle[:file], '.java') != path
+  next if File.basename(handle[:file], '.java') != p
 
-  # NOTE: find potential elements by previous commit since interactions were most likely done on such files
-  # NOTE: use file path suffix since file paths in interactions are relative to projects not to repository
-
-  relation = Element.where(commit: previous).where('file LIKE ?', "%#{handle[:file]}")
-  elements = relation.where(path: path).all
-  element = elements.first
-
-  # NOTE: skip selections with no modifications, i.e. with missing elements extracted from commit
-
-  next if element.nil? && i.kind == 'selection'
-
-  abort "#{BugsEclipseOrg::Interaction}:#{i.id} element not found".red unless element
-  abort "#{BugsEclipseOrg::Interaction}:#{i.id} too many elements".red if elements.size > 1
-
-  interaction = persist(Extisimo::Interaction, started_at: i.start_date, element: element, session: session) do |r|
+  interaction = persist(Extisimo::Interaction, bugs_eclipse_org_interaction_id: i.id) do |r|
     r.attachment = attachment
+    r.session = session
     r.kind = i.kind
+    r.file = handle[:file]
+    r.path = p
+    r.started_at = i.start_date
     r.finished_at = i.end_date
-    r.bugs_eclipse_org_interaction_id = i.id
   end
 
   dump_record interaction, :interaction, 2

@@ -60,9 +60,13 @@ interactions = BugsEclipseOrg::Interaction.joins(attachment: [extisimo_attachmen
   kind: %w(command edit selection),
   structure_kind: %w(java),
   originid: %w(
+    org.eclipse.ui.navigator.ProjectExplorer
+    org.eclipse.ui.views.ContentOutline
+    org.eclipse.ui.views.ResourceNavigator
     org.eclipse.jdt.ui.ClassFileEditor
     org.eclipse.jdt.ui.CompilationUnitEditor
     org.eclipse.jdt.ui.PackageExplorer
+    org.eclipse.jdt.ui.TypeHierarchy
   )
 ).where.not(structure_handle: nil).order(start_date: :asc)
 

@@ -7,10 +7,9 @@ services = %w(bugzilla egit gerrit github)
 s, m, k = nil, nil, nil
 
 ARGV.bind_and_parse! to: :locals do
-  a = "(#{models * '|'})"
-  use "[<options>] #{a} <identifier>..."
-  opt "s -s --service=(#{services * '|'})"
-  arg "m #{a}", &-> (v) { models.include?(v) ? v : raise(OptionParser::InvalidArgument.new a) }
+  use "[<options>] #{to_arg models} <identifier>..."
+  opt "s -s --service=#{to_arg services}"
+  arg "m #{to_arg models}", &included_in(models)
   arg 'k <identifier>...'
 end
 

@@ -17,7 +17,7 @@ class Extisimo::Task < ActiveRecord::Base
   has_many :sessions, through: :interactions
 
   def collaborators
-    Extisimo::User.find [reporter, assignee] + posts.pluck(:author_id) + attachments.pluck(:author_id)
+    Extisimo::User.where(id: [reporter_id, assignee_id] + posts.pluck(:author_id) + attachments.pluck(:author_id)).distinct
   end
 
   scope :reported_by, -> (user) { where reporter: user }

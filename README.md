@@ -21,8 +21,10 @@ A collection of tools to estimate developers' expertise
     lib                     Libraries along binary dependencies
       bugs_eclipse_org      Eclipse bugs and Mylyn context model
       database              Database access and model bindings
-      extise                Java DOM manipulation, IR utilities and SW metrics
+      extinf                Concept inferencers
+      extise                Java DOM manipulation, IR utilities, SW metrics
       extisimo              Expertise model of developers
+      extric                Expertise metrics
     log                     Log files
     spec                    RSpec test suite
     tmp                     Temporary files

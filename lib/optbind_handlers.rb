@@ -1,5 +1,10 @@
 require 'optbind'
 
+require 'optparse/date'
+require 'optparse/shellwords'
+require 'optparse/time'
+require 'optparse/uri'
+
 module OptionBinder::Handlers
   def matches(argument, regexp)
     -> (v) { regexp =~ v ? v : raise(OptionParser::InvalidArgument.new to_arg(argument)) }

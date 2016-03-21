@@ -23,7 +23,7 @@ A collection of tools to estimate developers' expertise
       database              Database access and model bindings
       extinf                Concept inferencers
       extise                Java DOM manipulation, IR utilities, SW metrics
-      extisimo              Expertise model of developers
+      extisimo              Custom data model
       extric                Expertise metrics
     log                     Log files
     spec                    RSpec test suite
@@ -96,6 +96,20 @@ Import Extise interactions from tasks and commits, fill `extisimo_{sessions,inte
 
     import_extise_interactions eclipse.pde.ui
 
+#### `load_inferencers`
+
+Load concept inferencers, fill `extisimo_{inferencers}` tables
+
+    load_inferencers
+    load_inferencers --module=Extinf lib/extinf/tasks/*
+
+#### `load_metrics`
+
+Load expertise metrics, fill `extisimo_{metrics}` tables
+
+    load_metrics
+    load_metrics --module=Extric lib/extric/elements/*
+
 ### Raw import
 
 #### `psql`
@@ -114,7 +128,7 @@ Export to raw SQL
 
     pg_dump -U extise --exclude-table=schema_\* --data-only extise_development > extise_development.sql
 
-## Analysis
+## Source analysis
 
 #### `extise`
 
@@ -126,6 +140,10 @@ TODO
     extise JavaQualifiedNameTokenizer UnaccentFilter LowercaseFilter PorterStemmer ElasticsearchStopwordsFilter WhitespaceFilter UniqueFilter SortFilter -- spec/fixtures/classes/*
 
 #### `jgibblda`
+
+TODO
+
+## Expertise estimation
 
 TODO
 

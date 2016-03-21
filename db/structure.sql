@@ -1720,7 +1720,7 @@ CREATE UNIQUE INDEX index_extisimo_inferencers_as_unique ON extisimo_inferencers
 -- Name: index_extisimo_inferencers_on_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_inferencers_on_path ON extisimo_inferencers USING btree (path);
+CREATE INDEX index_extisimo_inferencers_on_path ON extisimo_inferencers USING btree (path);
 
 
 --
@@ -1797,7 +1797,7 @@ CREATE UNIQUE INDEX index_extisimo_metrics_as_unique ON extisimo_metrics USING b
 -- Name: index_extisimo_metrics_on_path; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_metrics_on_path ON extisimo_metrics USING btree (path);
+CREATE INDEX index_extisimo_metrics_on_path ON extisimo_metrics USING btree (path);
 
 
 --

@@ -13,6 +13,6 @@ class CreateInferencers < ActiveRecord::Migration
 
     add_index :extisimo_inferencers, :target
 
-    add_index :extisimo_inferencers, :path, unique: true
+    add_index :extisimo_inferencers, :path
   end
 end

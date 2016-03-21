@@ -13,6 +13,6 @@ class CreateMetrics < ActiveRecord::Migration
 
     add_index :extisimo_metrics, :target
 
-    add_index :extisimo_metrics, :path, unique: true
+    add_index :extisimo_metrics, :path
   end
 end

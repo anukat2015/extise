@@ -505,6 +505,7 @@ CREATE TABLE extisimo_inferencers (
     id integer NOT NULL,
     name character varying NOT NULL,
     target character varying NOT NULL,
+    path character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -575,6 +576,7 @@ CREATE TABLE extisimo_metrics (
     id integer NOT NULL,
     name character varying NOT NULL,
     target character varying NOT NULL,
+    path character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -1715,6 +1717,13 @@ CREATE UNIQUE INDEX index_extisimo_inferencers_as_unique ON extisimo_inferencers
 
 
 --
+-- Name: index_extisimo_inferencers_on_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_inferencers_on_path ON extisimo_inferencers USING btree (path);
+
+
+--
 -- Name: index_extisimo_inferencers_on_target; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1782,6 +1791,13 @@ CREATE INDEX index_extisimo_interactions_on_started_at ON extisimo_interactions 
 --
 
 CREATE UNIQUE INDEX index_extisimo_metrics_as_unique ON extisimo_metrics USING btree (name);
+
+
+--
+-- Name: index_extisimo_metrics_on_path; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_metrics_on_path ON extisimo_metrics USING btree (path);
 
 
 --

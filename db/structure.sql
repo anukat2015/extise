@@ -505,8 +505,8 @@ CREATE TABLE extisimo_inferencers (
     id integer NOT NULL,
     name character varying NOT NULL,
     target character varying NOT NULL,
-    path character varying NOT NULL,
     type character varying NOT NULL,
+    path character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -577,8 +577,8 @@ CREATE TABLE extisimo_metrics (
     id integer NOT NULL,
     name character varying NOT NULL,
     target character varying NOT NULL,
-    path character varying NOT NULL,
     type character varying NOT NULL,
+    path character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

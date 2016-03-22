@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-o, n, w = nil, 4, :thread
-c, v, q, p = true, true, false, [STDIN]
+o, n, w, p = nil, 4, :thread, [STDIN]
+c, v, q = true, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'

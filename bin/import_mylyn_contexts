@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-a, n, w = [], 4, :thread
-c, s, t, v, q, z, p = true, false, 80, true, false, false, [STDIN]
+a, n, w, z, p = [], 4, :thread, false, [STDIN]
+c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'

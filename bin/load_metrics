@@ -18,7 +18,7 @@ end
 
 if p.empty?
   m ||= 'Extric'
-  p = Dir[File.expand_path "../../lib/extric/{#{Metric::TARGETS.map { |t| t.to_s.pluralize } * ','}}/*.rb", __FILE__]
+  p = Dir[File.expand_path "../../lib/extric/{#{Metric::TARGETS.map(&:pluralize) * ','}}/*.rb", __FILE__]
 end
 
 AutoColor.disable on: self unless c
@@ -30,8 +30,8 @@ p.map { |f| File.absolute_path f }.each do |f|
     load f
     type = [m, name].compact.map(&:camelize).join('::')
     object = type.constantize.new
-    name = object.name if object.respond_to? :name
-    target = object.target if object.respond_to? :target
+    name = object.name.to_s if object.respond_to? :name
+    target = object.target.to_s if object.respond_to? :target
   rescue LoadError
     abort "unable to load #{f}".red
   rescue
@@ -39,7 +39,7 @@ p.map { |f| File.absolute_path f }.each do |f|
   end
 
   abort "invalid metric at #{f}".red unless object.respond_to? :measure
-  abort "invalid target at #{f}".red unless Metric::TARGETS.include? target.to_sym
+  abort "invalid target at #{f}".red unless Metric::TARGETS.include? target
 
   metric = persist(Metric, name: name) { |r| r.target, r.type, r.path = target, type, f }
 

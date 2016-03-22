@@ -21,7 +21,7 @@ end
 # method parameters, as well as proper interactions' structure handle parsing to be able to, at least partially,
 # match elements of commits with those of interactions
 
-d ||= File.expand_path('../../../data/git.eclipse.org', __FILE__)
+d ||= GitEclipseOrg::DIRECTORY
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 

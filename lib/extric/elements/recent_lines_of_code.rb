@@ -1,12 +1,10 @@
 class Extric::RecentLinesOfCode
-  BASE = File.expand_path '../../../../../data/git.eclipse.org', __FILE__
-
   def measure(user, element)
     names = user.bugs_eclipse_org_user.realnames.unshift user.name
     commit = element.commit
     repository = commit.repository
 
-    g = Rugged::Repository.new File.join BASE, repository.name
+    g = Rugged::Repository.new File.join GitEclipseOrg::DIRECTORY, repository.name
 
     g.checkout 'master'
 

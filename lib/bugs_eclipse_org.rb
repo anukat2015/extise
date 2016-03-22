@@ -7,6 +7,8 @@ require 'bugs_eclipse_org/version'
 module BugsEclipseOrg
   extend ActiveSupport::Autoload
 
+  DIRECTORY = File.expand_path '../../../data/bugs.eclipse.org'
+
   autoload_under 'models' do
     autoload :Attachment
     autoload :Bug

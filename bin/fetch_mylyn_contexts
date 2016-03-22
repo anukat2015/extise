@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common'
+require_relative 'common' and load_extise!
 
 o, n, w, p = nil, 4, :thread, [STDIN]
 c, v, q = true, true, false
@@ -25,7 +25,7 @@ AutoColor.enable on: self, colored: c, colorings: {
 
 i = v && !options.default?(:p) ? 1 : 0
 
-FileUtils.mkpath o ||= File.expand_path('../../../data/bugs.eclipse.org/mylyn-context', __FILE__)
+FileUtils.mkpath o ||= File.join(BugsEclipseOrg::DIRECTORY, 'mylyn-context')
 
 p.each do |f|
   d = Nokogiri::XML File.open_or f
@@ -45,7 +45,7 @@ p.each do |f|
 
       file = File.join o, "#{attachment_id}.xml"
 
-      if attachment_filename == 'mylyn-context.zip' && !File.exist?(file)
+      if attachment_filename == BugsEclipseOrg::Attachment::MYLYN_CONTEXT_FILENAME && !File.exist?(file)
         system "curl -#{'s' if !v || q}S https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"
       end
     end

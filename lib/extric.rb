@@ -8,6 +8,7 @@ module Extric
   end
 
   autoload_under 'elements' do
+    autoload :RecentLinesOfCode
   end
 
   autoload_under 'sessions' do

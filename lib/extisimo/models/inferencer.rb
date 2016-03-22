@@ -1,5 +1,5 @@
 class Extisimo::Inferencer < ActiveRecord::Base
-  TARGETS = %i(element task).freeze
+  TARGETS = %w(element task).freeze
 
   has_many :conceptualities, dependent: :restrict_with_exception
 

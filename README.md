@@ -25,6 +25,7 @@ A collection of tools to estimate developers' expertise
       extise                Java DOM manipulation, IR utilities, SW metrics
       extisimo              Custom data model
       extric                Expertise metrics
+      git_eclipse_org       Eclipse Git repository utilities
     log                     Log files
     spec                    RSpec test suite
     tmp                     Temporary files
@@ -143,9 +144,18 @@ TODO
 
 TODO
 
-## Expertise estimation
+## Concept inference
+
+#### `infer`
 
 TODO
+
+## Expertise estimation
+
+#### `measure`
+
+    measure session
+    measure element recent_lines_of_code
 
 ## Utilities
 

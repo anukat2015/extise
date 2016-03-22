@@ -18,6 +18,9 @@ class Extric::RecentLinesOfCode
     b = Rugged::Blame.new g, element.file, o.merge(newest_commit: commit.identifier)
     c = b.select { |l| names.include? l[:final_signature][:name] }.count
 
-    { value: c != 0 ? b.count.to_f / c.to_f : 0 }
+    {
+      blame: { final: c, total: b.count },
+      value: c != 0 ? c.to_f / b.count : 0
+    }
   end
 end

@@ -4,4 +4,8 @@ class Extisimo::Metric < ActiveRecord::Base
   has_many :expertises, dependent: :restrict_with_exception
 
   scope :on, -> (target) { where target: target.to_s.singularize }
+
+  def self.inheritance_column
+    nil
+  end
 end

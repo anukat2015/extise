@@ -506,6 +506,7 @@ CREATE TABLE extisimo_inferencers (
     name character varying NOT NULL,
     target character varying NOT NULL,
     path character varying NOT NULL,
+    type character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -577,6 +578,7 @@ CREATE TABLE extisimo_metrics (
     name character varying NOT NULL,
     target character varying NOT NULL,
     path character varying NOT NULL,
+    type character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -1731,6 +1733,13 @@ CREATE INDEX index_extisimo_inferencers_on_target ON extisimo_inferencers USING 
 
 
 --
+-- Name: index_extisimo_inferencers_on_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_inferencers_on_type ON extisimo_inferencers USING btree (type);
+
+
+--
 -- Name: index_extisimo_interactions_on_attachment_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1805,6 +1814,13 @@ CREATE INDEX index_extisimo_metrics_on_path ON extisimo_metrics USING btree (pat
 --
 
 CREATE INDEX index_extisimo_metrics_on_target ON extisimo_metrics USING btree (target);
+
+
+--
+-- Name: index_extisimo_metrics_on_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_metrics_on_type ON extisimo_metrics USING btree (type);
 
 
 --

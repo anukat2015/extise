@@ -2,7 +2,7 @@ require 'colored'
 
 module AutoColor
   def self.enable(options = {})
-    target = options[:on].extend self::IO
+    target = options[:on].extend self::Output
     target.colored = options[:colored] != nil ? !!options[:colored] : true
     target.colorings = options[:colorings].to_h || {}
     target
@@ -12,7 +12,7 @@ module AutoColor
     enable options.merge colored: false
   end
 
-  module IO
+  module Output
     attr_accessor :colored
     attr_accessor :colorings
 

@@ -41,7 +41,7 @@ p.map { |f| File.absolute_path f }.each do |f|
   abort "invalid metric at #{f}".red unless object.respond_to? :measure
   abort "invalid target at #{f}".red unless Metric::TARGETS.include? target
 
-  metric = persist(Metric, name: name) { |r| r.target, r.type, r.path = target, type, f }
+  metric = persist(Metric, target: target, name: name) { |r| r.type, r.path = type, f }
 
   dump_record metric, :metric
 end

@@ -503,8 +503,8 @@ ALTER SEQUENCE extisimo_expertises_id_seq OWNED BY extisimo_expertises.id;
 
 CREATE TABLE extisimo_inferencers (
     id integer NOT NULL,
-    name character varying NOT NULL,
     target character varying NOT NULL,
+    name character varying NOT NULL,
     type character varying NOT NULL,
     path character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -575,8 +575,8 @@ ALTER SEQUENCE extisimo_interactions_id_seq OWNED BY extisimo_interactions.id;
 
 CREATE TABLE extisimo_metrics (
     id integer NOT NULL,
-    name character varying NOT NULL,
     target character varying NOT NULL,
+    name character varying NOT NULL,
     type character varying NOT NULL,
     path character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -1715,7 +1715,14 @@ CREATE INDEX index_extisimo_expertises_on_value ON extisimo_expertises USING btr
 -- Name: index_extisimo_inferencers_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_inferencers_as_unique ON extisimo_inferencers USING btree (name);
+CREATE UNIQUE INDEX index_extisimo_inferencers_as_unique ON extisimo_inferencers USING btree (target, name);
+
+
+--
+-- Name: index_extisimo_inferencers_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_inferencers_on_name ON extisimo_inferencers USING btree (name);
 
 
 --
@@ -1799,7 +1806,14 @@ CREATE INDEX index_extisimo_interactions_on_started_at ON extisimo_interactions 
 -- Name: index_extisimo_metrics_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_metrics_as_unique ON extisimo_metrics USING btree (name);
+CREATE UNIQUE INDEX index_extisimo_metrics_as_unique ON extisimo_metrics USING btree (target, name);
+
+
+--
+-- Name: index_extisimo_metrics_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_metrics_on_name ON extisimo_metrics USING btree (name);
 
 
 --

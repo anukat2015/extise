@@ -41,7 +41,7 @@ p.map { |f| File.absolute_path f }.each do |f|
   abort "invalid inferencer at #{f}".red unless object.respond_to? :infer
   abort "invalid target at #{f}".red unless Inferencer::TARGETS.include? target
 
-  inferencer = persist(Inferencer, name: name) { |r| r.target, r.type, r.path = target, type, f }
+  inferencer = persist(Inferencer, target: target, name: name) { |r| r.type, r.path = type, f }
 
   dump_record inferencer, :inferencer
 end

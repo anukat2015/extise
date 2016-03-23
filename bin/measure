@@ -65,11 +65,16 @@ process subjects, progress: p do |subject|
     metrics.each do |metric, handler|
       puts "measure on #{m}:#{subject.id} for #{user.name} with #{metric.name}".cyan if v unless q
 
-      data = handler.measure user, subject
+      begin
+        data = handler.measure user, subject
+      rescue
+        warn "#{Metric}:#{metric.id} #{$!.message || 'unknown failure'}".magenta
+        next
+      end
 
-      expertise = persist(Expertise, user: user, subject: subject, metric: metric) do |r|
-        r.value = data.delete :value
+      expertise = persist(Expertise, metric: metric, subject: subject, user: user) do |r|
         r.metric_data = data
+        r.value = data.delete :value
       end
 
       dump_record expertise, :expertise

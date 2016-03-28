@@ -17,7 +17,7 @@ end
 
 AutoColor.disable on: self unless c
 
-data = Class.const_get(m).pluck(a) rescue abort("Unable to #{m}.pluck #{a}".red) unless e
+data = Class.const_get(m).pluck(a) rescue abort("Unable to #{m}.pluck #{a}") unless e
 args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
 args.insert -2, "-t#{t}"
 

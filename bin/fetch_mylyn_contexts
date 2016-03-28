@@ -30,7 +30,7 @@ FileUtils.mkpath o ||= File.join(BugsEclipseOrg::DIRECTORY, 'mylyn-context')
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
-  puts "#{f.green}" unless q || i.zero?
+  inform f unless q || i.zero?
 
   process d.css('bug'), count: n, worker: w, progress: !n.zero? do |bug|
     bug_id = bug.css('bug_id').text.strip

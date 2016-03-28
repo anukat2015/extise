@@ -38,17 +38,17 @@ def import_mylyn_context?(a, _, o = options.bound)
   inform = !o[:q] && o[:n].zero? && !count.zero?
   case o[:o].to_sym
   when :append
-    warn "#{Attachment}:#{a} has #{count} interactions -> append".magenta if inform
+    warn "#{Attachment}:#{a} has #{count} interactions -> append" if inform
   when :delete
-    warn "#{Attachment}:#{a} has #{count} interactions -> delete all".magenta if inform
+    warn "#{Attachment}:#{a} has #{count} interactions -> delete all" if inform
     ActiveRecord::Base.connection.execute <<-SQL
       DELETE FROM #{prefix}interactions USING #{prefix}attachments
       WHERE #{prefix}interactions.attachment_id = #{prefix}attachments.id AND #{prefix}attachments.attachid = #{a}
     SQL
   when :restrict
-    abort "#{Attachment}:#{a} has #{count} interactions -> restrict".red unless count.zero?
+    abort "#{Attachment}:#{a} has #{count} interactions -> restrict" unless count.zero?
   when :skip
-    warn "#{Attachment}:#{a} has #{count} interactions -> skip".magenta if inform
+    warn "#{Attachment}:#{a} has #{count} interactions -> skip" if inform
     return false if count.zero?
   else
     raise
@@ -58,15 +58,15 @@ end
 
 def import_mylyn_context(a, i = 0, o = options.bound)
   file = File.join o[:m], "#{a}.xml"
-  abort "#{Attachment}:#{a} has unreadable file -> fail".red unless File.readable? file
-  return warn "#{Attachment}:#{a} has empty file -> skip".magenta if File.size(file).zero?
+  abort "#{Attachment}:#{a} has unreadable file -> fail" unless File.readable? file
+  return warn "#{Attachment}:#{a} has empty file -> skip" if File.size(file).zero?
   args = ["--attachment=#{a}", "--parallel=#{(o[:n] + 1) / 2}", "--parallel-worker=#{o[:w]}"]
   args += %w(color sort verbose).map { |x| o[x[0].to_sym] ? "-#{x[0]}" : "--no-#{x}" }
   args.insert -2, "-t#{o[:t] - 2 * i}"
   args << '-q' if o[:q]
   args << file
   command = "import_mylyn_contexts #{args * ' '}"
-  puts "#{'  ' * i}#{command.cyan}" if o[:v] unless o[:q]
+  inform "#{'  ' * i}#{command}" if o[:v] unless o[:q]
   Open3.popen3(File.expand_path command, __dir__) do |_, output, error, status|
     Thread.new { output.each { |l| print "#{'  ' * i}#{l}" }; output.close } unless o[:q]
     Thread.new { error.each { |l| STDERR.print l}; error.close }
@@ -92,7 +92,7 @@ i = v && !options.default?(:p) ? 1 : 0
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
-  puts "#{f.green}" unless q || i.zero?
+  inform f unless q || i.zero?
 
   if z
     q = false
@@ -110,9 +110,9 @@ p.each do |f|
 
   # NOTE: work only with data of bug sets from known sources as described below
 
-  abort "#{Bugzilla}:? invalid URL #{urlbase}".red if urlbase != 'https://bugs.eclipse.org/bugs/'
-  abort "#{Bugzilla}:? invalid version #{version}".red if version != '4.4.7'
-  abort "#{Bugzilla}:? invalid maintainer #{maintainer}".red if maintainer != 'webmaster@eclipse.org'
+  abort "#{Bugzilla}:? invalid URL #{urlbase}" if urlbase != 'https://bugs.eclipse.org/bugs/'
+  abort "#{Bugzilla}:? invalid version #{version}" if version != '4.4.7'
+  abort "#{Bugzilla}:? invalid maintainer #{maintainer}" if maintainer != 'webmaster@eclipse.org'
 
   bugzilla = persist(Bugzilla, urlbase: urlbase) do |r|
     r.version = version
@@ -127,8 +127,8 @@ p.each do |f|
     assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
 
     bug = persist(Bug, bugid: bugid, xml: b) do |r|
-      abort "#{Bug}:#{r.bugid} too many reporters".red if b.css('reporter').count != 1
-      abort "#{Bug}:#{r.bugid} too many assignees".red if b.css('assigned_to').count != 1
+      abort "#{Bug}:#{r.bugid} too many reporters" if b.css('reporter').count != 1
+      abort "#{Bug}:#{r.bugid} too many assignees" if b.css('assigned_to').count != 1
 
       r.bugzilla_id = bugzilla.id
       r.author_id = author.id
@@ -174,7 +174,7 @@ p.each do |f|
       author = persist_user c.css('who').text.presence, c.css('who')[0].attributes['name'].try(&:text).presence
 
       comment = persist(Comment, commentid: commentid, xml: c) do |r|
-        abort "#{Comment}:#{r.commentid} too many authors".red if c.css('who').count != 1
+        abort "#{Comment}:#{r.commentid} too many authors" if c.css('who').count != 1
 
         r.bug_id = bug.id
         r.author_id = author.id
@@ -197,7 +197,7 @@ p.each do |f|
       submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].try(&:text).presence
 
       attachment = persist(Attachment, attachid: attachid, xml: a) do |r|
-        abort "#{Attachment}:#{r.attachid} too many attachers".red if a.css('attacher').count != 1
+        abort "#{Attachment}:#{r.attachid} too many attachers" if a.css('attacher').count != 1
 
         r.bug_id = bug.id
         r.submitter_id = submitter.id

@@ -24,7 +24,7 @@ p.each do |f|
     begin
       project = Extisimo::Project.find_by! product: p, component: c
     rescue ActiveRecord::RecordNotFound
-      warn "#{Extisimo::Project}:? not found by #{p} #{c}".magenta
+      warn "#{Extisimo::Project}:? not found by #{p} #{c}"
       next
     end
 

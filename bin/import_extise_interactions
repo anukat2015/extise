@@ -46,7 +46,7 @@ end
 
 repository = Repository.find_by name: r
 
-abort "#{Repository}:? not found by #{r}".red unless repository
+abort "#{Repository}:? not found by #{r}" unless repository
 
 dump_record repository, :repository
 
@@ -87,7 +87,7 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   next unless previous
 
-  abort "#{BugsEclipseOrg::Interaction}:#{i.id} revision commit not found".red unless revision
+  abort "#{BugsEclipseOrg::Interaction}:#{i.id} revision commit not found" unless revision
 
   session = persist(Session, user: user, revision_commit: revision) do |r|
     r.previous_commit = previous
@@ -104,7 +104,7 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
   # NOTE: skip interactions with missing data in structure handle (hence sessions with zero interactions may exist)
 
   unless handle
-    warn "#{BugsEclipseOrg::Interaction}:#{i.id} missing data in structure handle".magenta
+    warn "#{BugsEclipseOrg::Interaction}:#{i.id} missing data in structure handle"
     next
   end
 

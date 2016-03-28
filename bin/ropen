@@ -4,14 +4,17 @@ require_relative 'common' and load_extise!
 models = %w(user task post attachment project repository commit element)
 services = %w(bugzilla egit gerrit github)
 
-s, m, k = nil, nil, nil
+s, c, m, k = nil, true, nil, nil
 
 ARGV.bind_and_parse! to: :locals do
   use "[<options>] #{to_arg models} <identifier>..."
   opt "s -s --service=#{to_arg services}"
+  opt 'c -c --[no-]color'
   arg "m #{to_arg models}", &included_in(models)
   arg 'k <identifier>...'
 end
+
+AutoColor.disable on: self unless c
 
 include Extisimo
 
@@ -43,17 +46,17 @@ end
 model = m.camelize.constantize
 record = find model, k * ' '
 
-abort "#{model}:? record not found by #{k * ' '}".red unless record
+abort "#{model}:? record not found by #{k * ' '}" unless record
 
 model, record = Project, record.project if record.is_a? Repository
 
 suffix = "url#{'s' if model == Project}"
 method = s ? "#{s}_#{suffix}" : services.reverse.map { |s| "#{s}_#{suffix}" }.find { |s| record.respond_to? s }
 
-abort "#{model}:#{record.id} unable to open#{" via #{s}" if s}".red unless record.respond_to? method
+abort "#{model}:#{record.id} unable to open#{" via #{s}" if s}" unless record.respond_to? method
 
 url = [record.send(method)].flatten.first
 
-abort "#{model}:#{record.id} no URL available".red unless url
+abort "#{model}:#{record.id} no URL available" unless url
 
 `open #{url}`

@@ -57,7 +57,7 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
   # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
 
   unless author
-    warn "#{User}:? not found by #{c.author[:name]}".magenta
+    warn "#{User}:? not found by #{c.author[:name]}"
     next
   end
 
@@ -83,7 +83,7 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
     next unless f[:path].end_with?('.java')
 
     if (b = git.lookup f[:oid]).binary?
-      warn "#{Commit}:#{commit.id} binary content in #{f[:path]}".magenta
+      warn "#{Commit}:#{commit.id} binary content in #{f[:path]}"
       next
     end
 
@@ -101,15 +101,15 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   sources.clear
 
-  puts "#{'  ' * 2}" << "#{Extise.command extractor} < …".cyan if v unless q
+  inform "#{'  ' * 2}" << "#{Extise.command extractor} < …" if v unless q
 
   blocks = Extise.stream(function: extractor, input: data) do |o|
     Extise::Data.parse_blocks(o).group_by { |b| b[:file] }
   end
 
-  abort("#{Commit}:#{commit.id} elements extraction failed".red) if blocks === false
-  abort "#{Commit}:#{commit.id} no elements extracted".red if blocks.empty?
-  abort "#{Commit}:#{commit.id} some elements not extracted".red if blocks.size < files.size
+  abort("#{Commit}:#{commit.id} elements extraction failed") if blocks === false
+  abort "#{Commit}:#{commit.id} no elements extracted" if blocks.empty?
+  abort "#{Commit}:#{commit.id} some elements not extracted" if blocks.size < files.size
 
   files.each do |f|
     k = f[:path]
@@ -119,13 +119,13 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
     blocks[k].select! { |b| b[:path] !~ /\// }
 
     if blocks[k].empty?
-      warn "#{Commit}:#{commit.id} no elements in #{f[:path]}".magenta
+      warn "#{Commit}:#{commit.id} no elements in #{f[:path]}"
       next
     end
 
     blocks[k].each do |b|
       if b[:path] == '!'
-        warn "#{Commit}:#{commit.id} problematic element in #{f[:path]}".magenta
+        warn "#{Commit}:#{commit.id} problematic element in #{f[:path]}"
         next
       end
 

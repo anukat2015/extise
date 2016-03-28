@@ -39,7 +39,7 @@ end
 
 # NOTE: measure on subjects related to tasks submitted prior to the desired time
 
-puts "fetch subjects through tasks submitted until #{options.assigned?(:u) ? u : 'now'}".cyan if v unless q
+inform "fetch subjects through tasks submitted until #{options.assigned?(:u) ? u : 'now'}" if v unless q
 
 subjects = subjects.where("#{Task.table_name}.submitted_at <= ?", u).order(created_at: :asc).distinct
 
@@ -57,18 +57,18 @@ when :sesssion
 end
 
 process subjects, progress: p do |subject|
-  puts "fetch users for #{m}:#{subject.id} who somehow relate".cyan if v unless q
+  inform "fetch users for #{m}:#{subject.id} who somehow relate" if v unless q
 
   users = users_fetcher.call subject
 
   users.each do |user|
     metrics.each do |metric, handler|
-      puts "measure on #{m}:#{subject.id} for #{user.name} with #{metric.name}".cyan if v unless q
+      inform "measure on #{m}:#{subject.id} for #{user.name} with #{metric.name}" if v unless q
 
       begin
         data = handler.measure user, subject
       rescue
-        warn "#{Metric}:#{metric.id} #{$!.message || 'unknown failure'}".magenta
+        warn "#{Metric}:#{metric.id} #{$!.message || 'unknown failure'}"
         next
       end
 

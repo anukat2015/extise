@@ -30,7 +30,7 @@ i = v && !options.default?(:p) ? 1 : 0
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
-  puts "#{f.green}" unless q || i.zero?
+  inform f unless q || i.zero?
 
   if z
     q = false
@@ -47,33 +47,33 @@ p.each do |f|
   # NOTE: data from local URLs can not be trusted and data from studio.atlassian.com are often mismatched with bugs
 
   if bug_url =~ %r{(local|https://studio.atlassian.com)-\d+\z}
-    warn "#{Attachment}:#{attachid || '?'} has unsupported URL #{bug_url} -> skip".magenta
+    warn "#{Attachment}:#{attachid || '?'} has unsupported URL #{bug_url} -> skip"
     next
   end
 
   # NOTE: work only with data of contexts from known sources as described below
 
-  abort "#{Attachment}:#{attachid || '?'} invalid URL #{bug_url}".red if bug_url !~ %r{\A(https://bugs.eclipse.org/bugs)-\d+\z}
-  abort "#{Attachment}:#{attachid || '?'} invalid version #{version}".red if version != '1'
+  abort "#{Attachment}:#{attachid || '?'} invalid URL #{bug_url}" if bug_url !~ %r{\A(https://bugs.eclipse.org/bugs)-\d+\z}
+  abort "#{Attachment}:#{attachid || '?'} invalid version #{version}" if version != '1'
 
   bug = Bug.where(bugid: bugid).first
 
   if bug.nil?
-    warn "#{Bug}:#{bugid} not found -> skip".magenta
+    warn "#{Bug}:#{bugid} not found -> skip"
     next
   end
 
   if attachid
     context = Attachment.where(attachid: attachid, filename: Attachment::MYLYN_CONTEXT_FILENAME).first
 
-    abort "#{Attachment}:#{attachid} context not found".red unless context
-    abort "#{Attachment}:#{attachid} context does not match #{Bug}:#{bugid}".red if context.bug.bugid.to_s != bugid
+    abort "#{Attachment}:#{attachid} context not found" unless context
+    abort "#{Attachment}:#{attachid} context does not match #{Bug}:#{bugid}" if context.bug.bugid.to_s != bugid
   else
     contexts = Attachment.where(bug: bug, filename: Attachment::MYLYN_CONTEXT_FILENAME)
     context = contexts.first
 
-    abort "#{Bug}:#{bugid} missing context".red if contexts.count.zero?
-    abort "#{Bug}:#{bugid} various contexts".red if contexts.count > 1
+    abort "#{Bug}:#{bugid} missing context" if contexts.count.zero?
+    abort "#{Bug}:#{bugid} various contexts" if contexts.count > 1
   end
 
   process d.css('InteractionEvent'), count: n, worker: w, progress: !n.zero? do |e|

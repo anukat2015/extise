@@ -19,7 +19,7 @@ module AutoColor
     attr_accessor :colorings
 
     def self.extended(target)
-      target.class_eval do
+      target.singleton_class.class_eval do
         METHODS.each do |method|
           next unless target.respond_to? method, true
           alias_method "uncolored_#{method}", method

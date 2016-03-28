@@ -99,13 +99,14 @@ def load_extise!
   rescue ActiveRecord::RecordNotUnique
     retry
   rescue => failure
-    Open3.popen2e(File.expand_path 'lsxml', __dir__) do |i, o, t|
+    args = ARGD.include?('--no-color') ? %w(--no-color) : []
+    Open3.popen2e(File.expand_path "lsxml #{args * ' '}", __dir__) do |i, o, t|
       i.puts xml
       i.close
       Thread.new {
-        warn "\n--XML-DEBUG--\n\n"
-        o.each { |l| warn l }
-        warn "\n--XML-DEBUG--\n\n"
+        STDERR.print "\n--XML-DEBUG--\n\n"
+        o.each { |l| STDERR.print l }
+        STDERR.print "\n--XML-DEBUG--\n\n"
       }.join
       t.join
     end if xml

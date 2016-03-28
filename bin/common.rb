@@ -3,6 +3,7 @@ abort 'common: internals only' if $0 == __FILE__
 
 $LOAD_PATH.unshift File.expand_path '../../lib', __FILE__
 
+require 'argd'
 require 'auto_color'
 require 'butcher'
 require 'colored_defaults'

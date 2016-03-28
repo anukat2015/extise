@@ -1,3 +1,4 @@
+require 'argd'
 require 'colored'
 
 module KernelColors
@@ -13,7 +14,8 @@ module KernelColors
   private
 
   def colorize_arguments(color, *args)
-    return args if respond_to?(:colored) && colored === false
+    # TODO checking if AutoColor is disabled is not enough since OptionParser may abort prior to that happening
+    return args if (respond_to?(:colored) && colored === false) || ARGD.include?('--no-color')
     args.map { |arg| Colored.colorize arg.to_s, foreground: color }
   end
 end

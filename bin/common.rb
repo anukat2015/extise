@@ -103,13 +103,13 @@ def load_extise!
       i.puts xml
       i.close
       Thread.new {
-        warn "\n--#{'XML-DEBUG'.red}--\n\n"
+        warn "\n--XML-DEBUG--\n\n"
         o.each { |l| warn l }
-        warn "\n--#{'XML-DEBUG'.red}--\n\n"
+        warn "\n--XML-DEBUG--\n\n"
       }.join
       t.join
     end if xml
-    failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s.red) : raise(failure)
+    failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s) : raise(failure)
   end
 
   alias process_without_active_record process

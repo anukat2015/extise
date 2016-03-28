@@ -20,14 +20,14 @@ def safe_eval(s)
   s = s.read if s.is_a? IO
   Object.new.instance_eval { binding }.eval(s).tap { |a| raise 'not an array' unless a.is_a? Array }
 rescue Exception
-  abort "Unable to evaluate input -> #{$!}".red
+  abort "Unable to evaluate input -> #{$!}"
 end
 
 a = p.inject([]) { |_, f| _ += e ? safe_eval(f) : File.open_or(f).readlines }
 h = a.inject(Hash.new 0) { |h, i| h[i.to_s.strip] += 1; h }
 h = Hash[h.sort_by { |_, x| -x }] if s
 
-abort 'No input data'.red if h.empty?
+abort 'No input data' if h.empty?
 
 pad_x = h.values.max_by { |x| x.to_s.length }.to_s.length
 pad_k = [h.keys.max_by { |k| k.length }.length, t - pad_x + (v ? 0 : 1 + 1 + 6 + 1) - 1].min

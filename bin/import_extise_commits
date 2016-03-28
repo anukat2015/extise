@@ -34,7 +34,7 @@ include Extisimo
 
 repository = Repository.find_by name: r
 
-abort "#{Repository}:? not found by #{r}".red unless repository
+abort "#{Repository}:? not found by #{r}" unless repository
 
 dump_record repository, :repository
 

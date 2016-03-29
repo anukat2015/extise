@@ -27,14 +27,14 @@ i = v && !options.default?(:p) ? 1 : 0
 FileUtils.mkpath bugs_directory = (o || File.join(BugsEclipseOrg::DIRECTORY, 'eclipse')) + '-bugs'
 FileUtils.mkpath changes_directory = (o || File.join(GitEclipseOrg::DIRECTORY, 'eclipse')) + '-changes'
 
+driver = Selenium::WebDriver.for :phantomjs
+
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
   inform f unless q || i.zero?
 
   process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
-    driver = Selenium::WebDriver.for :phantomjs
-
     bug_id = b.css('bug_id').text.strip
     url = "https://bugs.eclipse.org/bugs/show_bug.cgi?id=#{bug_id}"
 
@@ -65,8 +65,7 @@ p.each do |f|
     content = driver.page_source
 
     File.write file, content unless File.exist? file
-
-    driver.quit
   end
 end
 
+driver.quit

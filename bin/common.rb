@@ -125,4 +125,6 @@ def load_extise!
       ActiveRecord::Base.connection_pool.with_connection { block.call item }
     end
   end
+
+  yield if block_given?
 end

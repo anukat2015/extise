@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise! and include Extisimo
+require_relative 'common' and load_extise! { include Extisimo }
 
 c, s, t, v, q, p = true, false, 80, true, false, [STDIN]
 

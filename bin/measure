@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
-
-include Extisimo
+require_relative 'common' and load_extise! { include Extisimo }
 
 p, u, m, r = false, 'now', nil, []
 c, s, t, v, q = true, false, 80, true, false
@@ -25,8 +23,8 @@ v, q = false, true if p
 AutoColor.disable on: self unless c
 
 metrics = Metric.on(m)
-metrics = metrics.where(name: r) unless r.blank?
-metrics = Hash[metrics.map { |metric| [metric, (load(metric.path) and metric.type.constantize.new)] }]
+metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n}") } unless r.blank?
+metrics = Hash[metrics.map { |metric| [metric, (Extric.create_handle! file: metric.file, type: metric.type rescue abort $!)] }]
 
 subjects = case m.to_sym
 when :concept
@@ -43,6 +41,8 @@ inform "fetch subjects through tasks submitted until #{options.assigned?(:u) ? u
 
 subjects = subjects.where("#{Task.table_name}.submitted_at <= ?", u).order(created_at: :asc).distinct
 
+warn "no subjects fetched until #{options.assigned?(:u) ? u : 'now'}" unless subjects.any?
+
 # NOTE: measure on all users associated with a concept via element's commit, such users may not have assigned tasks
 # NOTE: measure on all users who worked on elements with same node path, such users may not have assigned tasks
 # NOTE: measure on the session associated user only, such user has assigned at least one task
@@ -52,7 +52,7 @@ when :concept
   -> (concept) { User.joins(commits: [elements: [conceptualities: :concept]]).where("#{Concept.table_name}.id = ?", concept.id).distinct }
 when :element
   -> (element) { User.joins(commits: :elements).where("#{Element.table_name}.path = ?", element.path).distinct }
-when :sesssion
+when :session
   -> (session) { [session.user] }
 end
 
@@ -60,6 +60,8 @@ process subjects, progress: p do |subject|
   inform "fetch users for #{m}:#{subject.id} who somehow relate" if v unless q
 
   users = users_fetcher.call subject
+
+  warn "no users fetched for #{m}:#{subject.id} who somehow relate" unless users.any?
 
   users.each do |user|
     metrics.each do |metric, handler|

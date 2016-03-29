@@ -4,8 +4,8 @@ class CreateMetrics < ActiveRecord::Migration
       t.string :target, null: false
       t.string :name, null: false
 
-      t.string :type, null: false
       t.string :file, null: false
+      t.string :type, null: false
 
       t.timestamps null: false
     end
@@ -15,7 +15,7 @@ class CreateMetrics < ActiveRecord::Migration
     add_index :extisimo_metrics, :target
     add_index :extisimo_metrics, :name
 
-    add_index :extisimo_metrics, :type
     add_index :extisimo_metrics, :file
+    add_index :extisimo_metrics, :type
   end
 end

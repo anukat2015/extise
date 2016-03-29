@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise! and include Extisimo
+require_relative 'common' and load_extise! { include Extisimo }
 
 models = %w(user task post attachment project repository commit element)
 services = %w(bugzilla egit gerrit github)

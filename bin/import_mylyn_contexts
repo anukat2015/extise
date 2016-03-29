@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise! and include BugsEclipseOrg
+require_relative 'common' and load_extise! { include BugsEclipseOrg }
 
 a, n, w, z, p = [], 4, :thread, false, [STDIN]
 c, s, t, v, q = true, false, 80, true, false

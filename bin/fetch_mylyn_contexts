@@ -2,7 +2,7 @@
 require_relative 'common' and load_extise!
 
 o, n, w, p = nil, 4, :thread, [STDIN]
-c, v, q = true, true, false
+c, v, q = true, false, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
@@ -19,31 +19,30 @@ n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
 AutoColor.enable on: self, colored: c, colorings: {
-  /bug \d*/ => :blue,
-  /attachment \d*/ => -> (s, r) { s.sub(r) { |p| p.yellow }},
+  /\A *(bug|attachment): \d+/ => -> (s, _) { s.sub(/(bug|attachment): (\d+)/, "#{'\1'.blue}: #{'\2'.yellow}") }
 }
 
 i = v && !options.default?(:p) ? 1 : 0
 
-FileUtils.mkpath o ||= File.join(BugsEclipseOrg::DIRECTORY, 'mylyn-context')
+FileUtils.mkpath contexts_directory = o || File.join(BugsEclipseOrg::DIRECTORY, 'mylyn-contexts')
 
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
   inform f unless q || i.zero?
 
-  process d.css('bug'), count: n, worker: w, progress: !n.zero? do |bug|
-    bug_id = bug.css('bug_id').text.strip
+  process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
+    bug_id = b.css('bug_id').text.strip
 
-    puts "#{'  ' * i}bug #{bug_id}" unless q
+    puts "#{'  ' * i}bug: #{bug_id}" unless q
 
-    bug.css('attachment').each do |attachment|
-      attachment_id = attachment.css('attachid').text.strip
-      attachment_filename = attachment.css('filename').text.strip
+    b.css('attachment').each do |a|
+      attachment_id = a.css('attachid').text.strip
+      attachment_filename = a.css('filename').text.strip
 
-      puts "#{'  ' * (i + 1)}attachment #{attachment_id} #{attachment_filename}" unless q
+      puts "#{'  ' * (i + 1)}attachment: #{attachment_id} #{attachment_filename}" unless q
 
-      file = File.join o, "#{attachment_id}.xml"
+      file = File.join contexts_directory, "#{attachment_id}.xml"
 
       if attachment_filename == BugsEclipseOrg::Attachment::MYLYN_CONTEXT_FILENAME && !File.exist?(file)
         system "curl -#{'s' if !v || q}S https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"

@@ -46,7 +46,13 @@ and additionally, if appropriate to:
 
 ## Data acquisition
 
-Following commands should be executed subsequently:
+Following commands do not have to be executed subsequently:
+
+#### `fetch_eclipse_pages`
+
+Download Eclipse pages of Bugzilla bugs and corresponding Gerrit changes according to input bugs file
+
+    fetch_eclipse_pages ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
 
 #### `fetch_mylyn_contexts`
 
@@ -66,13 +72,19 @@ Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attac
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn=../data/bugs.eclipse.org/mylyn-context-20160110-1829
 
+#### `import_eclipse_changes`
+
+Import Eclipse changes, fill `git_eclipse_org_{users,projects,changes,reviews,labels}` tables
+  
+  TODO
+
 #### `import_mylyn_contexts`
 
 Import Mylyn context interactions, fill `bugs_eclipse_org_{interactions}` tables
 
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1829/71687.xml --stat
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-context-20160110-1829/71687.xml
-    
+
 #### `import_extise_tasks`
 
 Import Extise tasks from Eclipse bugs, fill `extisimo_{users,projects,tasks,posts,attachments}` tables

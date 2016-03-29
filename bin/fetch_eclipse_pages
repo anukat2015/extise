@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise! { require 'selenium-webdriver' }
+
+o, n, w, p = nil, 4, :thread, [STDIN]
+c, v, q = true, false, false
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] [<file>...]'
+  opt 'o -o --output=<path>'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
+  opt 'c -c --[no-]color'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  arg 'p [<path>...]'
+end
+
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
+
+AutoColor.enable on: self, colored: c, colorings: {
+  /\A *(bug|change): \d+/ => -> (s, _) { s.sub(/(bug|change): (\d+)/, "#{'\1'.blue}: #{'\2'.yellow}") }
+}
+
+i = v && !options.default?(:p) ? 1 : 0
+
+FileUtils.mkpath bugs_directory = (o || File.join(BugsEclipseOrg::DIRECTORY, 'eclipse')) + '-bugs'
+FileUtils.mkpath changes_directory = (o || File.join(GitEclipseOrg::DIRECTORY, 'eclipse')) + '-changes'
+
+driver = Selenium::WebDriver.for :phantomjs
+
+p.each do |f|
+  d = Nokogiri::XML File.open_or f
+
+  inform f unless q || i.zero?
+
+  process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
+    bug_id = b.css('bug_id').text.strip
+    url = "https://bugs.eclipse.org/bugs/show_bug.cgi?id=#{bug_id}"
+
+    puts "#{'  ' * i}bug: #{bug_id}" unless q
+
+    driver.navigate.to url
+
+    file = File.join bugs_directory, "#{bug_id}.html"
+    content = driver.page_source
+
+    File.write file, content unless File.exist? file
+
+    url, change_id = *content.match(/https:\/\/git\.eclipse\.org\/r\/(?<change_id>\d+)/).to_a
+
+    unless url && change_id
+      warn "#{BugsEclipseOrg::Bug}:#{bug_id} change not found"
+      next
+    end
+
+    puts "#{'  ' * (i + 1)}change: #{bug_id}" unless q
+
+    driver.navigate.to url
+
+    wait = Selenium::WebDriver::Wait.new timeout: 30.seconds
+    wait.until { driver.find_element(class: 'screen').displayed? }
+
+    file = File.join changes_directory, "#{change_id}.html"
+    content = driver.page_source
+
+    File.write file, content unless File.exist? file
+  end
+end
+
+driver.quit

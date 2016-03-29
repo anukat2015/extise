@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
+require_relative 'common' and load_extise! and include BugsEclipseOrg
 
 m, o, n, w, z, p = nil, :restrict, 4, :thread, false, [STDIN]
 c, s, t, v, q = true, false, 80, true, false
@@ -23,8 +23,6 @@ n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
-
-include BugsEclipseOrg
 
 def import_mylyn_context?(a, _, o = options.bound)
   prefix = :bugs_eclipse_org_

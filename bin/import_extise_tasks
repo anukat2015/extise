@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
+require_relative 'common' and load_extise! and include Extisimo
 
 n, w = 4, :thread
 c, s, t, v, q = true, false, 80, true, false
@@ -33,7 +33,7 @@ end
 # NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
 
 def persist_user(user)
-  persist(Extisimo::User, name: user.login_name) do |r|
+  persist(User, name: user.login_name) do |r|
     r.bugs_eclipse_org_user = user
   end
 end
@@ -50,11 +50,11 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
 
   reporter = persist_user(b.author)
   assignee = persist_user(b.assignee)
-  project = persist(Extisimo::Project, product: b.product, component: b.component)
+  project = persist(Project, product: b.product, component: b.component)
 
   # NOTE: keywords of original bugs have very low information value
 
-  task = persist(Extisimo::Task, submitted_at: fix_timestamp(b.creation_ts, b.bugid), reporter_id: reporter.id) do |r|
+  task = persist(Task, submitted_at: fix_timestamp(b.creation_ts, b.bugid), reporter_id: reporter.id) do |r|
     r.assignee = assignee
     r.project = project
     r.classification = b.classification.downcase.gsub(/[\-\s]+/, '_')
@@ -84,7 +84,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
 
     # NOTE: original comments do not contain modification timestamp, creation timestamp is used instead
 
-    post = persist(Extisimo::Post, submitted_at: fix_timestamp(c.bug_when, c.commentid), author_id: author.id, task_id: task.id) do |r|
+    post = persist(Post, submitted_at: fix_timestamp(c.bug_when, c.commentid), author_id: author.id, task_id: task.id) do |r|
       r.description = c.thetext
       r.modified_at = r.submitted_at
       r.bugs_eclipse_org_comment_id = c.id
@@ -99,7 +99,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
 
     author = persist_user(a.submitter)
 
-    attachment = persist(Extisimo::Attachment, submitted_at: fix_timestamp(a.date, a.attachid), author_id: author.id, task_id: task.id) do |r|
+    attachment = persist(Attachment, submitted_at: fix_timestamp(a.date, a.attachid), author_id: author.id, task_id: task.id) do |r|
       r.file = a.filename
       r.type = a.type
       r.description = a.desc

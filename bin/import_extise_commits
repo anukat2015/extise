@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
+require_relative 'common' and load_extise! and include Extisimo
 
 d, n, w, r = nil, 4, :thread, nil
 c, s, t, v, q = true, false, 80, true, false
@@ -26,8 +26,6 @@ n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
-
-include Extisimo
 
 # NOTE: since the sum of interactions is far greater than the sum commits,
 # we first process commits and leave interactions for later processing

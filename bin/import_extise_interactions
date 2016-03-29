@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
+require_relative 'common' and load_extise! and include Extisimo
 
 n, w, r = 4, :thread, nil
 c, s, t, v, q = true, false, 80, true, false
@@ -20,8 +20,6 @@ n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
-
-include Extisimo
 
 # NOTE: interaction file path is relative to Eclipse project whereas element file path is relative
 # to Git repository root, interaction file path relative root can not be recomputed to Git repository
@@ -75,7 +73,7 @@ previous_session = nil
 process interactions, count: n, worker: w, progress: !n.zero? do |i|
   attachment = i.attachment.extisimo_attachment
   user = attachment.author
-  commits = Extisimo::Commit.where(author: user).where('submitted_at > ?', i.start_date).order(submitted_at: :asc)
+  commits = Commit.where(author: user).where('submitted_at > ?', i.start_date).order(submitted_at: :asc)
 
   # NOTE: consider consecutive commits A, B, C where A and C have the same author and B is authored by someone else,
   # and a session identified by commit C is created, then C is revision commit, B is original commit, and A is a commit
@@ -116,7 +114,7 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   next if File.basename(handle[:file], '.java') != p
 
-  interaction = persist(Extisimo::Interaction, bugs_eclipse_org_interaction_id: i.id) do |r|
+  interaction = persist(Interaction, bugs_eclipse_org_interaction_id: i.id) do |r|
     r.attachment = attachment
     r.session = session
     r.kind = i.kind

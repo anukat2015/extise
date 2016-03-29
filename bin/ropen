@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
+require_relative 'common' and load_extise! and include Extisimo
 
 models = %w(user task post attachment project repository commit element)
 services = %w(bugzilla egit gerrit github)
@@ -15,8 +15,6 @@ ARGV.bind_and_parse! to: :locals do
 end
 
 AutoColor.disable on: self unless c
-
-include Extisimo
 
 def find(model, identifier)
   record = model.where(id: identifier).first

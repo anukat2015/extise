@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
+require_relative 'common' and load_extise! and include Extisimo
 
 c, s, t, v, q, p = true, false, 80, true, false, [STDIN]
 
@@ -22,15 +22,15 @@ p.each do |f|
     p, c, g, n = *r
 
     begin
-      project = Extisimo::Project.find_by! product: p, component: c
+      project = Project.find_by! product: p, component: c
     rescue ActiveRecord::RecordNotFound
-      warn "#{Extisimo::Project}:? not found by #{p} #{c}"
+      warn "#{Project}:? not found by #{p} #{c}"
       next
     end
 
     dump_record project, :project
 
-    repository = persist(Extisimo::Repository, name: n) do |r|
+    repository = persist(Repository, name: n) do |r|
       r.project = project
       r.git_eclipse_org_product = g
     end

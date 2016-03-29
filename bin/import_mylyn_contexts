@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative 'common' and load_extise!
+require_relative 'common' and load_extise! and include BugsEclipseOrg
 
 a, n, w, z, p = [], 4, :thread, false, [STDIN]
 c, s, t, v, q = true, false, 80, true, false
@@ -22,8 +22,6 @@ n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
-
-include BugsEclipseOrg
 
 i = v && !options.default?(:p) ? 1 : 0
 

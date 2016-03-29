@@ -4306,7 +4306,7 @@ bug, comment or attachment#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#path#</dia:string>
+            <dia:string>#file#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#string#</dia:string>
@@ -8298,7 +8298,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#path#</dia:string>
+            <dia:string>#file#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#string#</dia:string>

@@ -5,7 +5,7 @@ class CreateInferencers < ActiveRecord::Migration
       t.string :name, null: false
 
       t.string :type, null: false
-      t.string :path, null: false
+      t.string :file, null: false
 
       t.timestamps null: false
     end
@@ -16,6 +16,6 @@ class CreateInferencers < ActiveRecord::Migration
     add_index :extisimo_inferencers, :name
 
     add_index :extisimo_inferencers, :type
-    add_index :extisimo_inferencers, :path
+    add_index :extisimo_inferencers, :file
   end
 end

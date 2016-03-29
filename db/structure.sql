@@ -506,7 +506,7 @@ CREATE TABLE extisimo_inferencers (
     target character varying NOT NULL,
     name character varying NOT NULL,
     type character varying NOT NULL,
-    path character varying NOT NULL,
+    file character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -578,7 +578,7 @@ CREATE TABLE extisimo_metrics (
     target character varying NOT NULL,
     name character varying NOT NULL,
     type character varying NOT NULL,
-    path character varying NOT NULL,
+    file character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -1719,17 +1719,17 @@ CREATE UNIQUE INDEX index_extisimo_inferencers_as_unique ON extisimo_inferencers
 
 
 --
+-- Name: index_extisimo_inferencers_on_file; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_inferencers_on_file ON extisimo_inferencers USING btree (file);
+
+
+--
 -- Name: index_extisimo_inferencers_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_inferencers_on_name ON extisimo_inferencers USING btree (name);
-
-
---
--- Name: index_extisimo_inferencers_on_path; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_extisimo_inferencers_on_path ON extisimo_inferencers USING btree (path);
 
 
 --
@@ -1810,17 +1810,17 @@ CREATE UNIQUE INDEX index_extisimo_metrics_as_unique ON extisimo_metrics USING b
 
 
 --
+-- Name: index_extisimo_metrics_on_file; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_metrics_on_file ON extisimo_metrics USING btree (file);
+
+
+--
 -- Name: index_extisimo_metrics_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_metrics_on_name ON extisimo_metrics USING btree (name);
-
-
---
--- Name: index_extisimo_metrics_on_path; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_extisimo_metrics_on_path ON extisimo_metrics USING btree (path);
 
 
 --

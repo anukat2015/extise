@@ -681,7 +681,7 @@ CREATE TABLE extisimo_repositories (
     name character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    git_eclipse_org_product character varying NOT NULL
+    git_eclipse_org_project_id integer
 );
 
 
@@ -713,8 +713,8 @@ CREATE TABLE extisimo_sessions (
     user_id integer NOT NULL,
     previous_commit_id integer NOT NULL,
     revision_commit_id integer NOT NULL,
-    previous_identifier character varying NOT NULL,
-    revision_identifier character varying NOT NULL,
+    previous_identifier character varying(40) NOT NULL,
+    revision_identifier character varying(40) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     started_at timestamp without time zone NOT NULL,
@@ -765,7 +765,8 @@ CREATE TABLE extisimo_tasks (
     updated_at timestamp without time zone NOT NULL,
     submitted_at timestamp without time zone NOT NULL,
     modified_at timestamp without time zone NOT NULL,
-    bugs_eclipse_org_bug_id integer NOT NULL
+    bugs_eclipse_org_bug_id integer NOT NULL,
+    git_eclipse_org_change_id integer
 );
 
 
@@ -797,7 +798,8 @@ CREATE TABLE extisimo_users (
     name character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    bugs_eclipse_org_user_id integer NOT NULL
+    bugs_eclipse_org_user_id integer NOT NULL,
+    git_eclipse_org_user_id integer
 );
 
 
@@ -818,6 +820,173 @@ CREATE SEQUENCE extisimo_users_id_seq
 --
 
 ALTER SEQUENCE extisimo_users_id_seq OWNED BY extisimo_users.id;
+
+
+--
+-- Name: git_eclipse_org_changes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE git_eclipse_org_changes (
+    id integer NOT NULL,
+    owner_id integer NOT NULL,
+    project_id integer NOT NULL,
+    changeid integer NOT NULL,
+    status character varying NOT NULL,
+    commit_identifier character varying(40) NOT NULL,
+    change_identifier character varying(40) NOT NULL,
+    history_size integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: git_eclipse_org_changes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE git_eclipse_org_changes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: git_eclipse_org_changes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE git_eclipse_org_changes_id_seq OWNED BY git_eclipse_org_changes.id;
+
+
+--
+-- Name: git_eclipse_org_labels; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE git_eclipse_org_labels (
+    id integer NOT NULL,
+    change_id integer NOT NULL,
+    key character varying NOT NULL,
+    value character varying NOT NULL,
+    names character varying[] NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: git_eclipse_org_labels_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE git_eclipse_org_labels_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: git_eclipse_org_labels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE git_eclipse_org_labels_id_seq OWNED BY git_eclipse_org_labels.id;
+
+
+--
+-- Name: git_eclipse_org_projects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE git_eclipse_org_projects (
+    id integer NOT NULL,
+    parent character varying NOT NULL,
+    name character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: git_eclipse_org_projects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE git_eclipse_org_projects_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: git_eclipse_org_projects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE git_eclipse_org_projects_id_seq OWNED BY git_eclipse_org_projects.id;
+
+
+--
+-- Name: git_eclipse_org_reviews; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE git_eclipse_org_reviews (
+    id integer NOT NULL,
+    change_id integer NOT NULL,
+    reviewer_id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: git_eclipse_org_reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE git_eclipse_org_reviews_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: git_eclipse_org_reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE git_eclipse_org_reviews_id_seq OWNED BY git_eclipse_org_reviews.id;
+
+
+--
+-- Name: git_eclipse_org_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE git_eclipse_org_users (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    email character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: git_eclipse_org_users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE git_eclipse_org_users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: git_eclipse_org_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE git_eclipse_org_users_id_seq OWNED BY git_eclipse_org_users.id;
 
 
 --
@@ -974,6 +1143,41 @@ ALTER TABLE ONLY extisimo_tasks ALTER COLUMN id SET DEFAULT nextval('extisimo_ta
 --
 
 ALTER TABLE ONLY extisimo_users ALTER COLUMN id SET DEFAULT nextval('extisimo_users_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_changes ALTER COLUMN id SET DEFAULT nextval('git_eclipse_org_changes_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_labels ALTER COLUMN id SET DEFAULT nextval('git_eclipse_org_labels_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_projects ALTER COLUMN id SET DEFAULT nextval('git_eclipse_org_projects_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_reviews ALTER COLUMN id SET DEFAULT nextval('git_eclipse_org_reviews_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_users ALTER COLUMN id SET DEFAULT nextval('git_eclipse_org_users_id_seq'::regclass);
 
 
 --
@@ -1142,6 +1346,46 @@ ALTER TABLE ONLY extisimo_tasks
 
 ALTER TABLE ONLY extisimo_users
     ADD CONSTRAINT extisimo_users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: git_eclipse_org_changes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_changes
+    ADD CONSTRAINT git_eclipse_org_changes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: git_eclipse_org_labels_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_labels
+    ADD CONSTRAINT git_eclipse_org_labels_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: git_eclipse_org_projects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_projects
+    ADD CONSTRAINT git_eclipse_org_projects_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: git_eclipse_org_reviews_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_reviews
+    ADD CONSTRAINT git_eclipse_org_reviews_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: git_eclipse_org_users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY git_eclipse_org_users
+    ADD CONSTRAINT git_eclipse_org_users_pkey PRIMARY KEY (id);
 
 
 --
@@ -1915,10 +2159,10 @@ CREATE UNIQUE INDEX index_extisimo_repositories_as_unique ON extisimo_repositori
 
 
 --
--- Name: index_extisimo_repositories_on_git_eclipse_org_product; Type: INDEX; Schema: public; Owner: -
+-- Name: index_extisimo_repositories_on_git_eclipse_org_project_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_repositories_on_git_eclipse_org_product ON extisimo_repositories USING btree (git_eclipse_org_product);
+CREATE UNIQUE INDEX index_extisimo_repositories_on_git_eclipse_org_project_id ON extisimo_repositories USING btree (git_eclipse_org_project_id);
 
 
 --
@@ -2006,6 +2250,13 @@ CREATE INDEX index_extisimo_tasks_on_classification ON extisimo_tasks USING btre
 
 
 --
+-- Name: index_extisimo_tasks_on_git_eclipse_org_change_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_tasks_on_git_eclipse_org_change_id ON extisimo_tasks USING btree (git_eclipse_org_change_id);
+
+
+--
 -- Name: index_extisimo_tasks_on_modified_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2062,6 +2313,132 @@ CREATE UNIQUE INDEX index_extisimo_users_on_bugs_eclipse_org_user_id ON extisimo
 
 
 --
+-- Name: index_extisimo_users_on_git_eclipse_org_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_users_on_git_eclipse_org_user_id ON extisimo_users USING btree (git_eclipse_org_user_id);
+
+
+--
+-- Name: index_git_eclipse_org_changes_as_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_git_eclipse_org_changes_as_unique ON git_eclipse_org_changes USING btree (changeid);
+
+
+--
+-- Name: index_git_eclipse_org_changes_on_change_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_changes_on_change_identifier ON git_eclipse_org_changes USING btree (change_identifier);
+
+
+--
+-- Name: index_git_eclipse_org_changes_on_commit_identifier; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_changes_on_commit_identifier ON git_eclipse_org_changes USING btree (commit_identifier);
+
+
+--
+-- Name: index_git_eclipse_org_changes_on_history_size; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_changes_on_history_size ON git_eclipse_org_changes USING btree (history_size);
+
+
+--
+-- Name: index_git_eclipse_org_changes_on_owner_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_changes_on_owner_id ON git_eclipse_org_changes USING btree (owner_id);
+
+
+--
+-- Name: index_git_eclipse_org_changes_on_project_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_changes_on_project_id ON git_eclipse_org_changes USING btree (project_id);
+
+
+--
+-- Name: index_git_eclipse_org_changes_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_changes_on_status ON git_eclipse_org_changes USING btree (status);
+
+
+--
+-- Name: index_git_eclipse_org_labels_as_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_git_eclipse_org_labels_as_unique ON git_eclipse_org_labels USING btree (change_id, key);
+
+
+--
+-- Name: index_git_eclipse_org_labels_on_change_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_labels_on_change_id ON git_eclipse_org_labels USING btree (change_id);
+
+
+--
+-- Name: index_git_eclipse_org_labels_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_labels_on_key ON git_eclipse_org_labels USING btree (key);
+
+
+--
+-- Name: index_git_eclipse_org_projects_as_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_git_eclipse_org_projects_as_unique ON git_eclipse_org_projects USING btree (name);
+
+
+--
+-- Name: index_git_eclipse_org_projects_on_parent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_projects_on_parent ON git_eclipse_org_projects USING btree (parent);
+
+
+--
+-- Name: index_git_eclipse_org_reviews_as_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_git_eclipse_org_reviews_as_unique ON git_eclipse_org_reviews USING btree (change_id, reviewer_id);
+
+
+--
+-- Name: index_git_eclipse_org_reviews_on_change_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_reviews_on_change_id ON git_eclipse_org_reviews USING btree (change_id);
+
+
+--
+-- Name: index_git_eclipse_org_reviews_on_reviewer_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_reviews_on_reviewer_id ON git_eclipse_org_reviews USING btree (reviewer_id);
+
+
+--
+-- Name: index_git_eclipse_org_users_as_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_git_eclipse_org_users_as_unique ON git_eclipse_org_users USING btree (name);
+
+
+--
+-- Name: index_git_eclipse_org_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_git_eclipse_org_users_on_email ON git_eclipse_org_users USING btree (email);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2085,6 +2462,16 @@ INSERT INTO schema_migrations (version) VALUES ('20151119035307');
 INSERT INTO schema_migrations (version) VALUES ('20151119035313');
 
 INSERT INTO schema_migrations (version) VALUES ('20151119035321');
+
+INSERT INTO schema_migrations (version) VALUES ('20151201164319');
+
+INSERT INTO schema_migrations (version) VALUES ('20151201164329');
+
+INSERT INTO schema_migrations (version) VALUES ('20151201164357');
+
+INSERT INTO schema_migrations (version) VALUES ('20151201164409');
+
+INSERT INTO schema_migrations (version) VALUES ('20151201164416');
 
 INSERT INTO schema_migrations (version) VALUES ('20151214141051');
 
@@ -2117,6 +2504,4 @@ INSERT INTO schema_migrations (version) VALUES ('20151214142907');
 INSERT INTO schema_migrations (version) VALUES ('20151214142912');
 
 INSERT INTO schema_migrations (version) VALUES ('20151214143150');
-
-INSERT INTO schema_migrations (version) VALUES ('20160301153317');
 

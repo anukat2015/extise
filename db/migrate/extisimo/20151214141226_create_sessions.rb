@@ -5,8 +5,8 @@ class CreateSessions < ActiveRecord::Migration
       t.references :previous_commit, null: false
       t.references :revision_commit, null: false
 
-      t.string :previous_identifier, null: false
-      t.string :revision_identifier, null: false
+      t.string :previous_identifier, null: false, limit: 40
+      t.string :revision_identifier, null: false, limit: 40
 
       t.timestamps null: false
 

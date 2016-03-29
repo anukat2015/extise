@@ -1,4 +1,4 @@
-class CreateUsersByEclipseOrg < ActiveRecord::Migration
+class CreateUsersByBugsEclipseOrg < ActiveRecord::Migration
   def change
     create_table :bugs_eclipse_org_users do |t|
       t.string :login_name, null: false

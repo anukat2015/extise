@@ -6241,7 +6241,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#owner_id#</dia:string>
+            <dia:string>#project_id#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#integer#</dia:string>
@@ -6264,7 +6264,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#project_id#</dia:string>
+            <dia:string>#owner_id#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#integer#</dia:string>
@@ -7441,17 +7441,17 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="25.51,48.5"/>
+        <dia:point val="25.51,49.3"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="25.46,47.75;33.05,57.55"/>
+        <dia:rectangle val="25.46,48.55;33.05,57.55"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="25.51,48.5"/>
-        <dia:point val="28,48.5"/>
+        <dia:point val="25.51,49.3"/>
+        <dia:point val="28,49.3"/>
         <dia:point val="28,56.7"/>
         <dia:point val="33,56.7"/>
       </dia:attribute>
@@ -7470,7 +7470,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:color val="#000000"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O38" connection="11"/>
+        <dia:connection handle="0" to="O38" connection="13"/>
         <dia:connection handle="1" to="O40" connection="8"/>
       </dia:connections>
     </dia:object>
@@ -7512,17 +7512,17 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="15,49.3"/>
+        <dia:point val="15,48.5"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="10.075,48.55;15.05,57.55"/>
+        <dia:rectangle val="10.075,47.75;15.05,57.55"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="15,49.3"/>
-        <dia:point val="13,49.3"/>
+        <dia:point val="15,48.5"/>
+        <dia:point val="13,48.5"/>
         <dia:point val="13,56.7"/>
         <dia:point val="10.125,56.7"/>
       </dia:attribute>
@@ -7541,7 +7541,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:color val="#000000"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O38" connection="12"/>
+        <dia:connection handle="0" to="O38" connection="10"/>
         <dia:connection handle="1" to="O39" connection="9"/>
       </dia:connections>
     </dia:object>

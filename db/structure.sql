@@ -828,8 +828,8 @@ ALTER SEQUENCE extisimo_users_id_seq OWNED BY extisimo_users.id;
 
 CREATE TABLE git_eclipse_org_changes (
     id integer NOT NULL,
-    owner_id integer NOT NULL,
     project_id integer NOT NULL,
+    owner_id integer NOT NULL,
     changeid integer NOT NULL,
     status character varying NOT NULL,
     commit_identifier character varying(40) NOT NULL,

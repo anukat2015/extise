@@ -1,8 +1,8 @@
 class CreateChangesByGitEclipseOrg < ActiveRecord::Migration
   def change
     create_table :git_eclipse_org_changes do |t|
-      t.references :owner, null: false
       t.references :project, null: false
+      t.references :owner, null: false
 
       t.integer :changeid, null: false
       t.string :status, null: false

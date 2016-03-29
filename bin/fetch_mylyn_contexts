@@ -44,9 +44,10 @@ p.each do |f|
 
       file = File.join contexts_directory, "#{attachment_id}.xml"
 
-      if attachment_filename == BugsEclipseOrg::Attachment::MYLYN_CONTEXT_FILENAME && !File.exist?(file)
-        system "curl -#{'s' if !v || q}S https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"
-      end
+      next if attachment_filename != BugsEclipseOrg::Attachment::MYLYN_CONTEXT_FILENAME
+      next if File.exist? file
+
+      system "curl -#{'s' if !v || q}S https://bugs.eclipse.org/bugs/attachment.cgi?id=#{attachment_id} | tar -xO > #{file}"
     end
   end
 end

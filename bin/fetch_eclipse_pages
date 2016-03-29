@@ -27,45 +27,52 @@ i = v && !options.default?(:p) ? 1 : 0
 FileUtils.mkpath bugs_directory = (o || File.join(BugsEclipseOrg::DIRECTORY, 'eclipse')) + '-bugs'
 FileUtils.mkpath changes_directory = (o || File.join(GitEclipseOrg::DIRECTORY, 'eclipse')) + '-changes'
 
-driver = Selenium::WebDriver.for :phantomjs
-
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
   inform f unless q || i.zero?
 
   process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
-    bug_id = b.css('bug_id').text.strip
-    url = "https://bugs.eclipse.org/bugs/show_bug.cgi?id=#{bug_id}"
+    driver = Selenium::WebDriver.for :phantomjs
 
-    puts "#{'  ' * i}bug: #{bug_id}" unless q
+    begin
+      bug_id = b.css('bug_id').text.strip
+      url = "https://bugs.eclipse.org/bugs/show_bug.cgi?id=#{bug_id}"
+      file = File.join bugs_directory, "#{bug_id}.html"
 
-    driver.navigate.to url
+      puts "#{'  ' * i}bug: #{bug_id}" unless q
 
-    file = File.join bugs_directory, "#{bug_id}.html"
-    content = driver.page_source
+      next if File.exist? file
 
-    File.write file, content unless File.exist? file
+      driver.navigate.to url
 
-    url, change_id = *content.match(/https:\/\/git\.eclipse\.org\/r\/(?<change_id>\d+)/).to_a
+      content = driver.page_source
 
-    unless url && change_id
-      warn "#{BugsEclipseOrg::Bug}:#{bug_id} change not found"
-      next
+      File.write file, content
+
+      url, change_id = *content.match(/https:\/\/git\.eclipse\.org\/r\/(?<change_id>\d+)/).to_a
+      file = File.join changes_directory, "#{change_id}.html"
+
+      unless url && change_id
+        warn "#{BugsEclipseOrg::Bug}:#{bug_id} change not found"
+        next
+      end
+
+      puts "#{'  ' * (i + 1)}change: #{bug_id}" unless q
+
+      next if File.exist? file
+
+      driver.navigate.to url
+
+      wait = Selenium::WebDriver::Wait.new timeout: 30.seconds
+      wait.until { driver.find_element(class: 'screen').displayed? }
+
+      content = driver.page_source
+
+      File.write file, content
+    ensure
+      driver.quit
     end
-
-    puts "#{'  ' * (i + 1)}change: #{bug_id}" unless q
-
-    driver.navigate.to url
-
-    wait = Selenium::WebDriver::Wait.new timeout: 30.seconds
-    wait.until { driver.find_element(class: 'screen').displayed? }
-
-    file = File.join changes_directory, "#{change_id}.html"
-    content = driver.page_source
-
-    File.write file, content unless File.exist? file
   end
 end
 
-driver.quit

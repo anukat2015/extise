@@ -17,6 +17,7 @@ gem 'optbind', '~> 0.3.2'
 gem 'parallel', '~> 1.6.1'
 gem 'ruby-progressbar', '~> 1.7.5'
 gem 'rugged', '~> 0.23.3'
+gem 'selenium-webdriver', '~> 2.53.0'
 gem 'upsert', '~> 2.1.1'
 
 gem 'pry'

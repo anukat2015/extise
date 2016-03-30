@@ -1,4 +1,4 @@
-class Extric::RecentLinesOfCode
+class Extric::Elements::RecentLinesOfCode
   def measure(user, element)
     names = user.bugs_eclipse_org_user.realnames.unshift user.name
     commit = element.commit

@@ -114,14 +114,16 @@ Import Extise interactions from tasks and commits, fill `extisimo_{sessions,inte
 Load concept inferencers, fill `extisimo_{inferencers}` tables
 
     load_inferencers
-    load_inferencers --module=Extinf lib/extinf/tasks/*
+    load_inferencers lib/extinf/tasks/*
+    load_inferencers --library=lib/extinf
 
 #### `load_metrics`
 
 Load expertise metrics, fill `extisimo_{metrics}` tables
 
     load_metrics
-    load_metrics --module=Extric lib/extric/elements/*
+    load_metrics lib/extric/elements/*
+    load_metrics --library=lib/extric
 
 ### Raw import
 

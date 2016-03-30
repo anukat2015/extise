@@ -5,21 +5,26 @@ require 'extisimo'
 require 'extric/version'
 
 module Extric
-  extend ActiveSupport::Autoload
-
-  autoload_under 'concepts' do
+  module Concepts
+    extend ActiveSupport::Autoload
   end
 
-  autoload_under 'elements' do
+  module Elements
+    extend ActiveSupport::Autoload
+
+    autoload :CommonLinesOfCode
     autoload :RecentLinesOfCode
   end
 
-  autoload_under 'sessions' do
+  module Sessions
+    extend ActiveSupport::Autoload
+
+    autoload :CommonLinesOfCode
   end
 
-  def self.resolve_metric!(file: nil, prefix: nil)
-    _, directory, name, type, handle = Dyna.resolve_and_create! file: file, prefix: prefix
-    target = File.basename(directory).singularize
+  def self.resolve_metric!(file: nil, library: nil)
+    _, name, type, handle = Dyna.resolve_and_create! file: file, library: library
+    target = File.basename(File.dirname file).singularize
     target = handle.target.to_s if handle.respond_to? :target
     name = handle.name.to_s if handle.respond_to? :name
     raise "invalid target at #{file}" unless Metric::TARGETS.include? target

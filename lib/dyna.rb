@@ -1,11 +1,15 @@
+require 'active_support/core_ext/object/blank'
+
 module Dyna
   extend self
 
-  def resolve_and_create!(file: nil, prefix: nil, &block)
+  def resolve_and_create!(file: nil, library: nil, &block)
     name, directory = File.basename(file, '.rb').underscore, File.dirname(file)
-    type = [prefix, name].compact.map(&:camelize).join('::')
+    prefix = File.join '.*', library ? File.dirname(library) : 'lib'
+    modules = directory.sub(/\A#{prefix}/, '').split(File::SEPARATOR).reject(&:blank?)
+    type = (modules << name).map(&:camelize).join('::')
     object = load_and_create!(file: file, type: type, &block).last
-    return file, directory, name, type, object
+    return file, name, type, object
   end
 
   def load_and_create!(file: nil, type: nil, &block)

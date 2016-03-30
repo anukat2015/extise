@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-m, c, s, t, v, q, p = nil, true, false, 80, true, false, []
+l, c, s, t, v, q, p = nil, true, false, 80, true, false, []
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<path>...]'
-  opt 'm    --module=<name>'
+  opt 'l    --library=<name>'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -14,15 +14,12 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-if p.empty?
-  m ||= 'Extinf'
-  p = Dir[File.expand_path "../../lib/extinf/{#{Inferencer::TARGETS.map(&:pluralize) * ','}}/*.rb", __FILE__]
-end
+p = Dir[File.expand_path "../../lib/extinf/{#{Inferencer::TARGETS.map(&:pluralize) * ','}}/*.rb", __FILE__] if p.empty?
 
 AutoColor.disable on: self unless c
 
 p.map { |f| File.absolute_path f }.each do |f|
-  target, name, _, type, _ = Extinf.resolve_inferencer! file: f, prefix: m rescue abort $!
+  target, name, _, type, _ = Extinf.resolve_inferencer! file: f, library: l rescue abort $!
   inferencer = persist(Inferencer, target: target, name: name) { |r| r.file, r.type = f, type }
 
   dump_record inferencer, :inferencer

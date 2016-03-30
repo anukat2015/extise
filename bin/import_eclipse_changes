@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise! { include BugsEclipseOrg }
+
+n, w, z, p = 4, :thread, false, [STDIN]
+c, s, t, v, q = true, false, 80, true, false
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] [<file>...]'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  opt 'z    --stat'
+  arg 'p [<path>...]'
+end
+
+#TODO add Gerrit change id reference to Bugzilla bugs on DB level
+#TODO review URL model concern
+
+abort 'not implemented'

@@ -56,6 +56,8 @@ when :session
   -> (session) { [session.user] }
 end
 
+#TODO metrics have now no way of knowing about --until option
+
 process subjects, progress: p do |subject|
   inform "fetch users for #{m}:#{subject.id} who somehow relate" if v unless q
 
@@ -64,18 +66,13 @@ process subjects, progress: p do |subject|
   warn "no users fetched for #{m}:#{subject.id} who somehow relate" unless users.any?
 
   users.each do |user|
-    metrics.each do |metric, handler|
+    metrics.each do |metric, handle|
       inform "measure on #{m}:#{subject.id} for #{user.name} with #{metric.name}" if v unless q
 
       begin
-        data = handler.measure user, subject
+        data = handle.measure(user, subject) || raise('no data')
       rescue
-        warn "#{metric.type} #{$!.message.presence || '?'} on #{m}:#{subject.id} for #{user.name}"
-        next
-      end
-
-      unless data
-        warn "#{metric.type} no data from measuring on #{m}:#{subject.id} for #{user.name}"
+        warn Extric.message handle, subject, user
         next
       end
 

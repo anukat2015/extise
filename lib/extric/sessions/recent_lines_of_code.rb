@@ -2,6 +2,8 @@
 # a session by a user relative to total lines of code of these elements
 
 class Extric::Sessions::RecentLinesOfCode
+  include Extric::Reporting
+
   def measure(user, session)
     names = user.bugs_eclipse_org_user.realnames.unshift user.name
     commit = session.revision_commit
@@ -24,7 +26,7 @@ class Extric::Sessions::RecentLinesOfCode
         o = { track_copies_any_commit_copies: true }
         b = Rugged::Blame.new g, element.file, o.merge(oldest_commit: commit.identifier)
       rescue Rugged::TreeError
-        warn "#{self.class} #{element.file} not found at #{commit.identifier} (#{$!})"
+        warn message user, element, "#{element.file} not found at #{commit.identifier} (#{$!})"
         next
       end
 

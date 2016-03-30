@@ -2,6 +2,8 @@
 # by a user relative to total lines of code of the element
 
 class Extric::Elements::RecentLinesOfCode
+  include Extric::Reporting
+
   def measure(user, element)
     names = user.bugs_eclipse_org_user.realnames.unshift user.name
     commit = element.commit
@@ -21,7 +23,7 @@ class Extric::Elements::RecentLinesOfCode
       o = { track_copies_any_commit_copies: true }
       b = Rugged::Blame.new g, element.file, o.merge(oldest_commit: commit.identifier)
     rescue Rugged::TreeError
-      warn "#{self.class} #{element.file} not found at #{commit.identifier} (#{$!})"
+      warn message user, element, "#{element.file} not found at #{commit.identifier} (#{$!})"
       return
     end
 

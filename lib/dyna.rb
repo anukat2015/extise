@@ -11,7 +11,7 @@ module Dyna
   end
 
   def load_and_create!(file: nil, type: nil, &block)
-    load file
+    load file unless defined? type
     object = block ? block.call(type.constantize) : type.constantize.new
     return file, object
   rescue LoadError

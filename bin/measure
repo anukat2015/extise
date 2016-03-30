@@ -24,7 +24,7 @@ AutoColor.disable on: self unless c
 
 metrics = Metric.on(m)
 metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n}") } unless r.blank?
-metrics = Hash[metrics.map { |metric| [metric, (Extric.create_handle! file: metric.file, type: metric.type rescue abort $!)] }]
+metrics = Hash[metrics.map { |metric| [metric, (Dyna.load_and_create!(file: metric.file, type: metric.type).last rescue abort $!)] }]
 
 subjects = case m.to_sym
 when :concept
@@ -70,7 +70,12 @@ process subjects, progress: p do |subject|
       begin
         data = handler.measure user, subject
       rescue
-        warn "#{Metric}:#{metric.id} #{$!.message || 'unknown failure'}"
+        warn "#{metric.type} #{$!.message.presence || '?'} on #{m}:#{subject.id} for #{user.name}"
+        next
+      end
+
+      unless data
+        warn "#{metric.type} no data from measuring on #{m}:#{subject.id} for #{user.name}"
         next
       end
 

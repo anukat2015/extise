@@ -137,3 +137,5 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
     end
   end
 end
+
+git.close

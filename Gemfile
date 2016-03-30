@@ -12,6 +12,7 @@ gem 'activesupport', '~> 5.0.0.beta1'
 gem 'rspec', '~> 3.3.0'
 
 gem 'colored', '~> 1.2'
+gem 'diffy', '~> 3.1.0'
 gem 'nokogiri', '~> 1.6.6'
 gem 'optbind', '~> 0.3.2'
 gem 'parallel', '~> 1.6.1'

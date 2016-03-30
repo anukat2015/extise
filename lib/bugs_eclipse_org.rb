@@ -5,7 +5,7 @@ require 'database'
 require 'bugs_eclipse_org/version'
 
 module BugsEclipseOrg
-  DIRECTORY = File.expand_path '../../../data/bugs.eclipse.org'
+  DIRECTORY = File.expand_path '../../../data/bugs.eclipse.org', __FILE__
 
   extend ActiveSupport::Autoload
 

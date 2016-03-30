@@ -9,12 +9,12 @@ module Extisimo::URL
       BUGZILLA_DESCRIPTION = 'https://bugs.eclipse.org/bugs/show_bug.cgi?id=%bug#c%description'
       BUGZILLA_ATTACHMENT = 'https://bugs.eclipse.org/bugs/attachment.cgi?id=%attachment'
 
-      EGIT_PROJECT = 'https://git.eclipse.org/c/%product/%repository.git'
-      EGIT_COMMIT = 'https://git.eclipse.org/c/%product/%repository.git/commit/?id=%commit'
-      EGIT_GIT = 'https://git.eclipse.org/gitroot/%product/%repository.git'
+      EGIT_PROJECT = 'https://git.eclipse.org/c/%parent/%repository.git'
+      EGIT_COMMIT = 'https://git.eclipse.org/c/%parent/%repository.git/commit/?id=%commit'
+      EGIT_GIT = 'https://git.eclipse.org/gitroot/%parent/%repository.git'
 
       GERRIT_USER = 'https://git.eclipse.org/r/#/q/owner:%user'
-      GERRIT_PROJECT = 'https://git.eclipse.org/r/#/q/project:%product/%repository'
+      GERRIT_PROJECT = 'https://git.eclipse.org/r/#/q/project:%parent/%repository'
 
       GITHUB_USER = 'https://github.com/%user'
       GITHUB_REPOSITORY = 'https://github.com/eclipse/%repository'
@@ -66,11 +66,11 @@ module Extisimo::URL
     include Extisimo::URL
 
     def egit_urls
-      repositories.pluck(:git_eclipse_org_product, :name).map { |product, name| EGIT_PROJECT.gsub(/%(product|repository)/, '%product' => product, '%repository' => name) }
+      repositories.pluck(:git_eclipse_org_parent, :name).map { |parent, name| EGIT_PROJECT.gsub(/%(parent|repository)/, '%parent' => parent, '%repository' => name) }
     end
 
     def gerrit_urls
-      repositories.pluck(:git_eclipse_org_product, :name).map { |product, name| GERRIT_PROJECT.gsub(/%(product|repository)/, '%product' => product, '%repository' => name) }
+      repositories.pluck(:git_eclipse_org_parent, :name).map { |parent, name| GERRIT_PROJECT.gsub(/%(parent|repository)/, '%parent' => parent, '%repository' => name) }
     end
 
     def github_urls
@@ -82,7 +82,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def egit_url
-      EGIT_GIT.gsub(/%(product|repository)/, '%product' => git_eclipse_org_product, '%repository' => name)
+      EGIT_GIT.gsub(/%(parent|repository)/, '%parent' => git_eclipse_org_parent, '%repository' => name)
     end
 
     def github_url
@@ -94,7 +94,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def egit_url
-      EGIT_COMMIT.gsub(/%(product|repository|commit)/, '%product' => repository.git_eclipse_org_product, '%repository' => repository.name, '%commit' => identifier)
+      EGIT_COMMIT.gsub(/%(parent|repository|commit)/, '%parent' => repository.git_eclipse_org_parent, '%repository' => repository.name, '%commit' => identifier)
     end
 
     def github_url

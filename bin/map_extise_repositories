@@ -32,7 +32,7 @@ p.each do |f|
 
     repository = persist(Repository, name: n) do |r|
       r.project = project
-      r.git_eclipse_org_product = g
+      r.git_eclipse_org_parent = g
     end
 
     dump_record repository, :repository, 1

@@ -1,3 +1,6 @@
+# NOTE: counts lines of code of an element recently modified
+# by a user relative to total lines of code of the element
+
 class Extric::Elements::RecentLinesOfCode
   def measure(user, element)
     names = user.bugs_eclipse_org_user.realnames.unshift user.name
@@ -14,13 +17,20 @@ class Extric::Elements::RecentLinesOfCode
     # track_copies_same_commit_copies
     # track_copies_any_commit_copies
 
-    o = { track_copies_any_commit_copies: true }
-    b = Rugged::Blame.new g, element.file, o.merge(newest_commit: commit.identifier)
+    begin
+      o = { track_copies_any_commit_copies: true }
+      b = Rugged::Blame.new g, element.file, o.merge(oldest_commit: commit.identifier)
+    rescue Rugged::TreeError
+      warn "#{self.class} #{element.file} not found at #{commit.identifier} (#{$!})"
+      return
+    end
+
     c = b.select { |l| names.include? l[:final_signature][:name] }.count
+    t = b.count
 
     {
-      blame: { final: c, total: b.count },
-      value: c != 0 ? c.to_f / b.count : 0
+      blame: { final: c, total: t },
+      value: c != 0 ? c.to_f / t : 0
     }
   end
 end

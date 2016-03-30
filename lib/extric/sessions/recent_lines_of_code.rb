@@ -11,8 +11,6 @@ class Extric::Sessions::RecentLinesOfCode
 
     g = Rugged::Repository.new File.join GitEclipseOrg::DIRECTORY, repository.name
 
-    g.checkout 'master'
-
     # NOTE: tracking options include:
     # track_copies_same_file
     # track_copies_same_commit_moves
@@ -33,6 +31,8 @@ class Extric::Sessions::RecentLinesOfCode
       c += b.select { |l| names.include? l[:final_signature][:name] }.count
       t = (t || 0) + b.count
     end
+
+    g.close
 
     return unless t
 

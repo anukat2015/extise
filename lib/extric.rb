@@ -12,14 +12,16 @@ module Extric
   module Elements
     extend ActiveSupport::Autoload
 
-    autoload :CommonLinesOfCode
+    autoload :CyclomaticComplexity
+    autoload :LinesOfCodeCombination
     autoload :RecentLinesOfCode
   end
 
   module Sessions
     extend ActiveSupport::Autoload
 
-    autoload :CommonLinesOfCode
+    autoload :LinesOfCodeCombination
+    autoload :RecentLinesOfCode
   end
 
   def self.resolve_metric!(file: nil, library: nil)
@@ -30,5 +32,16 @@ module Extric
     raise "invalid target at #{file}" unless Metric::TARGETS.include? target
     raise "invalid handle at #{file}" unless handle.respond_to? :measure
     return target, name, file, type, handle
+  end
+
+  def self.message(metric, user, subject, content = $!)
+    message = "#{metric.class} #{content.respond_to?(:message) ? content.message : (content || '?').to_s}"
+    message << " on #{subject.class}:#{subject.id} for #{user.class}:#{user.id}"
+  end
+
+  module Reporting
+    def message(user, subject, content = $!)
+      Extric.message self, user, subject, content
+    end
   end
 end

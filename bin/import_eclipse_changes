@@ -20,4 +20,6 @@ end
 #TODO add Gerrit change id reference to Bugzilla bugs on DB level
 #TODO review URL model concern
 
+# NOTE: to all 6569 bugs only 130 changes were fetched
+
 abort 'not implemented'

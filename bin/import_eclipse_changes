@@ -17,7 +17,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-#TODO add Gerrit change id reference to Bugzilla bugs on DB level
+#TODO add changeid reference to bugs_eclipse_org_bugs
+#TODO remove extisimo_repository.git_eclipse_org_parent and use git_eclipse_org_project.parent instead
 #TODO review URL model concern
 
 # NOTE: to all 6569 bugs only 130 changes were fetched

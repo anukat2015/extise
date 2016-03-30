@@ -24,6 +24,7 @@ import static com.google.common.base.Ascii.FS;
 import static com.google.common.base.Ascii.US;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterators.forArray;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 import static com.google.common.io.Resources.getResource;
@@ -79,17 +80,23 @@ public final class Bootstrap {
 
     protected Unit() {}
 
+    protected static Iterator<String> partition(final String input) {
+      Iterator<String> parts = Unit.splitter.split(input).iterator();
+
+      String first = parts.next();
+      String second = parts.hasNext() ? parts.next() : null;
+
+      return second == null ? forArray(first, null) : forArray(second, first);
+    }
+
     @Override
     public Collection<T> apply(final Collection<String> inputs) {
       List<T> output = newArrayListWithExpectedSize(16 * inputs.size());
 
       for (String input: inputs) {
-        Iterator<String> parts = Unit.splitter.split(input).iterator();
+        Iterator<String> partitions = partition(input);
 
-        String first = parts.next();
-        String second = parts.hasNext() ? parts.next() : null;
-
-        output.addAll(second == null ? this.apply(first, null) : this.apply(second, first));
+        output.addAll(this.apply(partitions.next(), partitions.next()));
       }
 
       return output;

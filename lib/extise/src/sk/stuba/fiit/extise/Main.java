@@ -34,7 +34,7 @@ public final class Main {
     runBootstrap(processOptions(args));
   }
 
-  private static final String[] knownPackages = { "sk.stuba.fiit.extise.dom", "sk.stuba.fiit.extise.map", "sk.stuba.fiit.extise.metric" };
+  private static final String[] knownPackages = { "sk.stuba.fiit.extise.difference", "sk.stuba.fiit.extise.dom", "sk.stuba.fiit.extise.map", "sk.stuba.fiit.extise.metric" };
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   static void runBootstrap(final String ... args) throws Exception {

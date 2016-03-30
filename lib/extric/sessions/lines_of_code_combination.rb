@@ -1,6 +1,10 @@
 # NOTE:
 
 class Extric::Sessions::LinesOfCodeCombination
+  ADDITIONS_MULTIPLIER = 1.3
+  DELETIONS_MULTIPLIER = 0.9
+  MODIFICATIONS_MULTIPLIER = 1.2
+
   include Extric::Reporting
 
   def measure(user, session)
@@ -22,18 +26,35 @@ class Extric::Sessions::LinesOfCodeCombination
 
     g = Rugged::Repository.new File.join GitEclipseOrg::DIRECTORY, revision_commit.repository.name
 
+    a, d, m, t = 0, 0, 0, 0
+
     elements.each do |previous_element, revision_element|
       previous_source = fetch_source g, previous_commit, previous_element
       revision_source = fetch_source g, revision_commit, revision_element
 
-      a, d, m = nil #TODO
+      t += [previous_source.length, revision_source.length].max
 
+      sources = Extise::Data.pack_files(previous: previous_source, revision: revision_source)
+
+      Extise.stream(function: 'MyersTextDifferencer', input: sources) do |o|
+        o.each_line do |l|
+          case l[0]
+          when '+' then a += 1
+          when '-' then d += 1
+          when '±' then m += 1
+          else
+          end
+        end
+      end
     end
 
     g.close
 
+    v = (ADDITIONS_MULTIPLIER * a + DELETIONS_MULTIPLIER * d + MODIFICATIONS_MULTIPLIER * m).to_f / t
+
     {
-      value: 0
+      difference: { additions: a, deletions: d, modifications: m, total: t },
+      value: v
     }
   end
 

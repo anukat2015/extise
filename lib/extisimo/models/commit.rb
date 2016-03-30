@@ -4,7 +4,7 @@ class Extisimo::Commit < ActiveRecord::Base
   belongs_to :repository
   belongs_to :author, class_name: :User
 
-  has_one :session
+  has_one :session, foreign_key: :revision_commit_id
 
   has_many :elements, dependent: :destroy
   has_many :conceptualities, through: :elements

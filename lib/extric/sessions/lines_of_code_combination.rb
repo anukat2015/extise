@@ -1,10 +1,8 @@
-# NOTE:
+# NOTE: computes linear combination of added, deleted,
+# and modified lines of code of elements inside a session
 
 class Extric::Sessions::LinesOfCodeCombination
-  ADDITIONS_MULTIPLIER = 1.3
-  DELETIONS_MULTIPLIER = 0.9
-  MODIFICATIONS_MULTIPLIER = 1.2
-
+  include Extric::Elements::LinesOfCodeCombination::Helpers
   include Extric::Reporting
 
   def measure(user, session)
@@ -29,40 +27,12 @@ class Extric::Sessions::LinesOfCodeCombination
     a, d, m, t = 0, 0, 0, 0
 
     elements.each do |previous_element, revision_element|
-      previous_source = fetch_source g, previous_commit, previous_element
-      revision_source = fetch_source g, revision_commit, revision_element
-
-      t += [previous_source.length, revision_source.length].max
-
-      sources = Extise::Data.pack_files(previous: previous_source, revision: revision_source)
-
-      Extise.stream(function: 'MyersTextDifferencer', input: sources) do |o|
-        o.each_line do |l|
-          case l[0]
-          when '+' then a += 1
-          when '-' then d += 1
-          when '±' then m += 1
-          else
-          end
-        end
-      end
+      r = compute_source_difference g, previous_element, revision_element
+      a, d, m, t = a + r[:additions], d + r[:deletions], m + r[:modifications], t + r[:total]
     end
 
     g.close
 
-    v = (ADDITIONS_MULTIPLIER * a + DELETIONS_MULTIPLIER * d + MODIFICATIONS_MULTIPLIER * m).to_f / t
-
-    {
-      difference: { additions: a, deletions: d, modifications: m, total: t },
-      value: v
-    }
-  end
-
-  private
-
-  def fetch_source(git, commit, element)
-    c = git.lookup commit.identifier
-    f = c.parents.first.diff(c).deltas.map(&:new_file).find { |f| f[:path] == element.file }
-    git.lookup(f[:oid]).text[element.offset..(element.offset + element.length)] if f
+    compute_result_data a, d, m, t
   end
 end

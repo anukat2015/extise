@@ -11,10 +11,9 @@ class Extric::Elements::CyclomaticComplexity
 
     g = Rugged::Repository.new File.join GitEclipseOrg::DIRECTORY, repository.name
     c = g.lookup commit.identifier
+    f = c.parents.first.diff(c).deltas.map(&:new_file).find { |f| f[:path] == element.file }
 
-    file = c.parents.first.diff(c).deltas.map(&:new_file).find { |f| f[:path] == element.file }
-    content = g.lookup(file[:oid]).text
-    source = content[element.offset..(element.offset + element.length)]
+    source = g.lookup(f[:oid]).text[element.offset..(element.offset + element.length)]
 
     r = Extise.stream(function: 'CyclomaticComplexity', input: source) { |o| o.read }
     l = LIMIT

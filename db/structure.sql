@@ -682,7 +682,7 @@ CREATE TABLE extisimo_repositories (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     git_eclipse_org_project_id integer,
-    git_eclipse_org_parent character varying NOT NULL
+    git_eclipse_org_project_parent character varying NOT NULL
 );
 
 
@@ -2161,17 +2161,17 @@ CREATE UNIQUE INDEX index_extisimo_repositories_as_unique ON extisimo_repositori
 
 
 --
--- Name: index_extisimo_repositories_on_git_eclipse_org_parent; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_extisimo_repositories_on_git_eclipse_org_parent ON extisimo_repositories USING btree (git_eclipse_org_parent);
-
-
---
 -- Name: index_extisimo_repositories_on_git_eclipse_org_project_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_extisimo_repositories_on_git_eclipse_org_project_id ON extisimo_repositories USING btree (git_eclipse_org_project_id);
+
+
+--
+-- Name: index_extisimo_repositories_on_git_eclipse_org_project_parent; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_repositories_on_git_eclipse_org_project_parent ON extisimo_repositories USING btree (git_eclipse_org_project_parent);
 
 
 --

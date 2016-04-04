@@ -1,4 +1,5 @@
 class Extisimo::Project < ActiveRecord::Base
+  include Extisimo::Reference::Project
   include Extisimo::URL::Project
 
   has_many :tasks, dependent: :destroy

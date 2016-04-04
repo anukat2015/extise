@@ -10,6 +10,20 @@ module Extisimo::Reference
       class BugsEclipseOrg::User
         has_one :extisimo_user, class_name: 'Extisimo::User', foreign_key: :bugs_eclipse_org_user_id
       end
+
+      belongs_to :git_eclipse_org_user, -> { readonly }, class_name: 'GitEclipseOrg::User'
+
+      class GitEclipseOrg::User
+        has_one :extisimo_user, class_name: 'Extisimo::User', foreign_key: :git_eclipse_org_user_id
+      end
+    end
+  end
+
+  module Project
+    extend ActiveSupport::Concern
+
+    included do
+      has_many :git_eclipse_org_projects, -> { readonly }, through: :repositories
     end
   end
 
@@ -25,6 +39,12 @@ module Extisimo::Reference
 
       class BugsEclipseOrg::Bug
         has_one :extisimo_task, class_name: 'Extisimo::Task', foreign_key: :bugs_eclipse_org_bug_id
+      end
+
+      belongs_to :git_eclipse_org_change, -> { readonly }, class_name: 'GitEclipseOrg::Change'
+
+      class GitEclipseOrg::Change
+        has_one :extisimo_task, class_name: 'Extisimo::Task', foreign_key: :git_eclipse_org_change_id
       end
     end
   end
@@ -65,6 +85,18 @@ module Extisimo::Reference
 
       class BugsEclipseOrg::Interaction
         has_one :extisimo_interaction, class_name: 'Extisimo::Interaction', foreign_key: :bugs_eclipse_org_interaction_id
+      end
+    end
+  end
+
+  module Repository
+    extend ActiveSupport::Concern
+
+    included do
+      belongs_to :git_eclipse_org_project, -> { readonly }, class_name: 'GitEclipseOrg::Project'
+
+      class GitEclipseOrg::Project
+        has_one :extisimo_repository, class_name: 'Extisimo::Repository', foreign_key: :git_eclipse_org_project_id
       end
     end
   end

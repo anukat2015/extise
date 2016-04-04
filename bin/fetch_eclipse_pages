@@ -76,3 +76,4 @@ p.each do |f|
   end
 end
 
+# NOTE: to all 6569 bugs only 130 changes were fetched

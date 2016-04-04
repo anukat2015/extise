@@ -19,7 +19,7 @@ p.each do |f|
   d = CSV.new(File.open_or f)
 
   process(d, progress: false) do |r|
-    p, c, g, n = *r
+    p, c, m, n = *r
 
     begin
       project = Project.find_by! product: p, component: c
@@ -32,7 +32,14 @@ p.each do |f|
 
     repository = persist(Repository, name: n) do |r|
       r.project = project
-      r.git_eclipse_org_parent = g
+      r.git_eclipse_org_project_parent = m
+      r.git_eclipse_org_project = GitEclipseOrg::Project.find_by name: n
+
+      # NOTE: always cache project parent since Eclipse changes may not be present
+
+      if r.git_eclipse_org_project_parent != r.git_eclipse_org_project.parent
+        abort "#{Repository}:? project parents for repository #{n} do not match"
+      end
     end
 
     dump_record repository, :repository, 1

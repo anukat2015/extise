@@ -1,4 +1,5 @@
 class Extisimo::Repository < ActiveRecord::Base
+  include Extisimo::Reference::Repository
   include Extisimo::URL::Repository
 
   belongs_to :project

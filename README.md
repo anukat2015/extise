@@ -76,7 +76,9 @@ Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attac
 
 Import Eclipse changes, fill `git_eclipse_org_{users,projects,changes,reviews,labels}` tables
   
-    import_eclipse_changes
+    import_eclipse_changes ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
+    import_eclipse_changes ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
+    import_eclipse_changes ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --bugzilla-pages=../data/bugs.eclipse.org/eclipse-bugs-20160330-0106 --gerrit-pages=../data/git.eclipse.org/eclipse-changes-20160330-0129
 
 #### `import_mylyn_contexts`
 

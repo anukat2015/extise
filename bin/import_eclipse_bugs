@@ -6,8 +6,8 @@ c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
-  opt 'm -m --mylyn=<path>'
-  opt 'o    --mylyn-mode=(append|delete|restrict|skip)'
+  opt 'm -m --mylyn-contexts=<path>'
+  opt 'o    --mylyn-contexts-mode=(append|delete|restrict|skip)'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'

@@ -56,8 +56,6 @@ when :session
   -> (session) { [session.user] }
 end
 
-#TODO metrics have now no way of knowing about --until option
-
 process subjects, progress: p do |subject|
   inform "fetch users for #{m}:#{subject.id} who somehow relate" if v unless q
 

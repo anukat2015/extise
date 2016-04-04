@@ -70,7 +70,7 @@ Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attac
 
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
-    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829
+    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829
 
 #### `import_eclipse_changes`
 

@@ -831,6 +831,7 @@ CREATE TABLE git_eclipse_org_changes (
     id integer NOT NULL,
     project_id integer NOT NULL,
     owner_id integer NOT NULL,
+    bugid integer NOT NULL,
     changeid integer NOT NULL,
     status character varying NOT NULL,
     commit_identifier character varying(40) NOT NULL,
@@ -2332,6 +2333,13 @@ CREATE UNIQUE INDEX index_extisimo_users_on_git_eclipse_org_user_id ON extisimo_
 --
 
 CREATE UNIQUE INDEX index_git_eclipse_org_changes_as_unique ON git_eclipse_org_changes USING btree (changeid);
+
+
+--
+-- Name: index_git_eclipse_org_changes_on_bugid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_git_eclipse_org_changes_on_bugid ON git_eclipse_org_changes USING btree (bugid);
 
 
 --

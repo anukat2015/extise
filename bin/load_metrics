@@ -14,8 +14,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-p = Dir["#{l}/**.rb"].reject { |f| f =~ /\/version\.rb/ } if l
-p = Dir[File.expand_path "../../lib/extric/{#{Metric::TARGETS.map(&:pluralize) * ','}}/*.rb", __FILE__] if p.empty?
+l = File.join '..', '..', 'lib', 'extric' unless l
+p = Dir[File.expand_path File.join(l, "{#{Metric::TARGETS.map(&:pluralize) * ','}}", '*.rb'), __FILE__] if p.empty?
 
 AutoColor.disable on: self unless c
 

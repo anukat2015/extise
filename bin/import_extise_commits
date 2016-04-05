@@ -42,100 +42,102 @@ sort = Rugged::SORT_DATE | Rugged::SORT_REVERSE
 
 # NOTE: always process master commits only
 
-git.checkout 'master'
+begin
+  git.checkout 'master'
 
-process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do |c|
+  process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do |c|
 
-  # NOTE: skip first commit and all merge commits
+    # NOTE: skip first commit and all merge commits
 
-  next if c.parents.count != 1
+    next if c.parents.count != 1
 
-  author = User.joins(:bugs_eclipse_org_user).find_by 'login_name = ? OR realnames @> ?', c.author[:name], "{#{c.author[:name]}}"
+    author = User.joins(:bugs_eclipse_org_user).find_by 'login_name = ? OR realnames @> ?', c.author[:name], "{#{c.author[:name]}}"
 
-  # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
+    # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
 
-  unless author
-    warn "#{User}:? not found by #{c.author[:name]}"
-    next
-  end
-
-  commit = persist(Commit, repository: repository, identifier: c.oid) do |r|
-    r.author = author
-    r.submitted_at = c.time.utc
-  end
-
-  dump_record commit, :commit, 1
-
-  # NOTE: consider only elements from the revision file, the actual difference itself is not included implicitly
-  # in the the model but rather computed later between the original (not previous) and revision commit files
-
-  files = c.parents.first.diff(c).deltas.map &:new_file
-
-  # NOTE: select only Java files to process (also filter out binary files)
-
-  sources = {}
-
-  files.select! do |f|
-    next if f[:oid] =~ /0{40}/
-    next if f[:path].ends_with?('package-info.java')
-    next unless f[:path].end_with?('.java')
-
-    if (b = git.lookup f[:oid]).binary?
-      warn "#{Commit}:#{commit.id} binary content in #{f[:path]}"
+    unless author
+      warn "#{User}:? not found by #{c.author[:name]}"
       next
     end
 
-    sources[f[:path]] = b.text
-  end
-
-  # NOTE: move to next commit if no Java files are present and leave
-  # the current commit persisted since it still indicates a session boundary
-
-  next if files.empty?
-
-  # NOTE: extract Java type declarations for all files at once
-
-  extractor, data = 'TypePositionExtractor', Extise::Data.pack_files(sources)
-
-  sources.clear
-
-  inform "#{'  ' * 2}" << "#{Extise.command extractor} < …" if v unless q
-
-  blocks = Extise.stream(function: extractor, input: data) do |o|
-    Extise::Data.parse_blocks(o).group_by { |b| b[:file] }
-  end
-
-  abort("#{Commit}:#{commit.id} elements extraction failed") if blocks === false
-  abort "#{Commit}:#{commit.id} no elements extracted" if blocks.empty?
-  abort "#{Commit}:#{commit.id} some elements not extracted" if blocks.size < files.size
-
-  files.each do |f|
-    k = f[:path]
-
-    # NOTE: select only top level Java type declarations in case of unit node extraction
-
-    blocks[k].select! { |b| b[:path] !~ /\// }
-
-    if blocks[k].empty?
-      warn "#{Commit}:#{commit.id} no elements in #{f[:path]}"
-      next
+    commit = persist(Commit, repository: repository, identifier: c.oid) do |r|
+      r.author = author
+      r.submitted_at = c.time.utc
     end
 
-    blocks[k].each do |b|
-      if b[:path] == '!'
-        warn "#{Commit}:#{commit.id} problematic element in #{f[:path]}"
+    dump_record commit, :commit, 1
+
+    # NOTE: consider only elements from the revision file, the actual difference itself is not included implicitly
+    # in the the model but rather computed later between the original (not previous) and revision commit files
+
+    files = c.parents.first.diff(c).deltas.map &:new_file
+
+    # NOTE: select only Java files to process (also filter out binary files)
+
+    sources = {}
+
+    files.select! do |f|
+      next if f[:oid] =~ /0{40}/
+      next if f[:path].ends_with?('package-info.java')
+      next unless f[:path].end_with?('.java')
+
+      if (b = git.lookup f[:oid]).binary?
+        warn "#{Commit}:#{commit.id} binary content in #{f[:path]}"
         next
       end
 
-      element = persist(Element, commit: commit, file: f[:path], path: b[:path]) do |r|
-        r.offset = b[:offset]
-        r.length = b[:length]
-        r.line = b[:line]
+      sources[f[:path]] = b.text
+    end
+
+    # NOTE: move to next commit if no Java files are present and leave
+    # the current commit persisted since it still indicates a session boundary
+
+    next if files.empty?
+
+    # NOTE: extract Java type declarations for all files at once
+
+    extractor, data = 'TypePositionExtractor', Extise::Data.pack_files(sources)
+
+    sources.clear
+
+    inform "#{'  ' * 2}" << "#{Extise.command extractor} < …" if v unless q
+
+    blocks = Extise.stream(function: extractor, input: data) do |o|
+      Extise::Data.parse_blocks(o).group_by { |b| b[:file] }
+    end
+
+    abort("#{Commit}:#{commit.id} elements extraction failed") if blocks === false
+    abort "#{Commit}:#{commit.id} no elements extracted" if blocks.empty?
+    abort "#{Commit}:#{commit.id} some elements not extracted" if blocks.size < files.size
+
+    files.each do |f|
+      k = f[:path]
+
+      # NOTE: select only top level Java type declarations in case of unit node extraction
+
+      blocks[k].select! { |b| b[:path] !~ /\// }
+
+      if blocks[k].empty?
+        warn "#{Commit}:#{commit.id} no elements in #{f[:path]}"
+        next
       end
 
-      dump_record element, :element, 2
+      blocks[k].each do |b|
+        if b[:path] == '!'
+          warn "#{Commit}:#{commit.id} problematic element in #{f[:path]}"
+          next
+        end
+
+        element = persist(Element, commit: commit, file: f[:path], path: b[:path]) do |r|
+          r.offset = b[:offset]
+          r.length = b[:length]
+          r.line = b[:line]
+        end
+
+        dump_record element, :element, 2
+      end
     end
   end
+ensure
+  git.close
 end
-
-git.close

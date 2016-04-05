@@ -15,4 +15,8 @@ class Extisimo::User < ActiveRecord::Base
   scope :has_attachments, -> { joins(:attachments).distinct }
 
   alias_scope :has_tasks, :has_assigned_tasks
+
+  def names
+    [name]
+  end
 end

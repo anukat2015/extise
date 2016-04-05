@@ -16,6 +16,10 @@ module Extisimo::Reference
       class GitEclipseOrg::User
         has_one :extisimo_user, class_name: 'Extisimo::User', foreign_key: :git_eclipse_org_user_id
       end
+
+      def eclipse_org_user_names
+        ([bugs_eclipse_org_user.login_name] + bugs_eclipse_org_user.realnames + [git_eclipse_org_user.try(:name)]).compact.uniq
+      end
     end
   end
 

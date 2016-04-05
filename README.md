@@ -193,7 +193,7 @@ TODO
 
 #### `rhist`
 
-    rhist BugsEclipseOrg::Bug priority'
+    rhist BugsEclipseOrg::Bug priority
     rhist -e 'BugsEclipseOrg::Bug.pluck(:priority)'
 
 #### `ropen`

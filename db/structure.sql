@@ -472,7 +472,7 @@ CREATE TABLE extisimo_expertises (
     subject_id integer NOT NULL,
     user_id integer NOT NULL,
     metric_data json NOT NULL,
-    value numeric(9,8) NOT NULL,
+    value numeric(17,8) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

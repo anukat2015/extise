@@ -41,9 +41,13 @@ end
 
 i = 0
 
-# NOTE: import only confirmed, resolved, and fixed bugs
+# NOTE: import only confirmed, resolved or verified, and fixed bugs
 
-bugs = BugsEclipseOrg::Bug.where(everconfirmed: true, bug_status: :RESOLVED, resolution: :FIXED).order(creation_ts: :asc)
+bugs = BugsEclipseOrg::Bug.where(
+  everconfirmed: true,
+  bug_status: %w(RESOLVED VERIFIED),
+  resolution: %w(FIXED)
+).order(creation_ts: :asc)
 
 process bugs, count: n, worker: w, progress: !n.zero? do |b|
   abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent reporter" if b.reporter != b.author.login_name

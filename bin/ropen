@@ -31,11 +31,9 @@ def find(model, identifier)
     repository = find Repository, r
     Commit.find_by repository: repository, identifier: i
   elsif model == Element
-    r, c, i, p = identifier.split(/\s+/)
+    r, c, p = identifier.split(/\s+/)
     commit = find Commit, "#{r} #{c}"
-    puts commit
-    puts commit: commit, identifier: i, path: p
-    Element.find_by commit: commit, identifier: i, path: p
+    Element.find_by commit: commit, path: p
   end
 rescue
   nil
@@ -57,4 +55,4 @@ url = [record.send(method)].flatten.first
 
 abort "#{model}:#{record.id} no URL available" unless url
 
-`open #{url}`
+`open #{url.gsub(/\s/, '%20')}`

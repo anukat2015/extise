@@ -201,7 +201,7 @@ TODO
     ropen project PDE UI
     ropen repository eclipse.pde.ui
     ropen -s egit commit eclipse.pde.ui 95ad7b194d9a98b93cd129f464dd5380842cf3a9
-    ropen element eclipse.pde.ui 1837573ce7fdb32310064e06230cd995173dc2f6 5694e314bed2ebc911ff9643e6961b848bd35bb6 EEDescriptionGenerator
+    ropen element eclipse.pde.ui 9617552fae0b9e5e284f1b54f7a4b9f6cd25287c RegistryBrowser
 
 ## Contributing
 

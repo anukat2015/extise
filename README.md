@@ -152,6 +152,15 @@ Export to raw SQL
 
     pg_dump -U extise --exclude-table=schema_\* --data-only extise_development > extise_development.sql
 
+## Data statistics
+
+#### `dbstat`
+
+Print database statistics
+
+    dbstat
+    dbstat bugs_eclipse_org
+
 ## Source analysis
 
 #### `extise`
@@ -184,22 +193,19 @@ TODO
 
 #### `cor`
 
-Calculates correlation coefficient
+Calculate correlation coefficient
     
     TODO
 
-## Utilities
+#### `rcor`
 
-#### `lsxml`
+TODO
 
-    lsxml ../data/bugs.eclipse.org/mylyn-contexts-20160110-1829/71687.xml
-
-#### `dbstat`
-
-    dbstat
-    dbstat bugs_eclipse_org
+    TODO
 
 #### `hist`
+
+Compute data histogram
 
     hist ../data/extise.fiit.stuba.sk/extise_development-bugs_eclipse_org-20160113_all-with-mylyn-context-20160110-1824.warnings
     hist -e '[1,2,1]'
@@ -208,10 +214,22 @@ Calculates correlation coefficient
 
 #### `rhist`
 
+TODO
+
     rhist BugsEclipseOrg::Bug priority
     rhist -e 'BugsEclipseOrg::Bug.pluck(:priority)'
 
+## Utilities
+
+#### `lsxml`
+
+List XML contents
+
+    lsxml ../data/bugs.eclipse.org/mylyn-contexts-20160110-1829/71687.xml
+
 #### `ropen`
+
+Open data entity
 
     ropen project PDE UI
     ropen repository eclipse.pde.ui

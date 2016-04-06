@@ -31,12 +31,12 @@ module Extric
     autoload :Duration
     autoload :EditsCount
     autoload :ExclusiveEditsCount
-    autoload :InclusiveEditsCount
     autoload :InteractionsCount
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
     autoload :RecentLinesOfCode
     autoload :SelectionsCount
+    autoload :SubsequentEditsCount
   end
 
   extend Resolving

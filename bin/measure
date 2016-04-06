@@ -23,7 +23,7 @@ v, q = false, true if p
 AutoColor.disable on: self unless c
 
 metrics = Metric.on(m)
-metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n}") } unless r.blank?
+metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n} on #{m}") } unless r.blank?
 metrics = Hash[metrics.map { |metric| [metric, (Dyna.load_and_create!(file: metric.file, type: metric.type).last rescue abort $!)] }]
 
 subjects = case m.to_sym
@@ -74,9 +74,16 @@ process subjects, progress: p do |subject|
         next
       end
 
+      value = data.delete :value
+
+      unless value.is_a? Numeric
+        warn Extric::Reporting.message handle, user, subject, 'value not numeric'
+        next
+      end
+
       expertise = persist(Expertise, metric: metric, subject: subject, user: user) do |r|
         r.metric_data = data
-        r.value = data.delete :value
+        r.value = value
       end
 
       dump_record expertise, :expertise

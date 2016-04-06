@@ -18,7 +18,7 @@ module Database
   end
 
   def configurations
-    @configurations ||= YAML.load_file(File.expand_path 'db/config.yml', root)
+    @configurations ||= YAML.load_file(File.expand_path 'db/config.yml', root || File.expand_path('../..', __FILE__))
   end
 
   def establish_connection(options = {})

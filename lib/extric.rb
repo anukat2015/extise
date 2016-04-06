@@ -10,6 +10,7 @@ module Extric
   autoload :Git
   autoload :Reporting
   autoload :Resolving
+  autoload :Sessions
 
   module Concepts
     extend ActiveSupport::Autoload
@@ -27,9 +28,14 @@ module Extric
   module Sessions
     extend ActiveSupport::Autoload
 
+    autoload :EditsCount
+    autoload :ExclusiveEditsCount
+    autoload :InclusiveEditsCount
+    autoload :InteractionsCount
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
     autoload :RecentLinesOfCode
+    autoload :SelectionsCount
   end
 
   extend Resolving

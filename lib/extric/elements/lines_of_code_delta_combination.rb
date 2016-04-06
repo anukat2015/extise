@@ -4,7 +4,7 @@
 class Extric::Elements::LinesOfCodeDeltaCombination
   include Extric::Extise
   include Extric::Git
-  include Extric::Reporting
+  include Extric::Common
 
   attr_accessor :combinator
 
@@ -16,10 +16,7 @@ class Extric::Elements::LinesOfCodeDeltaCombination
     revision_element = element
     revision_commit = element.commit
 
-    unless revision_commit.author == user
-      warn message user, element, "revision #{revision_commit.identifier} not authored by user"
-      return
-    end
+    return unless user_matches? revision_commit, author: user, subject: element
 
     session = revision_commit.session
 

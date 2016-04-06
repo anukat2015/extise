@@ -1,10 +1,10 @@
 # NOTE: counts user edits during a session
 
 class Extric::Sessions::EditsCount
-  include Extric::Sessions
+  include Extric::Common
 
   def measure(user, session)
-    return unless session_user_matches! user, session
+    return unless user_matches? session, user
     { value: session.interactions.where(kind: 'edit').count }
   end
 end

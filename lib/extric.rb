@@ -8,9 +8,9 @@ module Extric
 
   autoload :Extise
   autoload :Git
+  autoload :Common
   autoload :Reporting
   autoload :Resolving
-  autoload :Sessions
 
   module Concepts
     extend ActiveSupport::Autoload
@@ -28,6 +28,7 @@ module Extric
   module Sessions
     extend ActiveSupport::Autoload
 
+    autoload :Duration
     autoload :EditsCount
     autoload :ExclusiveEditsCount
     autoload :InclusiveEditsCount

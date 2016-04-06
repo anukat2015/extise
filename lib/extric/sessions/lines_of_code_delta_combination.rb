@@ -4,7 +4,7 @@
 class Extric::Sessions::LinesOfCodeDeltaCombination
   include Extric::Extise
   include Extric::Git
-  include Extric::Reporting
+  include Extric::Common
 
   attr_accessor :combinator
 
@@ -16,10 +16,7 @@ class Extric::Sessions::LinesOfCodeDeltaCombination
     previous_commit = session.previous_commit
     revision_commit = session.revision_commit
 
-    unless revision_commit.author == user
-      warn message user, session, "revision #{revision_commit.identifier} not authored by user"
-      return
-    end
+    return unless user_matches? revision_commit, author: user, subject: session
 
     elements = revision_commit.elements.inject([]) do |elements, revision_element|
       previous_element = previous_commit.elements.find_by file: revision_element.file, path: revision_element.path

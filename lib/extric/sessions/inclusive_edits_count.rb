@@ -2,12 +2,12 @@
 # i.e. edits that happened on an element more than once
 
 class Extric::Sessions::InclusiveEditsCount
-  include Extric::Sessions
+  include Extric::Common
 
   def measure(user, session)
     # TODO refactor to pure SQL
 
-    return unless session_user_matches! user, session
+    return unless user_matches? session, user
     { value: session.interactions.where(kind: 'edit').group(:file, :path).count('*').values.select { |c| c > 1 }.sum }
   end
 end

@@ -38,7 +38,7 @@ def options(source = ARGV)
     options.define_singleton_method(:default?) { |v| binder.default? v }
     options.define_singleton_method(:bound) { binder.bound_variables }
     options.define_singleton_method(:bound?) { |v| binder.bound? v }
-    options.define_singleton_method(:assigned) { binder.bound_variables }
+    options.define_singleton_method(:assigned) { binder.assigned_variables }
     options.define_singleton_method(:assigned?) { |v| binder.assigned? v }
   end
   options

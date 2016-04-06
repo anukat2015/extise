@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-l, c, s, t, v, q, p = nil, true, false, 80, true, false, []
+l, u, c, s, t, v, q, p = nil, :restrict, true, false, 80, true, false, []
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<path>...]'
-  opt 'l    --library=<name>'
+  opt 'l    --library=<path>'
+  opt 'u    --unload[=(delete|restrict)]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -14,14 +15,29 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-l = File.expand_path File.join(%w(.. .. lib extinf)), __FILE__ unless l
-p = Dir[File.expand_path File.join(%W(.. .. #{l} {#{Inferencer::TARGETS.map(&:pluralize) * ','}} *.rb)), __FILE__] if p.empty?
+l = File.expand_path l || File.join(%w(.. .. lib extinf)), __FILE__
+p = Dir[File.join(%W(#{l} {#{Inferencer::TARGETS.map(&:pluralize) * ','}} *.rb))] if p.empty?
 
 AutoColor.disable on: self unless c
 
 p.map { |f| File.absolute_path f }.each do |f|
   target, name, _, type, _ = Extinf.resolve_inferencer! file: f, library: l rescue abort $!
-  inferencer = persist(Inferencer, target: target, name: name) { |r| r.file, r.type = f, type }
 
-  dump_record inferencer, :inferencer
+  if !options.assigned? :u
+    inferencer = persist(Inferencer, target: target, name: name) { |r| r.file, r.type = f, type }
+
+    dump_record inferencer, :inferencer
+  else
+    inferencer = Inferencer.find_by(target: target, name: name) || abort("#{Inferencer}:? not found by #{name} on #{target}")
+    count = Conceptuality.by(inferencer).count
+
+    dump_record inferencer, :inferencer
+
+    if u.try(:to_sym) == :delete
+      Conceptuality.by(inferencer).delete_all
+      warn "#{Inferencer}:#{inferencer.id} has #{count} conceptualities -> delete" unless q || count.zero?
+    end
+
+    inferencer.destroy! rescue abort "#{Inferencer}:#{inferencer.id} has #{count} conceptualities -> restrict"
+  end
 end

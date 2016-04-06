@@ -71,6 +71,7 @@ Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attac
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
     import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829
+    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829 --mylyn-contexts-mode=delete
 
 #### `import_eclipse_changes`
 
@@ -119,6 +120,9 @@ Load concept inferencers, fill `extisimo_{inferencers}` tables
     load_inferencers lib/extinf/tasks/*
     load_inferencers --library=lib/extinf
 
+    load_inferencers --unload
+    load_inferencers --unload=delete lib/extric/tasks/jgibblda.rb
+
 #### `load_metrics`
 
 Load expertise metrics, fill `extisimo_{metrics}` tables
@@ -126,6 +130,9 @@ Load expertise metrics, fill `extisimo_{metrics}` tables
     load_metrics
     load_metrics lib/extric/elements/*
     load_metrics --library=lib/extric
+
+    load_metrics --unload
+    load_metrics --unload=delete lib/extric/sessions/recent_lines_of_code.rb
 
 ### Raw import
 
@@ -200,7 +207,7 @@ TODO
 
     ropen project PDE UI
     ropen repository eclipse.pde.ui
-    ropen -s egit commit eclipse.pde.ui 95ad7b194d9a98b93cd129f464dd5380842cf3a9
+    ropen commit eclipse.pde.ui 95ad7b194d9a98b93cd129f464dd5380842cf3a9 --service egit
     ropen element eclipse.pde.ui 9617552fae0b9e5e284f1b54f7a4b9f6cd25287c RegistryBrowser
 
 ## Contributing

@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-l, c, s, t, v, q, p = nil, true, false, 80, true, false, []
+l, u, c, s, t, v, q, p = nil, :restrict, true, false, 80, true, false, []
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<path>...]'
   opt 'l    --library=<path>'
+  opt 'u    --unload[=(delete|restrict)]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -14,14 +15,29 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-l = File.expand_path File.join(%w(.. .. lib extric)), __FILE__ unless l
-p = Dir[File.expand_path File.join(%W(.. .. #{l} {#{Metric::TARGETS.map(&:pluralize) * ','}} *.rb)), __FILE__] if p.empty?
+l = File.expand_path l || File.join(%w(.. .. lib extric)), __FILE__
+p = Dir[File.join(%W(#{l} {#{Metric::TARGETS.map(&:pluralize) * ','}} *.rb))] if p.empty?
 
 AutoColor.disable on: self unless c
 
 p.map { |f| File.absolute_path f }.each do |f|
   target, name, _, type, _ = Extric.resolve_metric! file: f, library: l rescue abort $!
-  metric = persist(Metric, target: target, name: name) { |r| r.file, r.type = f, type }
 
-  dump_record metric, :metric
+  if !options.assigned? :u
+    metric = persist(Metric, target: target, name: name) { |r| r.file, r.type = f, type }
+
+    dump_record metric, :metric
+  else
+    metric = Metric.find_by(target: target, name: name) || abort("#{Metric}:? not found by #{name} on #{target}")
+    count = Expertise.by(metric).count
+
+    dump_record metric, :metric
+
+    if u.try(:to_sym) == :delete
+      Expertise.by(metric).delete_all
+      warn "#{Metric}:#{metric.id} has #{count} expertises -> delete" unless q || count.zero?
+    end
+
+    metric.destroy! rescue abort "#{Metric}:#{metric.id} has #{count} expertises -> restrict"
+  end
 end

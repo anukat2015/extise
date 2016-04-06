@@ -1,27 +1,19 @@
-# NOTE: computes normalized cyclomatic complexity of an element
+# NOTE: computes cyclomatic complexity of an element
 
 class Extric::Elements::CyclomaticComplexity
-  LIMIT = 1000
-
+  include Extric::Extise
+  include Extric::Git
   include Extric::Reporting
+
+  # TODO cache values for user-less metrics
 
   def measure(_, element)
     commit = element.commit
     repository = commit.repository
 
-    g = Rugged::Repository.new File.join GitEclipseOrg::DIRECTORY, repository.name
-    c = g.lookup commit.identifier
-    f = c.parents.first.diff(c).deltas.map(&:new_file).find { |f| f[:path] == element.file }
+    s = fetch_source repository: repository, commit: commit, element: element
+    v = read_metric metric: 'CyclomaticComplexity', source: s
 
-    source = g.lookup(f[:oid]).text[element.offset..(element.offset + element.length)]
-
-    r = Extise.stream(function: 'CyclomaticComplexity', input: source) { |o| o.read }
-    l = LIMIT
-    v = [r.to_f / l, 1.0].min
-
-    {
-      complexity: { raw: r, limit: l },
-      value: v
-    }
+    { value: v }
   end
 end

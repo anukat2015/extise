@@ -1,44 +1,37 @@
-# NOTE: counts lines of code of all elements recently modified during
-# a session by a user relative to total lines of code of these elements
+# NOTE: counts lines of code of all elements most recently modified by a user during a session
 
 class Extric::Sessions::RecentLinesOfCode
+  include Extric::Git
   include Extric::Reporting
 
   def measure(user, session)
-    names = user.bugs_eclipse_org_user.realnames.unshift user.name
     commit = session.revision_commit
     repository = commit.repository
 
-    g = Rugged::Repository.new File.join GitEclipseOrg::DIRECTORY, repository.name
-
-    # NOTE: tracking options include:
-    # track_copies_same_file
-    # track_copies_same_commit_moves
-    # track_copies_same_commit_copies
-    # track_copies_any_commit_copies
+    g = open_repository name: repository.name
+    i = commit.identifier
+    n = user.eclipse_org_user_names
 
     c, t = 0, nil
 
     commit.elements.each do |element|
       begin
-        o = { track_copies_any_commit_copies: true }
-        b = Rugged::Blame.new g, element.file, o.merge(oldest_commit: commit.identifier)
+        f = element.file
+        b = blame_recent git: g, identifier: i, file: f
       rescue Rugged::TreeError
-        warn message user, element, "#{element.file} not found at #{commit.identifier} (#{$!})"
+        warn message user, session, "#{element.file} not found at #{commit.identifier} (#{$!})"
         next
       end
 
-      c += b.select { |l| names.include? l[:final_signature][:name] }.count
+      c += count_recent blame: b, names: n
       t = (t || 0) + b.count
     end
-
-    g.close
 
     return unless t
 
     {
       blame: { final: c, total: t },
-      value: c != 0 ? c.to_f / t : 0
+      value: c
     }
   end
 end

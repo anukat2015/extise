@@ -16,14 +16,7 @@ end
 
 AutoColor.disable on: self unless c
 
-def safe_eval(s)
-  s = s.read if s.is_a? IO
-  Object.new.instance_eval { binding }.eval(s).tap { |a| raise 'not an array' unless a.is_a? Array }
-rescue Exception
-  abort "Unable to evaluate input -> #{$!}"
-end
-
-a = m.inject([]) { |_, f| _ += e ? safe_eval(f) : File.open_or(f).readlines }
+a = m.inject([]) { |_, f| _ += SafeEval::IO.read_with_safe_eval f, eval: e, as: Array }
 h = a.inject(Hash.new 0) { |h, i| h[i.to_s.strip] += 1; h }
 h = Hash[h.sort_by { |_, x| -x }] if s
 

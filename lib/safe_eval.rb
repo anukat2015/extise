@@ -11,8 +11,9 @@ module SafeEval
     def read_and_safe_eval(o, as: nil)
       o = o.read if o.is_a? ::IO
       v = SafeEval.safe_eval(o)
+      t = [as].flatten
 
-      if as && !v.is_a?(as)
+      unless t.empty? || t.find { |u| v.is_a? u }
         raise Exception.new "#{__FILE__}:#{__LINE__}: evaluation error, unexpected #{v.class}, expecting #{as}"
       end
 

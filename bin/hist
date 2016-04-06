@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-e, c, s, t, v, p = false, true, true, 80, true, [STDIN]
+e, c, s, t, v, m = false, true, true, 80, true, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<path>...]'
@@ -11,7 +11,7 @@ ARGV.bind_and_parse! to: :locals do
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
-  arg 'p [<path>...]'
+  arg 'm [<mix>...]'
 end
 
 AutoColor.disable on: self unless c
@@ -23,7 +23,7 @@ rescue Exception
   abort "Unable to evaluate input -> #{$!}"
 end
 
-a = p.inject([]) { |_, f| _ += e ? safe_eval(f) : File.open_or(f).readlines }
+a = m.inject([]) { |_, f| _ += e ? safe_eval(f) : File.open_or(f).readlines }
 h = a.inject(Hash.new 0) { |h, i| h[i.to_s.strip] += 1; h }
 h = Hash[h.sort_by { |_, x| -x }] if s
 

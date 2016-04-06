@@ -3,29 +3,40 @@ require_relative 'common'
 
 require 'statsample'
 
-e, m, c, v, x, y = false, :spearman, true, true, STDIN, STDIN
+e, u, m, c, v, x, y = false, false, :spearman, true, true, STDIN, STDIN
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>] <path> <path>'
-  use '[<options>] -e <command> <command>'
+  use '[<options>] [<path>] [<path>]'
+  use '[<options>] -e [<command>] [<command>]'
   opt 'e -e --eval'
   opt 'm -m --method=(pearson|spearman)'
   opt 'c -c --[no-]color'
   opt 'v -v --[no-]verbose'
-  arg 'x <x>'
-  arg 'y <y>'
+  arg 'x [<x>]'
+  arg 'y [<y>]'
 end
 
 AutoColor.disable on: self unless c
 
 begin
-  x = SafeEval::IO.read_with_safe_eval(x, eval: e, as: Array).map &:to_f
-  y = SafeEval::IO.read_with_safe_eval(y, eval: e, as: Array).map &:to_f
+  x = SafeEval::IO.read_with_safe_eval x, eval: e, as: Array
+  y = SafeEval::IO.read_with_safe_eval y, eval: e, as: [Array, NilClass]
+
+  x, y = x[0..(x.length / 2 - 1)], x[(x.length / 2)..-1] if y.nil? || y.empty?
+  x, y = x.map(&:to_f), y.map(&:to_f)
 rescue Exception
   abort "Unable to evaluate input -> #{$!}"
+end
+
+if v
+  puts "#{'X'.blue}: #{x.length.to_s.yellow} -> #{x.to_s.yellow}"
+  puts "#{'Y'.blue}: #{x.length.to_s.yellow} -> #{y.to_s.yellow}"
 end
 
 abort 'Input vectors mismatch' if x.length != y.length
 abort 'Input vectors empty' if x.empty?
 
-puts Statsample::Bivariate.send m.to_sym, Daru::Vector[x], Daru::Vector[y]
+r = Statsample::Bivariate.send m.to_sym, Daru::Vector[x], Daru::Vector[y]
+
+print "#{'C'.blue}: #{m.to_s.yellow} -> " if v
+puts "%+.12f".yellow % r

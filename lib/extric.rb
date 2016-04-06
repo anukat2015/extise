@@ -30,13 +30,13 @@ module Extric
 
     autoload :Duration
     autoload :EditsCount
-    autoload :ExclusiveEditsCount
     autoload :InteractionsCount
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
     autoload :RecentLinesOfCode
     autoload :SelectionsCount
     autoload :SubsequentEditsCount
+    autoload :UniqueEditsCount
   end
 
   extend Resolving

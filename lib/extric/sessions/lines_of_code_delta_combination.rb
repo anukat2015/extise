@@ -2,10 +2,15 @@
 # lines of code of all elements by a user during a session
 
 class Extric::Sessions::LinesOfCodeDeltaCombination
-  include Extric::Elements::LinesOfCodeDeltaCombination::Computing
   include Extric::Extise
   include Extric::Git
   include Extric::Reporting
+
+  attr_accessor :combinator
+
+  def initialize(combinator = nil)
+    @combinator = combinator || Extric::Elements::LinesOfCodeDeltaCombination::Combinator.new
+  end
 
   def measure(user, session)
     previous_commit = session.previous_commit
@@ -39,6 +44,6 @@ class Extric::Sessions::LinesOfCodeDeltaCombination
       a, d, m, t = a + s[:additions], d + s[:deletions], m + s[:modifications], t + s[:total]
     end
 
-    combine_and_return a, d, m, t
+    combinator.combine_and_return a, d, m, t
   end
 end

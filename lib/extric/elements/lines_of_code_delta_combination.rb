@@ -2,25 +2,15 @@
 # lines of code of an element by a user during a session
 
 class Extric::Elements::LinesOfCodeDeltaCombination
-  module Computing
-    ADDITIONS_MULTIPLIER = 1.3
-    DELETIONS_MULTIPLIER = 0.9
-    MODIFICATIONS_MULTIPLIER = 1.2
-
-    def combine_and_return(a, d, m, t)
-      v = ADDITIONS_MULTIPLIER * a + DELETIONS_MULTIPLIER * d + MODIFICATIONS_MULTIPLIER * m
-
-      {
-        difference: { additions: a, deletions: d, modifications: m, total: t },
-        value: v
-      }
-    end
-  end
-
-  include Extric::Elements::LinesOfCodeDeltaCombination::Computing
   include Extric::Extise
   include Extric::Git
   include Extric::Reporting
+
+  attr_accessor :combinator
+
+  def initialize(combinator = nil)
+    @combinator = combinator || Extric::Elements::LinesOfCodeDeltaCombination::Combinator.new
+  end
 
   def measure(user, element)
     revision_element = element
@@ -51,6 +41,27 @@ class Extric::Elements::LinesOfCodeDeltaCombination
     r = fetch_source git: g, commit: revision_commit, element: revision_element
     s = compute_source_difference original: o, revision: r
 
-    combine_and_return *s.values
+    combinator.combine_and_return *s.values
+  end
+
+  class Combinator
+    ADDITIONS_MULTIPLIER = 1.3
+    DELETIONS_MULTIPLIER = 0.9
+    MODIFICATIONS_MULTIPLIER = 1.2
+
+    attr_accessor :multipliers
+
+    def initialize(multipliers = nil)
+      @multipliers = multipliers || { additions: ADDITIONS_MULTIPLIER, deletions: DELETIONS_MULTIPLIER, modifications: MODIFICATIONS_MULTIPLIER }
+    end
+
+    def combine_and_return(a, d, m, t)
+      v = multipliers[:additions] * a + multipliers[:deletions] * d + multipliers[:modifications] * m
+
+      {
+        difference: { additions: a, deletions: d, modifications: m, total: t },
+        value: v
+      }
+    end
   end
 end

@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+require_relative 'common'
+
+require 'statsample'
+
+e, m, c, v, x, y = false, :spearman, true, true, STDIN, STDIN
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] <path> <path>'
+  use '[<options>] -e <command> <command>'
+  opt 'e -e --eval'
+  opt 'm    --method=(pearson|spearman)'
+  opt 'c -c --[no-]color'
+  opt 'v -v --[no-]verbose'
+  arg 'x <x>'
+  arg 'y <y>'
+end
+
+AutoColor.disable on: self unless c
+
+def safe_eval(s)
+  s = s.read if s.is_a? IO
+  Object.new.instance_eval { binding }.eval(s).tap { |a| raise 'not an array' unless a.is_a? Array }
+rescue Exception
+  abort "Unable to evaluate input -> #{$!}"
+end
+
+x = (e ? safe_eval(x) : File.open_or(x).readlines).map &:to_f
+y = (e ? safe_eval(y) : File.open_or(y).readlines).map &:to_f
+
+abort 'Input vectors mismatch' if x.length != y.length
+abort 'Input vectors empty' if x.empty?
+
+puts Statsample::Bivariate.send m.to_sym, Daru::Vector[x], Daru::Vector[y]

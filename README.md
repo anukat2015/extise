@@ -156,7 +156,7 @@ Export to raw SQL
 
 #### `extise`
 
-TODO
+Run Java source code or text analysis
 
     extise --list
     extise MethodPositionExtractor < spec/fixtures/classes/HashMap.java
@@ -179,6 +179,14 @@ TODO
 
     measure session
     measure element recent_lines_of_code
+
+## Statistical analysis
+
+#### `cor`
+
+Calculates correlation coefficient
+    
+    TODO
 
 ## Utilities
 

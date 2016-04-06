@@ -6,6 +6,6 @@ class Extric::Sessions::UniqueEditsCount
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: session.interactions.where(kind: 'edit').select(:file, :path).distinct.count('path') }
+    { value: session.interactions.where(kind: 'edit').group(:file, :path).count.values.select { |c| c == 1 }.sum }
   end
 end

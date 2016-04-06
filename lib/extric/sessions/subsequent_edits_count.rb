@@ -6,6 +6,6 @@ class Extric::Sessions::SubsequentEditsCount
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: session.interactions.where(kind: 'edit').group(:file, :path).count('*').values.select { |c| c > 1 }.sum }
+    { value: session.interactions.where(kind: 'edit').group(:file, :path).count.values.select { |c| c >= 2 }.sum }
   end
 end

@@ -27,7 +27,7 @@ A collection of tools to estimate developers' expertise
       extric                Expertise metrics
       git_eclipse_org       Eclipse Git repository utilities
     log                     Log files
-    spec                    RSpec test suite
+    spec                    Test suites
     tmp                     Temporary files
 
 ## Commands
@@ -37,12 +37,18 @@ Every executable command responds to:
     -h, --help
         --version
 
-and additionally, if appropriate to:
- 
-    -c, --[no-]color                 Default true
-    -s, --[no-]sort                  Default true or false
-    -t, --trim[=<length>]            Default 80
-    -v, --[no-]verbose               Default true or false
+additionally, if appropriate to:
+
+    -c, --[no-]color                        Default true
+    -s, --[no-]sort                         Default true or false
+    -t, --trim[=<length>]                   Default 80
+    -v, --[no-]verbose                      Default true or false
+    -q, --quiet                             Default false
+
+and if parallelism is supported to:
+
+        --parallel[=<count>]                Default 4
+        --parallel-worker=(process|thread)  Default thread
 
 ## Data acquisition
 
@@ -152,7 +158,7 @@ Export to raw SQL
 
     pg_dump -U extise --exclude-table=schema_\* --data-only extise_development > extise_development.sql
 
-## Data statistics
+## Data lookup
 
 #### `dbstat`
 
@@ -160,6 +166,15 @@ Print database statistics
 
     dbstat
     dbstat bugs_eclipse_org
+
+#### `ropen`
+
+Open data entity
+
+    ropen project PDE UI
+    ropen repository eclipse.pde.ui
+    ropen commit eclipse.pde.ui 95ad7b194d9a98b93cd129f464dd5380842cf3a9 --service egit
+    ropen element eclipse.pde.ui 9617552fae0b9e5e284f1b54f7a4b9f6cd25287c RegistryBrowser
 
 ## Source analysis
 
@@ -226,15 +241,6 @@ TODO
 List XML contents
 
     lsxml ../data/bugs.eclipse.org/mylyn-contexts-20160110-1829/71687.xml
-
-#### `ropen`
-
-Open data entity
-
-    ropen project PDE UI
-    ropen repository eclipse.pde.ui
-    ropen commit eclipse.pde.ui 95ad7b194d9a98b93cd129f464dd5380842cf3a9 --service egit
-    ropen element eclipse.pde.ui 9617552fae0b9e5e284f1b54f7a4b9f6cd25287c RegistryBrowser
 
 ## Contributing
 

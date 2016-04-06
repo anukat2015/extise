@@ -16,9 +16,13 @@ end
 
 AutoColor.disable on: self unless c
 
-a = m.inject([]) { |_, f| _ += SafeEval::IO.read_with_safe_eval f, eval: e, as: Array }
-h = a.inject(Hash.new 0) { |h, i| h[i.to_s.strip] += 1; h }
-h = Hash[h.sort_by { |_, x| -x }] if s
+begin
+  a = m.inject([]) { |_, f| _ += SafeEval::IO.read_with_safe_eval f, eval: e, as: Array }
+  h = a.inject(Hash.new 0) { |h, i| h[i.to_s.strip] += 1; h }
+  h = Hash[h.sort_by { |_, x| -x }] if s
+rescue Exception
+  abort "Unable to evaluate input -> #{$!}"
+end
 
 abort 'No input data' if h.empty?
 

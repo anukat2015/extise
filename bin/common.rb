@@ -20,6 +20,7 @@ require 'nokogiri'
 require 'parallen'
 require 'progresso'
 require 'rugged'
+require 'safe_eval'
 require 'shellwords'
 require 'yaml'
 

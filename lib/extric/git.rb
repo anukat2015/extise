@@ -6,7 +6,7 @@ module Extric::Git
   # track_copies_same_commit_copies
   # track_copies_any_commit_copies
 
-  COPIES_TRACKING = { track_copies_any_commit_copies: true }
+  COPIES_TRACKING = { track_copies_any_commit_copies: true }.freeze
 
   def open_repository(name: nil)
     Rugged::Repository.new(File.join GitEclipseOrg::DIRECTORY, name)

@@ -10,6 +10,6 @@ class Extisimo::Conceptuality < ActiveRecord::Base
   end
 
   scope :by, -> (inferencer) { where inferencer: inferencer }
-  scope :on, -> (subject) { where subject.respond_to?(:id) ? { subject: subject } : { subject_type: subject }}
+  scope :on, -> (subject) { where subject.respond_to?(:id) ? { subject: subject } : { subject_type: subject.to_s }}
   scope :of, -> (concept) { where concept: concept }
 end

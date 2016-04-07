@@ -210,11 +210,17 @@ TODO
 
 Calculate correlation coefficient
     
-    TODO
+    cor ../samples/vectors
+    cor ../samples/vector-x ../samples/vector-y
+    cor -e '[0,2,1,8,4,0,1,4]' -m pearson 
+    cor -e '[0,2,1,8]' '[4,0,1,4]'
+
+    echo 0\n3\n7\n9\n0\n9\n7 | cor
+    echo [0,3,7,1,9,0,9,7] | cor -e
 
 #### `rcor`
 
-TODO
+Calculate correlation coefficient between expertises
 
     TODO
 
@@ -222,14 +228,15 @@ TODO
 
 Compute data histogram
 
-    hist ../data/extise.fiit.stuba.sk/extise_development-bugs_eclipse_org-20160113_all-with-mylyn-context-20160110-1824.warnings
-    hist -e '[1,2,1]'
-    echo 1\n2\n1 | hist
-    echo [1,2,1] | hist -e
+    hist ../samples/data
+    hist -e '[0,1,0]'
+    
+    echo 0\n1\n0 | hist
+    echo [0,1,0] | hist -e
 
 #### `rhist`
 
-TODO
+Compute data histogram on attributes of entities
 
     rhist BugsEclipseOrg::Bug priority
     rhist -e 'BugsEclipseOrg::Bug.pluck(:priority)'

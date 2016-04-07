@@ -5,9 +5,12 @@ module KernelColors
   alias_method :inform, :puts
 
   { abort: :red, inform: :cyan, warn: :magenta }.each do |method, color|
-    original_method = "original_#{method}".to_sym
+    original_method = "kernel_#{method}".to_sym
     alias_method original_method, method
-    define_method(method) { |*args| send original_method, colorize_arguments(color, *args).join($\) }
+    define_method(method) do |*args|
+      return __send__ original_method if args.empty?
+      __send__ original_method, colorize_arguments(color, *args).join($\)
+    end
     private original_method
   end
 

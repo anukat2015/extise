@@ -222,7 +222,10 @@ Calculate correlation coefficient
 
 Calculate correlation coefficient between expertises
 
-    TODO
+    rcor session:edits_count session:lines_of_code_delta
+    rcor -e 'Extisimo::Expertise.fetch(on: :session, by: :edits_count).pluck :value' 'Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck :value'
+
+    echo 'Extisimo::Expertise.fetch(on: :session, by: :edits_count).pluck(:value) + Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck(:value)' | rcor -e 
 
 #### `hist`
 
@@ -239,7 +242,9 @@ Compute data histogram
 Compute data histogram on attributes of entities
 
     rhist BugsEclipseOrg::Bug priority
-    rhist -e 'BugsEclipseOrg::Bug.pluck(:priority)'
+    rhist -e 'BugsEclipseOrg::Bug.pluck :priority'
+    
+    echo 'BugsEclipseOrg::Bug.pluck :priority' | rhist -e
 
 ## Utilities
 

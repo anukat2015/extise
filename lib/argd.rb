@@ -1,3 +1,3 @@
 class Object
-  ARGD = ARGV.dup
+  ARGD = ARGV.dup.freeze
 end

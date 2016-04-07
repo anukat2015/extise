@@ -50,10 +50,14 @@ Open3.popen3(File.expand_path "cor #{args * ' '}", __dir__) do |input, output, e
   threads = [Thread.new { output.each { |l| print l }}]
   threads << Thread.new { error.each { |l| STDERR.print l }}
 
-  input.print [x, y].flatten(1).compact * "\n"
-  STDIN.each { |l| input.print "\n#{l}" } if e && !x
-  input.close
+  if x
+    input.print [x, y].flatten(1).compact * "\n"
+  elsif e
+    input.print 'load_extise!'
+    STDIN.each { |l| input.print "\n#{l}" }
+  end
 
+  input.close
   threads.each &:join
   [output, error].each &:close
   abort unless status.value.to_i.zero?

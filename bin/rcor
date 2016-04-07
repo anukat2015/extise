@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise! { include Extisimo }
+
+e, m, c, v, x, y = false, :spearman, true, true, nil, nil
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] <target:metric> <target:metric>'
+  use '[<options>] -e [<command>] [<command>]'
+  opt 'e -e --eval'
+  opt 'm -m --method=(pearson|spearman)'
+  opt 'c -c --[no-]color'
+  opt 'v -v --[no-]verbose'
+  arg 'x [<x>]'
+  arg 'y [<y>]'
+end
+
+options.binder.abort OptionParser::MissingArgument::Reason unless x && y unless e
+
+AutoColor.disable on: self unless c
+
+def fetch_expertise_values(q)
+  t, n = *q.split(/:/)
+  metric = Metric.find_by(target: t, name: n) || abort("#{Metric}:? not found by #{n} on #{t}")
+  Hash[Expertise.by(metric).all.map { |e| [[e.user_id, e.subject_id], e.value] }]
+end
+
+def wrap_for_eval(c)
+  Shellwords.escape "load_extise!;#{c}" if c
+end
+
+args = ["-m#{m}"]
+args += %w(color verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
+
+if !e
+  x = fetch_expertise_values x
+  y = fetch_expertise_values y
+
+  k = x.keys & y.keys
+
+  x = x.slice(*k).sort.map { |_, i| i }
+  y = y.slice(*k).sort.map { |_, i| i }
+else
+  x = wrap_for_eval x
+  y = wrap_for_eval y
+
+  args += ['-e', x, y].compact
+end
+
+Open3.popen3(File.expand_path "cor #{args * ' '}", __dir__) do |input, output, error, status|
+  threads = [Thread.new { output.each { |l| print l }}]
+  threads << Thread.new { error.each { |l| STDERR.print l }}
+
+  input.print [x, y].flatten(1).compact * "\n"
+  STDIN.each { |l| input.print "\n#{l}" } if e && !x
+  input.close
+
+  threads.each &:join
+  [output, error].each &:close
+  abort unless status.value.to_i.zero?
+end

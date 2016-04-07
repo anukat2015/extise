@@ -28,13 +28,13 @@ rescue Exception
   abort "Unable to process input -> #{$!}"
 end
 
+abort 'Input vectors mismatch' if x.length != y.length
+abort 'Input vectors empty' if x.empty?
+
 if v
   puts "#{'X'.blue}: #{x.length.to_s.yellow} -> #{x.to_s.yellow}"
   puts "#{'Y'.blue}: #{x.length.to_s.yellow} -> #{y.to_s.yellow}"
 end
-
-abort 'Input vectors mismatch' if x.length != y.length
-abort 'Input vectors empty' if x.empty?
 
 r = Statsample::Bivariate.send m.to_sym, Daru::Vector[x], Daru::Vector[y]
 

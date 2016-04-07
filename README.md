@@ -206,6 +206,25 @@ TODO
 
 ## Statistical analysis
 
+#### `hist`
+
+Compute data histogram
+
+    hist ../samples/data
+    hist -e '[0,1,0]'
+    
+    echo 0\n1\n0 | hist
+    echo [0,1,0] | hist -e
+
+#### `rhist`
+
+Compute data histogram on attributes of entities
+
+    rhist BugsEclipseOrg::Bug priority
+    rhist -e 'BugsEclipseOrg::Bug.pluck :priority'
+    
+    echo 'BugsEclipseOrg::Bug.pluck :priority' | rhist -e
+
 #### `cor`
 
 Calculate correlation coefficient
@@ -226,25 +245,6 @@ Calculate correlation coefficient between expertises
     rcor -e 'Extisimo::Expertise.fetch(on: :session, by: :edits_count).pluck :value' 'Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck :value'
 
     echo 'Extisimo::Expertise.fetch(on: :session, by: :edits_count).pluck(:value) + Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck(:value)' | rcor -e 
-
-#### `hist`
-
-Compute data histogram
-
-    hist ../samples/data
-    hist -e '[0,1,0]'
-    
-    echo 0\n1\n0 | hist
-    echo [0,1,0] | hist -e
-
-#### `rhist`
-
-Compute data histogram on attributes of entities
-
-    rhist BugsEclipseOrg::Bug priority
-    rhist -e 'BugsEclipseOrg::Bug.pluck :priority'
-    
-    echo 'BugsEclipseOrg::Bug.pluck :priority' | rhist -e
 
 ## Utilities
 

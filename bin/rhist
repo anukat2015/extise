@@ -11,9 +11,11 @@ ARGV.bind_and_parse! to: :locals do
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
-  arg 'm <model>'
-  arg 'a <attribute>'
+  arg 'm [<model>]'
+  arg 'a [<attribute>]'
 end
+
+options.binder.abort OptionParser::MissingArgument::Reason unless m && a unless e
 
 AutoColor.disable on: self unless c
 
@@ -23,12 +25,12 @@ args.insert -2, "-t#{t}"
 
 if e
   data, args = %w(load_extise!) + ([m, a] + ARGV).compact.map { |x| Shellwords.escape x }, args << '-e'
-  args, data = args + ["'#{data[0]};[]'"] + data[1..-1], [] if data.size > 1
+  args, data = args + [Shellwords.escape("#{data[0]};[]")] + data[1..-1], [] if data.size > 1
 end
 
 Open3.popen3(File.expand_path "hist #{args * ' '}", __dir__) do |input, output, error, status|
-  Thread.new { output.each { |l| print l }}
-  Thread.new { error.each { |l| STDERR.print l }}
+  threads = [Thread.new { output.each { |l| print l }}]
+  threads << Thread.new { error.each { |l| STDERR.print l }}
 
   unless data.empty?
     input.print data * "\n"
@@ -36,5 +38,7 @@ Open3.popen3(File.expand_path "hist #{args * ' '}", __dir__) do |input, output, 
   end
 
   input.close
+  threads.each &:join
+  [output, error].each &:close
   abort unless status.value.to_i.zero?
 end

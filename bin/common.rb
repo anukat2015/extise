@@ -109,6 +109,7 @@ def load_extise!
         o.each { |l| STDERR.print l }
         STDERR.print "\n--XML-DEBUG--\n\n"
       }.join
+      o.close
       t.join
     end if xml
     failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s) : raise(failure)

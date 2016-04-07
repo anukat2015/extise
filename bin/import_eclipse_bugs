@@ -65,9 +65,11 @@ def import_mylyn_context(a, i = 0, o = options.bound)
   args << file
   command = "import_mylyn_contexts #{args * ' '}"
   inform "#{'  ' * i}#{command}" if o[:v] unless o[:q]
-  Open3.popen3(File.expand_path command, __dir__) do |_, output, error, status|
-    Thread.new { output.each { |l| print "#{'  ' * i}#{l}" }; output.close } unless o[:q]
-    Thread.new { error.each { |l| STDERR.print l}; error.close }
+  Open3.popen3(File.expand_path command, __dir__) do |input, output, error, status|
+    threads = [Thread.new { error.each { |l| STDERR.print l }}]
+    threads << Thread.new { output.each { |l| print "#{'  ' * i}#{l}" }} unless o[:q]
+    threads.each &:join
+    [input, output, error].each &:close
     abort unless status.value.to_i.zero?
   end
 end

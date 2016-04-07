@@ -21,7 +21,7 @@ begin
   h = a.inject(Hash.new 0) { |h, i| h[i.to_s.strip] += 1; h }
   h = Hash[h.sort_by { |_, x| -x }] if s
 rescue Exception
-  abort "Unable to evaluate input -> #{$!}"
+  abort "Unable to process input -> #{$!}"
 end
 
 abort 'No input data' if h.empty?

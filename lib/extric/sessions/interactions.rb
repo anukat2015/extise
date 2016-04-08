@@ -1,6 +1,6 @@
 # NOTE: counts user interactions during a session
 
-class Extric::Sessions::InteractionsCount
+class Extric::Sessions::Interactions
   include Extric::Common
 
   def measure(user, session)

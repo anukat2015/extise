@@ -1,6 +1,6 @@
 # NOTE: counts user selections during a session
 
-class Extric::Sessions::SelectionsCount
+class Extric::Sessions::Selections
   include Extric::Common
 
   def measure(user, session)

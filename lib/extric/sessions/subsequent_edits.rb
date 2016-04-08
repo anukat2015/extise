@@ -1,7 +1,7 @@
 # NOTE: counts subsequent user edits during a session,
 # i.e. edits that happened on an element more than once
 
-class Extric::Sessions::SubsequentEditsCount
+class Extric::Sessions::SubsequentEdits
   include Extric::Common
 
   def measure(user, session)

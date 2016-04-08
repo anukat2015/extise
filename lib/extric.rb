@@ -20,24 +20,31 @@ module Extric
   module Elements
     extend ActiveSupport::Autoload
 
+    autoload :CommentCount
+    autoload :CommentLinesOfCode
     autoload :CyclomaticComplexity
+    autoload :LinesOfCode
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
+    autoload :MethodCount
     autoload :RecentLinesOfCode
+    autoload :SourceLinesOfCode
+    autoload :StatementCount
+    autoload :TypeCount
   end
 
   module Sessions
     extend ActiveSupport::Autoload
 
     autoload :Duration
-    autoload :EditsCount
-    autoload :InteractionsCount
+    autoload :Edits
+    autoload :Interactions
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
     autoload :RecentLinesOfCode
-    autoload :SelectionsCount
-    autoload :SubsequentEditsCount
-    autoload :UniqueEditsCount
+    autoload :Selections
+    autoload :SubsequentEdits
+    autoload :UniqueEdits
   end
 
   extend Resolving

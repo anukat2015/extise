@@ -1,6 +1,6 @@
 # NOTE: counts user edits during a session
 
-class Extric::Sessions::EditsCount
+class Extric::Sessions::Edits
   include Extric::Common
 
   def measure(user, session)

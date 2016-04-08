@@ -74,7 +74,7 @@ process subjects, progress: p do |subject|
         next
       end
 
-      value = Float data.delete :value rescue nil
+      value = Float data[:value] rescue nil
 
       unless value
         warn Extric::Reporting.message handle, user, subject, 'value not numeric'
@@ -82,7 +82,7 @@ process subjects, progress: p do |subject|
       end
 
       expertise = persist(Expertise, metric: metric, subject: subject, user: user) do |r|
-        r.metric_data = data
+        r.metric_data = data.except :value
         r.value = value
       end
 

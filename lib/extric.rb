@@ -6,6 +6,7 @@ require 'extric/version'
 module Extric
   extend ActiveSupport::Autoload
 
+  autoload :Caching
   autoload :Extise
   autoload :Git
   autoload :Common

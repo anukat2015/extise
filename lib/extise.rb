@@ -19,7 +19,7 @@ module Extise
     input = StringIO.new input if input.is_a? String
 
     Open3.popen3(command functions + files) do |i, o, e, s|
-      i.tap { input.each_line { |l| i.puts l } if files.empty? }.close
+      i.tap { input.each_line { |l| i.write l } if files.empty? }.close
       yield(o, e, s).tap { [o, e].each &:close }
     end
   end
@@ -31,11 +31,17 @@ module Extise
     end
   end
 
+  def self.read(function: nil, input: STDIN)
+    stream function: function, input: input do |o|
+      block_given? ? o.each_line { |l| yield l } : o.read
+    end
+  end
+
   module Data
     FS, US = 28, 31
 
     def self.pack_files(files)
-      files.map { |file, source| "#{file}#{US.chr}#{source}" } * FS.chr
+      files.map { |file, source| "#{[file] * ':'}#{US.chr}#{source}" } * FS.chr
     end
 
     def self.parse_blocks(input)

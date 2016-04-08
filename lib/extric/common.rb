@@ -18,17 +18,20 @@ module Extric::Common
   end
 
   def measure_on_elements(commit, options = {})
+    elements = commit.elements
     repository = commit.repository
+
+    return unless elements.any?
 
     g = open_repository name: repository.name
     s, v, t = [], 0, 0
 
-    commit.elements.each do |element|
+    elements.each do |element|
       s << [[element.file, element.path], fetch_source(git: g, commit: commit, element: element)]
     end
 
     read_metric metric: options[:metric], sources: s do |r|
-      v, t = v + r, t + 1
+      v, t = v + Float(r), t + 1
     end
 
     raise if s.size != t

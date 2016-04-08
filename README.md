@@ -184,7 +184,7 @@ Run Java source code or text analysis
 
     extise --list
     extise MethodPositionExtractor < spec/fixtures/classes/HashMap.java
-    extise CyclomaticComplexity < spec/fixtures/classes/HashMap.java
+    extise CyclomaticComplexity -- spec/fixtures/classes/HashMap.java spec/fixtures/classes/TimeUnit.java 
     extise JavaQualifiedNameTokenizer UnaccentFilter LowercaseFilter PorterStemmer ElasticsearchStopwordsFilter WhitespaceFilter UniqueFilter SortFilter -- spec/fixtures/classes/*
 
 #### `jgibblda`

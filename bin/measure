@@ -67,6 +67,9 @@ process subjects, progress: p do |subject|
     metrics.each do |metric, handle|
       inform "measure on #{m}:#{subject.id} for #{user.name} with #{metric.name}" if v unless q
 
+      # NOTE: do not catch any exceptions here since each metric is responsible for its own behavior,
+      # this ensures that any fatal failures immediately terminate execution and backtrace is shown
+
       data = handle.measure user, subject
 
       unless data

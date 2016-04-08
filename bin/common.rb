@@ -102,7 +102,7 @@ def load_extise!
   rescue => failure
     args = ARGD.include?('--no-color') ? %w(--no-color) : []
     Open3.popen2e(File.expand_path "lsxml #{args * ' '}", __dir__) do |i, o, t|
-      i.puts xml
+      i.write xml
       i.close
       Thread.new {
         STDERR.print "\n--XML-DEBUG--\n\n"

@@ -51,10 +51,10 @@ Open3.popen3(File.expand_path "cor #{args * ' '}", __dir__) do |input, output, e
   threads << Thread.new { error.each { |l| STDERR.print l }}
 
   if x
-    input.print [x, y].flatten(1).compact * "\n"
+    input.write [x, y].flatten(1).compact * "\n"
   elsif e
-    input.print 'load_extise!'
-    STDIN.each { |l| input.print "\n#{l}" }
+    input.write 'load_extise!'
+    STDIN.each { |l| input.write "\n#{l}" }
   end
 
   input.close

@@ -33,8 +33,8 @@ Open3.popen3(File.expand_path "hist #{args * ' '}", __dir__) do |input, output, 
   threads << Thread.new { error.each { |l| STDERR.print l }}
 
   unless data.empty?
-    input.print data * "\n"
-    STDIN.each { |l| input.print "\n#{l}" } if e
+    input.write data * "\n"
+    STDIN.each { |l| input.write "\n#{l}" } if e
   end
 
   input.close

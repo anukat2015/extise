@@ -1,6 +1,6 @@
 # NOTE: counts statements of an element
 
-class Extric::Elements::TypeCount
+class Extric::Elements::StatementCount
   include Extric::Common
 
   def measure(_, element)

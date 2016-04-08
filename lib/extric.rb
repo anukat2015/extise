@@ -26,6 +26,7 @@ module Extric
     autoload :LinesOfCode
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
+    autoload :LogicalLinesOfCode
     autoload :MethodCount
     autoload :RecentLinesOfCode
     autoload :SourceLinesOfCode

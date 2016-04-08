@@ -1,11 +1,10 @@
 # NOTE: computes cyclomatic complexity of an element
 
 class Extric::Elements::CyclomaticComplexity
+  include Extric::Caching
   include Extric::Extise
   include Extric::Git
   include Extric::Reporting
-
-  # TODO cache values for user-less metrics
 
   def measure(_, element)
     commit = element.commit
@@ -16,4 +15,6 @@ class Extric::Elements::CyclomaticComplexity
 
     { value: v }
   end
+
+  cache_method :measure, -> (_, element) { element.id }
 end

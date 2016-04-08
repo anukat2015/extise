@@ -34,7 +34,7 @@ class Extric::Elements::LinesOfCodeDeltaCombination
     g = open_repository name: revision_commit.repository.name
     o = fetch_source git: g, commit: previous_commit, element: previous_element
     r = fetch_source git: g, commit: revision_commit, element: revision_element
-    s = compute_source_difference original: o, revision: r
+    s = compute_difference original: o, revision: r
 
     combinator.combine_and_return *s.values
   end

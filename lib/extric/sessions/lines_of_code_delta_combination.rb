@@ -35,7 +35,7 @@ class Extric::Sessions::LinesOfCodeDeltaCombination
     elements.each do |previous_element, revision_element|
       o = fetch_source git: g, commit: previous_commit, element: previous_element
       r = fetch_source git: g, commit: revision_commit, element: revision_element
-      s = compute_source_difference original: o, revision: r
+      s = compute_difference original: o, revision: r
       a, d, m, t = a + s[:additions], d + s[:deletions], m + s[:modifications], t + s[:total]
     end
 

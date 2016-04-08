@@ -1,8 +1,7 @@
 # NOTE: counts lines of code of an element most recently modified by a user
 
 class Extric::Elements::RecentLinesOfCode
-  include Extric::Git
-  include Extric::Reporting
+  include Extric::Common
 
   def measure(user, element)
     commit = element.commit

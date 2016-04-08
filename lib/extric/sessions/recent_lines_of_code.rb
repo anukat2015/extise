@@ -1,8 +1,7 @@
 # NOTE: counts lines of code of all elements most recently modified by a user during a session
 
 class Extric::Sessions::RecentLinesOfCode
-  include Extric::Git
-  include Extric::Reporting
+  include Extric::Common
 
   def measure(user, session)
     commit = session.revision_commit

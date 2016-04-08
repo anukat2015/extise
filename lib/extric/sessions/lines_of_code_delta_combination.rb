@@ -2,8 +2,6 @@
 # lines of code of all elements by a user during a session
 
 class Extric::Sessions::LinesOfCodeDeltaCombination
-  include Extric::Extise
-  include Extric::Git
   include Extric::Common
 
   attr_accessor :combinator

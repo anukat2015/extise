@@ -1,20 +1,11 @@
 # NOTE: computes cyclomatic complexity of an element
 
 class Extric::Elements::CyclomaticComplexity
-  include Extric::Caching
-  include Extric::Extise
-  include Extric::Git
-  include Extric::Reporting
+  include Extric::Common
 
   def measure(_, element)
-    commit = element.commit
-    repository = commit.repository
-
-    s = fetch_source repository: repository, commit: commit, element: element
-    v = read_metric metric: 'CyclomaticComplexity', source: s
-
-    { value: v }
+    measure_on_element element, metric: 'CyclomaticComplexity'
   end
 
-  cache_method :measure, -> (_, element) { element.id }
+  cache_measure on: :element
 end

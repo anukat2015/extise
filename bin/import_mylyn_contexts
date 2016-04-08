@@ -40,7 +40,7 @@ p.each do |f|
   bug_url = d.root.attributes['Id'].text.strip
   version = d.root.attributes['Version'].text.strip
   bugid = bug_url.match(/\d+\z/)[0]
-  attachid = a.shift
+  attachid = Integer a.shift
 
   # NOTE: data from local URLs can not be trusted and data from studio.atlassian.com are often mismatched with bugs
 

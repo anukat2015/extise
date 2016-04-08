@@ -74,9 +74,9 @@ process subjects, progress: p do |subject|
         next
       end
 
-      value = data.delete :value
+      value = Float data.delete :value rescue nil
 
-      unless value.is_a? Numeric
+      unless value
         warn Extric::Reporting.message handle, user, subject, 'value not numeric'
         next
       end

@@ -16,6 +16,14 @@ class Extisimo::Expertise < ActiveRecord::Base
   def self.fetch(by: nil, on: nil, of: nil)
     metric, subject, user = *[by, on, of].map { |o| o.respond_to?(:id) ? o : nil }
 
+    metric = Extisimo::Metric.find by if by.is_a? Integer
+    user = Extisimo::User.find of if of.is_a? Integer
+
+    if metric && !subject && on.is_a?(Integer)
+      index = Extisimo::Metric::TARGETS.index metric.target
+      subject = SUBJECT_TYPES[index].constantize.find on
+    end
+
     if !subject && on
       index = Extisimo::Metric::TARGETS.index on.to_s
       subject = (SUBJECT_TYPES[index] if index) || on.to_s

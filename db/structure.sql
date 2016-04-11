@@ -844,7 +844,7 @@ CREATE TABLE git_eclipse_org_changes (
     changeid integer NOT NULL,
     project_name character varying NOT NULL,
     branch_name character varying NOT NULL,
-    change_identifier character varying(42) NOT NULL,
+    change_identifier character varying NOT NULL,
     subject text NOT NULL,
     status character varying NOT NULL,
     created timestamp without time zone NOT NULL,

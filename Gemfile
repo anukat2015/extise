@@ -14,25 +14,18 @@ gem 'activemodel', '~> 5.0.0.beta1'
 gem 'activerecord', '~> 5.0.0.beta1'
 gem 'activesupport', '~> 5.0.0.beta1'
 
-# utilities
-
-gem 'colored', '~> 1.2'
-gem 'optbind', '~> 0.3.2'
-gem 'ruby-progressbar', '~> 1.7.5'
-
-# scraping
-
-gem 'nokogiri', '~> 1.6.6'
-gem 'selenium-webdriver', '~> 2.53.0'
-
-# git
-
-gem 'rugged', '~> 0.23.3'
-
 # processing
 
 gem 'concurrent-ruby', '~> 1.0.0'
 gem 'parallel', '~> 1.6.1'
+
+# utilities
+
+gem 'colored', '~> 1.2'
+gem 'optbind', '~> 0.3.2'
+gem 'nokogiri', '~> 1.6.6'
+gem 'ruby-progressbar', '~> 1.7.5'
+gem 'rugged', '~> 0.23.3'
 
 # statistics
 

@@ -8,7 +8,7 @@ class CreateChangesByGitEclipseOrg < ActiveRecord::Migration
       t.integer :changeid, null: false
       t.string :project_name, null: false
       t.string :branch_name, null: false
-      t.string :change_identifier, null: false, limit: 41
+      t.string :change_identifier, null: false, limit: 42
       t.text :subject, null: false
       t.string :status, null: false
       t.datetime :created, null: false

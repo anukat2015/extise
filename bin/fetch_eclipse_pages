@@ -33,47 +33,47 @@ p.each do |f|
   inform f unless q || i.zero?
 
   process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
-    driver = Selenium::WebDriver.for :phantomjs
+    bug_id = b.css('bug_id').text.strip
+    url = "https://bugs.eclipse.org/bugs/show_bug.cgi?id=#{bug_id}"
+    file = File.join bugs_directory, "#{bug_id}.html"
+
+    puts "#{'  ' * i}bug: #{bug_id}" unless q
+
+    next if File.exist? file
+
+    content = `curl -sS #{url}`
+
+    File.write file, content
+
+    driver = nil
 
     begin
-      bug_id = b.css('bug_id').text.strip
-      url = "https://bugs.eclipse.org/bugs/show_bug.cgi?id=#{bug_id}"
-      file = File.join bugs_directory, "#{bug_id}.html"
+      Nokogiri::XML(content).css('#field_container_see_also').css('a').each do |a|
+        next if a.text !~ /\s*Gerrit\s+Change\s*/
 
-      puts "#{'  ' * i}bug: #{bug_id}" unless q
+        driver ||= Selenium::WebDriver.for :phantomjs
 
-      next if File.exist? file
+        url, change_id = a['href'], a['href'].match(/(?<change_id>\d+)\/?\z/).to_a[1]
+        file = File.join changes_directory, "#{change_id}.html"
 
-      driver.navigate.to url
+        unless url && change_id
+          warn "#{BugsEclipseOrg::Bug}:#{bug_id} change not found"
+          next
+        end
 
-      content = driver.page_source
+        puts "#{'  ' * (i + 1)}change: #{change_id}" unless q
 
-      File.write file, content
+        next if File.exist? file
 
-      url, change_id = *content.match(/https:\/\/git\.eclipse\.org\/r\/(?<change_id>\d+)/).to_a
-      file = File.join changes_directory, "#{change_id}.html"
+        driver.navigate.to url
+        wait = Selenium::WebDriver::Wait.new timeout: 30.seconds
+        wait.until { driver.find_element(class: 'screen').displayed? }
+        content = driver.page_source
 
-      unless url && change_id
-        warn "#{BugsEclipseOrg::Bug}:#{bug_id} change not found"
-        next
+        File.write file, content
       end
-
-      puts "#{'  ' * (i + 1)}change: #{bug_id}" unless q
-
-      next if File.exist? file
-
-      driver.navigate.to url
-
-      wait = Selenium::WebDriver::Wait.new timeout: 30.seconds
-      wait.until { driver.find_element(class: 'screen').displayed? }
-
-      content = driver.page_source
-
-      File.write file, content
     ensure
-      driver.quit
+      driver.try! :quit
     end
   end
 end
-
-# NOTE: to all 6569 bugs only 130 changes were fetched

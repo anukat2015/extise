@@ -22,6 +22,21 @@ v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
+BUGID_MATCHERS = [
+  /\A(\d+):?\s/,
+  /\A[\[\|](\d+)[\]]\s/,
+  /#(\d+)[:\.\s]/,
+  /bug\s*(\d+)[\.\)\s]/i,
+  /bug\s*\[?(\d+)[\]\}]/i,
+  /\*\s*\[(\d+)\]/
+]
+
+def extract_bugid(s)
+  s = s.gsub(/\A["\s]*/, '')
+  BUGID_MATCHERS.each { |r| s.match(r).to_a[1].tap { |b| return b if b }}
+  nil
+end
+
 def persist_user(a)
   persist(User, accountid: a['_account_id']) do |r|
     r.username = a['username'].presence
@@ -60,12 +75,12 @@ p.each do |d|
         r.project_id = project.id
         r.owner_id = owner.id
 
-        r.bugid = c['subject'].match(/https:\/\/bugs.eclipse.org\/bugs\/show_bug\.cgi\?id=(?<bugid>\d+)/).to_a[1]
-        r.project_name = c['project']
-        r.branch_name = c['branch']
-        r.change_identifier = c['change_id']
-        r.subject = c['subject']
-        r.status = c['status']
+        r.bugid = extract_bugid c['subject']
+        r.project_name = c['project'].presence
+        r.branch_name = c['branch'].presence
+        r.change_identifier = c['change_id'].presence
+        r.subject = c['subject'].presence
+        r.status = c['status'].presence
         r.created = c['created']
         r.updated = c['updated']
       end
@@ -77,11 +92,11 @@ p.each do |d|
       c['messages'].each do |m|
         author = m['author'] ? persist_user(m['author']) : nil
 
-        message = persist(Message, identifier: m['id']) do |r|
+        message = persist(Message, identifier: m['id'].presence) do |r|
           r.change_id = change.id
           r.author_id = author.try :id
 
-          r.message = m['message']
+          r.message = m['message'].presence
           r.date = m['date']
         end
 
@@ -94,7 +109,7 @@ p.each do |d|
           user = persist_user l
 
           label = persist(Label, change_id: change.id, user_id: user.id, name: n) do |r|
-            r.value = l['value']
+            r.value = l['value'].presence
             r.approved = l['_account_id'] == a['approved'].try { self['_account_id'] }
             r.date = l['date']
           end

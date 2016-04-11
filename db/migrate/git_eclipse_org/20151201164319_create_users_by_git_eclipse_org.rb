@@ -2,7 +2,7 @@ class CreateUsersByGitEclipseOrg < ActiveRecord::Migration
   def change
     create_table :git_eclipse_org_users do |t|
       t.integer :accountid, null: false
-      t.string :username, null: false
+      t.string :username, null: true
       t.string :name, null: false
       t.string :email, null: true
 

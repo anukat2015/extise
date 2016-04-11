@@ -2,7 +2,7 @@ class CreateMessagesByGitEclipseOrg < ActiveRecord::Migration
   def change
     create_table :git_eclipse_org_messages do |t|
       t.references :change, null: false
-      t.references :author, null: false
+      t.references :author, null: true
 
       t.string :identifier, null: false, limit: 17
       t.text :message, null: false

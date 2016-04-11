@@ -916,7 +916,7 @@ ALTER SEQUENCE git_eclipse_org_labels_id_seq OWNED BY git_eclipse_org_labels.id;
 CREATE TABLE git_eclipse_org_messages (
     id integer NOT NULL,
     change_id integer NOT NULL,
-    author_id integer NOT NULL,
+    author_id integer,
     identifier character varying(17) NOT NULL,
     message text NOT NULL,
     date timestamp without time zone NOT NULL,
@@ -983,7 +983,7 @@ ALTER SEQUENCE git_eclipse_org_projects_id_seq OWNED BY git_eclipse_org_projects
 CREATE TABLE git_eclipse_org_users (
     id integer NOT NULL,
     accountid integer NOT NULL,
-    username character varying NOT NULL,
+    username character varying,
     name character varying NOT NULL,
     email character varying,
     created_at timestamp without time zone NOT NULL,

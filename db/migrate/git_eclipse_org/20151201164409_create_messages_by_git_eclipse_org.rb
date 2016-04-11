@@ -4,7 +4,7 @@ class CreateMessagesByGitEclipseOrg < ActiveRecord::Migration
       t.references :change, null: false
       t.references :author, null: true
 
-      t.string :identifier, null: false, limit: 17
+      t.string :identifier, null: false
       t.text :message, null: false
       t.datetime :date, null: false
 

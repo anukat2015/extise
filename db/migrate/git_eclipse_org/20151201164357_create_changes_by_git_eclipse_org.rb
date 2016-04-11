@@ -9,7 +9,7 @@ class CreateChangesByGitEclipseOrg < ActiveRecord::Migration
       t.string :project_name, null: false
       t.string :branch_name, null: false
       t.string :change_identifier, null: false
-      t.text :subject, null: false
+      t.text :subject, null: true
       t.string :status, null: false
       t.datetime :created, null: false
       t.datetime :updated, null: false

@@ -4,7 +4,7 @@ require_relative 'common' and load_extise! { include Extisimo }
 e, m, s, u, c, v, x, y = false, :spearman, nil, nil, true, true, nil, nil
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>] <target:metric> <target:metric>'
+  use '[<options>] <target:name> <target:name>'
   use '[<options>] -e [<command>] [<command>]'
   opt 'e -e --eval'
   opt 'm -m --method=(pearson|spearman)'

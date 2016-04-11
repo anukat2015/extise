@@ -5,7 +5,7 @@ class CreateLabelsByGitEclipseOrg < ActiveRecord::Migration
       t.references :user, null: false
 
       t.string :name, null: false
-      t.integer :value, null: false
+      t.integer :value, null: true
       t.boolean :approved, null: false
       t.string :date, null: true
 

@@ -882,7 +882,7 @@ CREATE TABLE git_eclipse_org_labels (
     change_id integer NOT NULL,
     user_id integer NOT NULL,
     name character varying NOT NULL,
-    value integer NOT NULL,
+    value integer,
     approved boolean NOT NULL,
     date character varying,
     created_at timestamp without time zone NOT NULL,

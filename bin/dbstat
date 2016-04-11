@@ -21,12 +21,12 @@ groups = Hash[[groups.find { |g, _| g == p }].compact] if p
 
 abort "No tables#{" with prefix #{p}" if p} found" if groups.empty?
 
-dump_attribute configuration[:database], ''
+dump_attribute configuration[:database], nil, 0, blank: false
 
 groups.each do |group, tables|
-  dump_attribute group, '', 1
+  dump_attribute group, nil, 1, blank: false
 
   tables.each do |table|
-    dump_attribute table.sub(/.+_/, ''), connection.execute("SELECT COUNT(*) FROM #{table}")[0]['count'], 2
+    dump_attribute table.sub(/.+_/, ''), connection.execute("SELECT COUNT(*) FROM #{table}")[0]['count'], 2, {}
   end
 end

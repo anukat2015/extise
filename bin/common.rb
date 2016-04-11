@@ -73,7 +73,7 @@ def load_extise!
 
   def dump_attribute(k, v = nil, i = 0, o = options.bound)
     return if o[:q]
-    puts "#{'  ' * i}#{k.to_s.blue}: #{v.blank? ? 'blank'.black : v.to_s.yellow}"
+    puts "#{'  ' * i}#{k.to_s.blue}: #{v.blank? ? ('blank'.black unless o[:blank] === false) : v.to_s.yellow}"
   end
 
   def dump_record(r, n = nil, i = 0, o = options.bound)

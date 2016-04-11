@@ -8,8 +8,8 @@ module GitEclipseOrg
   autoload_under 'models' do
     autoload :Change
     autoload :Label
+    autoload :Message
     autoload :Project
-    autoload :Review
     autoload :User
   end
 

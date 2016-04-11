@@ -6113,13 +6113,13 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:point val="15,46"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="14.95,45.95;24.79,58.65"/>
+        <dia:rectangle val="14.95,45.95;25.56,58.65"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="15,46"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.7400000000000002"/>
+        <dia:real val="10.51"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="12.600000000000001"/>
@@ -6329,7 +6329,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#project#</dia:string>
+            <dia:string>#project_name#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#string#</dia:string>
@@ -6352,7 +6352,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#branch#</dia:string>
+            <dia:string>#branch_name#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#string#</dia:string>
@@ -6375,7 +6375,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#identifier#</dia:string>
+            <dia:string>#change_identifier#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#string#</dia:string>
@@ -7395,16 +7395,16 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="24.74,49.3"/>
+        <dia:point val="25.51,49.3"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="24.69,48.55;33.05,62.55"/>
+        <dia:rectangle val="25.46,48.55;33.05,62.55"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="24.74,49.3"/>
+        <dia:point val="25.51,49.3"/>
         <dia:point val="27,49.3"/>
         <dia:point val="27,61.7"/>
         <dia:point val="33,61.7"/>
@@ -7575,7 +7575,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:point val="33,46"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="32.95,45.95;43.175,53.05"/>
+        <dia:rectangle val="32.95,45.95;43.175,53.85"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="33,46"/>
@@ -7584,7 +7584,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:real val="10.125"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="7"/>
+        <dia:real val="7.7999999999999998"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#git_eclipse_org::messages#</dia:string>
@@ -7745,6 +7745,29 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
+            <dia:string>#identifier#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#string#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
             <dia:string>#message#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
@@ -7883,7 +7906,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:point val="33,48.5"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="24.69,46.95;33.05,49.35"/>
+        <dia:rectangle val="25.46,46.95;33.05,49.35"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -7892,7 +7915,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:point val="33,48.5"/>
         <dia:point val="28,48.5"/>
         <dia:point val="28,47.7"/>
-        <dia:point val="24.74,47.7"/>
+        <dia:point val="25.51,47.7"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>

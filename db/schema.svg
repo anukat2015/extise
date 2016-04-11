@@ -431,19 +431,19 @@
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1891.1" y="983"></text>
   </g>
   <g>
-    <rect style="fill: #ffffff" x="300" y="920" width="194.8" height="24"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="300" y="920" width="194.8" height="24"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="397.4" y="936">git_eclipse_org::changes</text>
-    <rect style="fill: #ffffff" x="300" y="944" width="194.8" height="228"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="300" y="944" width="194.8" height="228"/>
+    <rect style="fill: #ffffff" x="300" y="920" width="210.2" height="24"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="300" y="920" width="210.2" height="24"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="405.1" y="936">git_eclipse_org::changes</text>
+    <rect style="fill: #ffffff" x="300" y="944" width="210.2" height="228"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="300" y="944" width="210.2" height="228"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="958">+id: integer</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="974">+project_id: integer</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="990">+owner_id: integer</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1006">+bugid: integer</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1022">+changeid: integer</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1038">+project: string</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1054">+branch: string</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1070">+identifier: string</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1038">+project_name: string</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1054">+branch_name: string</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1070">+change_identifier: string</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1086">+subject: text</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1102">+status: string</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="303" y="1118">+created: datetime</text>
@@ -494,9 +494,9 @@
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="3" y="1366">+updated_at: datetime</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="494.8,986 540,986 540,1234 660,1234 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="510.2,986 540,986 540,1234 660,1234 "/>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="542" y="1107"></text>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="498.8" y="983">0..*</text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="514.2" y="983">0..*</text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:end;font-family:monospace;font-style:normal;font-weight:normal" x="656" y="1231">1</text>
   </g>
   <g>
@@ -515,21 +515,22 @@
     <rect style="fill: #ffffff" x="660" y="920" width="202.5" height="24"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="920" width="202.5" height="24"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="761.25" y="936">git_eclipse_org::messages</text>
-    <rect style="fill: #ffffff" x="660" y="944" width="202.5" height="116"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="944" width="202.5" height="116"/>
+    <rect style="fill: #ffffff" x="660" y="944" width="202.5" height="132"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="660" y="944" width="202.5" height="132"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="958">+id: integer</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="974">+change_id: integer</text>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="990">+author_id: integer</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1006">+message: text</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1022">+date: datetime</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1038">+created_at: datetime</text>
-    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1054">+updated_at: datetime</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1006">+identifier: string</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1022">+message: text</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1038">+date: datetime</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1054">+created_at: datetime</text>
+    <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="663" y="1070">+updated_at: datetime</text>
   </g>
   <g>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,970 560,970 560,954 494.8,954 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,970 560,970 560,954 510.2,954 "/>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="562" y="962"></text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:end;font-family:monospace;font-style:normal;font-weight:normal" x="656" y="967">0..*</text>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="498.8" y="951">1</text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="514.2" y="951">1</text>
   </g>
   <g>
     <polygon style="fill: #ffffff" points="0,920 206.2,920 218.2,932 218.2,1082 0,1082 "/>

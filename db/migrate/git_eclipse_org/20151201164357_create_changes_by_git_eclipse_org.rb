@@ -4,12 +4,15 @@ class CreateChangesByGitEclipseOrg < ActiveRecord::Migration
       t.references :project, null: false
       t.references :owner, null: false
 
-      t.integer :bugid, null: false
+      t.integer :bugid, null: true
       t.integer :changeid, null: false
+      t.string :project_name, null: false
+      t.string :branch_name, null: false
+      t.string :change_identifier, null: false, limit: 41
+      t.text :subject, null: false
       t.string :status, null: false
-      t.string :commit_identifier, null: false, limit: 40
-      t.string :change_identifier, null: false, limit: 40
-      t.integer :history_size, null: false
+      t.datetime :created, null: false
+      t.datetime :updated, null: false
 
       t.timestamps null: false
     end
@@ -17,11 +20,13 @@ class CreateChangesByGitEclipseOrg < ActiveRecord::Migration
     add_index :git_eclipse_org_changes, :owner_id
     add_index :git_eclipse_org_changes, :project_id
 
-    add_index :git_eclipse_org_changes, :bugid, unique: true
+    add_index :git_eclipse_org_changes, :bugid
     add_index :git_eclipse_org_changes, :changeid, unique: true, name: 'index_git_eclipse_org_changes_as_unique'
-    add_index :git_eclipse_org_changes, :status
-    add_index :git_eclipse_org_changes, :commit_identifier
+    add_index :git_eclipse_org_changes, :project_name
+    add_index :git_eclipse_org_changes, :branch_name
     add_index :git_eclipse_org_changes, :change_identifier
-    add_index :git_eclipse_org_changes, :history_size
+    add_index :git_eclipse_org_changes, :status
+    add_index :git_eclipse_org_changes, :created
+    add_index :git_eclipse_org_changes, :updated
   end
 end

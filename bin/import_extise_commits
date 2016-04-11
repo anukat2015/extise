@@ -50,7 +50,11 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   next if c.parents.count != 1
 
-  author = User.joins(:bugs_eclipse_org_user).find_by 'login_name = ? OR realnames @> ?', c.author[:name], "{#{c.author[:name]}}"
+  authors = User.fetch(c.author[:name]).all
+
+  abort "#{User}:? ambiguous name #{c.author[:name]}" if authors.count >= 2
+
+  author = authors.first
 
   # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
 

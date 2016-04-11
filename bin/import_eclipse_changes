@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include GitEclipseOrg }
 
-b, g, n, w, z, p = nil, nil, 4, :thread, false, [STDIN]
+n, w, z, p = 4, :thread, false, [STDIN]
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>] [<file>...]'
-  opt 'b -b --bugzilla-pages=<path>'
-  opt 'g -g --gerrit-pages=<path>'
+  use '[<options>] [<directory>...]'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -24,93 +22,87 @@ v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
-def persist_user(n, e = nil)
-  persist(User, name: n) do |r|
-    r.email = e
+def persist_user(a)
+  persist(User, accountid: a['_account_id']) do |r|
+    r.username = a['username'].presence
+    r.name = a['name'].presence
+    r.email = a['email'].presence
   end
 end
 
 i = v && !options.default?(:p) ? 1 : 0
+p = p.flat_map { |d| d.is_a?(IO) ? d.readlines.map(&:strip) : d }
 
-bugs_directory = b || File.join(BugsEclipseOrg::DIRECTORY, 'eclipse-bugs')
-changes_directory = g || File.join(GitEclipseOrg::DIRECTORY, 'eclipse-changes')
+p.each do |d|
+  inform d unless q || i.zero?
 
-p.each do |f|
-  d = Nokogiri::XML File.open_or f
-
-  inform f unless q || i.zero?
+  files = Dir[File.join d, '*.json']
 
   if z
     q = false
-    dump_attribute :bugzilla, d.root.attributes['urlbase'].text, i
-    dump_attribute :bugs, d.css('bug').count, i + 1
+    dump_attribute :changes, files.count, i
     next
   end
 
-  process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
-    bugid = b.css('bug_id').text.presence
+  process files, count: n, worker: w, progress: !n.zero? do |f|
+    JSON.parse(File.read f).tap do |c|
+      changeid = File.basename(f, '.json').to_i
 
-    content = File.read File.join bugs_directory, "#{bugid}.html"
-    changeid = content.match(/https:\/\/git\.eclipse\.org\/r\/(?<changeid>\d+)/).to_a[1]
+      abort "#{Change}:? mismatching change identifier" if changeid != c['_number']
 
-    unless changeid
-      warn "#{BugsEclipseOrg::Bug}:#{bugid} change not found"
-      next
-    end
-
-    content = File.read File.join changes_directory, "#{changeid}.html"
-    document = Nokogiri::XML content
-
-    abort "#{Change}:? mismatching bug identifier #{bugid}" unless content =~ /https:\/\/bugs.eclipse.org\/bugs\/show_bug\.cgi\?id=#{bugid}/
-    abort "#{Change}:? mismatching change identifier" unless content =~ /https:\/\/git.eclipse.org\/r\/#{changeid}/
-
-    parent, name = *content.match(/href="#\/projects\/(?<parent>[-\w\.]+)\/(?<name>[-\w\.]+),dashboards\/default"/).to_a[1..2]
-
-    abort "#{Project}:? missing parent" if parent.blank?
-    abort "#{Project}:? missing name" if name.blank?
-
-    project = persist(Project, name: name) do |r|
-      r.parent = parent
-    end
-
-    email, name = *document.css('#change_infoTable')[0].to_xml.match(/title="(?<email>\S+)[^"]*" href="#\/q\/owner:[^>]*">(?<name>[^<]+)</).to_a[1..2]
-
-    abort "#{User}:? missing name" if name.blank?
-
-    owner = persist_user name, email
-
-    change = persist(Change, changeid: changeid) do |r|
-      r.project_id = project.id
-      r.owner_id = owner.id
-
-      r.bugid = bugid
-      r.status = document.css('span.com-google-gerrit-client-change-ChangeScreen_BinderImpl_GenCss_style-statusText').text.gsub(/-/, ' ').downcase
-      r.commit_identifier = document.css('table.com-google-gerrit-client-change-CommitBox_BinderImpl_GenCss_style-header td')[4].text
-      r.change_identifier = document.css('table.com-google-gerrit-client-change-CommitBox_BinderImpl_GenCss_style-header td')[8].text[1..-1]
-      r.history_size = document.css('div.com-google-gerrit-client-change-Message_BinderImpl_GenCss_style-contents').count
-    end
-
-    dump_record change, :change, i
-    dump_record project, :project, i + 1
-    dump_record owner, :owner, i + 1
-
-    document.css('#change_infoTable tr td span[role=listitem]').each do |s|
-      next unless s['title'] =~ /Code-Review/
-
-      reviewer = persist_user s.text, s['title'].match(/\S+@\S+/).to_s.presence
-      review = persist Review, change_id: change.id, reviewer_id: reviewer.id
-
-      dump_record review, :review, i + 1
-      dump_record reviewer, :reviewer, i + 2
-    end
-
-    document.css('.com-google-gerrit-client-change-ChangeScreen_BinderImpl_GenCss_style-labelName').each do |t|
-      label = persist(Label, change_id: change.id, key: t.text.gsub(/-/, ' ').downcase) do |r|
-        r.value = t.next.text.match(/[+-]\d+/).presence
-        r.names = t.next.css('span[role=listitem]').map { |s| s.text }
+      project = persist(Project, name: c['project'].split('/', 2).last) do |r|
+        r.parent = c['project'].split('/', 2).first
       end
 
-      dump_record label, :label, i + 1
+      owner = persist_user c['owner']
+
+      change = persist(Change, changeid: changeid) do |r|
+        r.project_id = project.id
+        r.owner_id = owner.id
+
+        r.bugid = c['subject'].match(/https:\/\/bugs.eclipse.org\/bugs\/show_bug\.cgi\?id=(?<bugid>\d+)/).to_a[1]
+        r.project_name = c['project']
+        r.branch_name = c['branch']
+        r.change_identifier = c['change_id']
+        r.subject = c['subject']
+        r.status = c['status']
+        r.created = c['created']
+        r.updated = c['updated']
+      end
+
+      dump_record change, :change, i
+      dump_record project, :project, i + 1
+      dump_record owner, :owner, i + 1
+
+      c['messages'].each do |m|
+        author = m['author'] ? persist_user(m['author']) : nil
+
+        message = persist(Message, identifier: m['id']) do |r|
+          r.change_id = change.id
+          r.author_id = author.try :id
+
+          r.message = m['message']
+          r.date = m['date']
+        end
+
+        dump_record message, :message, i + 1
+        dump_record author, :author, i + 2 if author
+      end
+
+      c['labels'].each do |n, a|
+        (a['all'] || []).each do |l|
+          user = persist_user l
+
+          label = persist(Label, change_id: change.id, user_id: user.id, name: n) do |r|
+            r.value = l['value']
+            r.approved = l['_account_id'] == a['approved'].try { self['_account_id'] }
+            r.date = l['date']
+          end
+
+          dump_record label, :label, i + 1
+          dump_record user, :user, i + 2
+        end
+      end
     end
   end
 end

@@ -17,8 +17,16 @@ module Extisimo::Reference
         has_one :extisimo_user, class_name: 'Extisimo::User', foreign_key: :git_eclipse_org_user_id
       end
 
+      def bugs_eclipse_org_user_names
+        ([bugs_eclipse_org_user.login_name] + bugs_eclipse_org_user.realnames).uniq
+      end
+
+      def git_eclipse_org_user_names
+        [git_eclipse_org_user.username, git_eclipse_org_user.name].uniq
+      end
+
       def eclipse_org_user_names
-        ([bugs_eclipse_org_user.login_name] + bugs_eclipse_org_user.realnames + [git_eclipse_org_user.try(:name)]).compact.uniq
+        (bugs_eclipse_org_user_names + git_eclipse_org_user_names).uniq
       end
     end
   end
@@ -45,10 +53,14 @@ module Extisimo::Reference
         has_one :extisimo_task, class_name: 'Extisimo::Task', foreign_key: :bugs_eclipse_org_bug_id
       end
 
-      belongs_to :git_eclipse_org_change, -> { readonly }, class_name: 'GitEclipseOrg::Change'
+      has_and_belongs_to_many :git_eclipse_org_changes, -> { readonly }, class_name: 'GitEclipseOrg::Change'
 
       class GitEclipseOrg::Change
-        has_one :extisimo_task, class_name: 'Extisimo::Task', foreign_key: :git_eclipse_org_change_id
+        has_and_belongs_to_many :extisimo_tasks, class_name: 'Extisimo::Task'
+
+        def extisimo_task
+          extisimo_tasks.first
+        end
       end
     end
   end

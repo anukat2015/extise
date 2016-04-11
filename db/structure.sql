@@ -984,7 +984,7 @@ CREATE TABLE git_eclipse_org_users (
     id integer NOT NULL,
     accountid integer NOT NULL,
     username character varying,
-    name character varying NOT NULL,
+    name character varying,
     email character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL

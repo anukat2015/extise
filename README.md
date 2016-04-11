@@ -56,9 +56,9 @@ Following commands do not have to be executed subsequently:
 
 #### `fetch_eclipse_pages`
 
-Download Eclipse pages of Bugzilla bugs and corresponding Gerrit changes according to input bugs file
+Download Gerrit change files according to input URL
 
-    fetch_eclipse_pages ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
+    fetch_gerrit_changes https://git.eclipse.org/r
 
 #### `fetch_mylyn_contexts`
 

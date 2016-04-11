@@ -35,7 +35,7 @@ end
 def persist_user(user)
   persist(User, name: user.login_name) do |r|
     r.bugs_eclipse_org_user = user
-    r.git_eclipse_org_user = GitEclipseOrg::User.find_by name: user.realnames << user.login_name
+    r.git_eclipse_org_user = GitEclipseOrg::User.where('username IN (?) OR name IN (?)', *[user.bugs_eclipse_org_names] * 2).first
   end
 end
 

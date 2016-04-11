@@ -13,16 +13,21 @@ class AddReferences < ActiveRecord::Migration
     add_reference :extisimo_users, :git_eclipse_org_user, null: true
     add_reference :extisimo_repositories, :git_eclipse_org_project, null: true
 
-    # NOTE: a task always references a single bug, and none or many changes
+    # NOTE: each task always references a single bug, and none or many changes
 
-    add_reference :extisimo_task, :bugs_eclipse_org_bug, null: false
+    add_reference :extisimo_tasks, :bugs_eclipse_org_bug, null: false
 
     create_table :extisimo_tasks_git_eclipse_org_changes, id: false do |t|
       t.references :extisimo_task, null: false
       t.references :git_eclipse_org_change, null: false
     end
 
-    add_index :extisimo_tasks_git_eclipse_org_changes, [:extisimo_task_id, :git_eclipse_org_change_id], unique: true
-    add_index :extisimo_tasks_git_eclipse_org_changes, :git_eclipse_org_change_id, unique: true
+    add_index :extisimo_tasks_git_eclipse_org_changes, [:extisimo_task_id, :git_eclipse_org_change_id], unique: true, name: 'index_extisimo_tasks_git_eclipse_org_changes_as_unique'
+    add_index :extisimo_tasks_git_eclipse_org_changes, :git_eclipse_org_change_id, unique: true, name: 'index_extisimo_tasks_git_eclipse_org_changes_as_guard'
+
+    # NOTE: each repository references project's parent since it is missing in bugs.eclipse.org original data
+
+    add_column :extisimo_repositories, :git_eclipse_org_project_parent, :string, null: false
+    add_index :extisimo_repositories, :git_eclipse_org_project_parent
   end
 end

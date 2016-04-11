@@ -6,13 +6,23 @@ class AddReferences < ActiveRecord::Migration
 
   def change
     add_reference :extisimo_users, :bugs_eclipse_org_user, null: false
-    add_reference :extisimo_tasks, :bugs_eclipse_org_bug, null: false
     add_reference :extisimo_posts, :bugs_eclipse_org_comment, null: false
     add_reference :extisimo_attachments, :bugs_eclipse_org_attachment, null: false
     add_reference :extisimo_interactions, :bugs_eclipse_org_interaction, null: false
 
     add_reference :extisimo_users, :git_eclipse_org_user, null: true
-    add_reference :extisimo_tasks, :git_eclipse_org_change, null: true
     add_reference :extisimo_repositories, :git_eclipse_org_project, null: true
+
+    # NOTE: a task always references a single bug, and none or many changes
+
+    add_reference :extisimo_task, :bugs_eclipse_org_bug, null: false
+
+    create_table :extisimo_tasks_git_eclipse_org_changes, id: false do |t|
+      t.references :extisimo_task, null: false
+      t.references :git_eclipse_org_change, null: false
+    end
+
+    add_index :extisimo_tasks_git_eclipse_org_changes, [:extisimo_task_id, :git_eclipse_org_change_id], unique: true
+    add_index :extisimo_tasks_git_eclipse_org_changes, :git_eclipse_org_change_id, unique: true
   end
 end

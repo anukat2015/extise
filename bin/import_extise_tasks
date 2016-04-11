@@ -35,7 +35,7 @@ end
 def persist_user(user)
   persist(User, name: user.login_name) do |r|
     r.bugs_eclipse_org_user = user
-    r.git_eclipse_org_user = GitEclipseOrg::User.where('username IN (?) OR name IN (?)', *[user.bugs_eclipse_org_names] * 2).first
+    r.git_eclipse_org_user = GitEclipseOrg::User.where('username IN (?) OR name IN (?)', *[user.realnames << user.login_name] * 2).first
   end
 end
 
@@ -75,7 +75,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
     r.cc = b.cc
     r.modified_at = fix_timestamp b.delta_ts, b.bugid
     r.bugs_eclipse_org_bug_id = b.id
-    r.git_eclipse_org_change = GitEclipseOrg::Change.find_by bugid: b.bugid
+    r.git_eclipse_org_changes = GitEclipseOrg::Change.where bugid: b.bugid
   end
 
   dump_record task, :task, i

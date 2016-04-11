@@ -53,10 +53,10 @@ module Extisimo::Reference
         has_one :extisimo_task, class_name: 'Extisimo::Task', foreign_key: :bugs_eclipse_org_bug_id
       end
 
-      has_and_belongs_to_many :git_eclipse_org_changes, -> { readonly }, class_name: 'GitEclipseOrg::Change'
+      has_and_belongs_to_many :git_eclipse_org_changes, -> { readonly }, class_name: 'GitEclipseOrg::Change', association_foreign_key: :git_eclipse_org_change_id, foreign_key: :extisimo_task_id
 
       class GitEclipseOrg::Change
-        has_and_belongs_to_many :extisimo_tasks, class_name: 'Extisimo::Task'
+        has_and_belongs_to_many :extisimo_tasks, -> { readonly }, class_name: 'Extisimo::Task', association_foreign_key: :extisimo_task_id, foreign_key: :git_eclipse_org_change_id
 
         def extisimo_task
           extisimo_tasks.first

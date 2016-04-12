@@ -145,7 +145,7 @@ Load expertise metrics, fill `extisimo_{metrics}` tables
 
 Import from raw SQL 
 
-    psql -U extise extise_development < ../data/extise.fiit.stuba.sk/extise_development-bugs_eclipse_org-20160113-all-with-mylyn-context-20160110-1824.sql
+    psql -U extise extise_development < ../data/extise.fiit.stuba.sk/extise_development-bugs_eclipse_org-20160411_all-with-mylyn-context-20160110-1824.sql
 
 ## Data export
 

@@ -24,12 +24,16 @@ AutoColor.disable on: self unless c
 
 BUGID_MATCHERS = [
   /\A(\d+):?\s/,
-  /\A[\[\|](\d+)[\]]\s/,
+  /\A[\[\|](\d+)[\]][:\.\-\s]/,
   /#(\d+)[:\.\s]/,
-  /bug\s*(\d+)[\.\)\s]/i,
+  /bug\s*(\d+)[:\.\)\s]/i,
   /bug\s*\[?(\d+)[\]\}]/i,
   /\*\s*\[(\d+)\]/
 ]
+
+# NOTE: bug identifier extraction is not accurate, moreover a single change
+# can reference and also be a solution to multiple bugs, this implementation
+# scans the input and extracts the first possible bug identifier match
 
 def extract_bugid(s)
   s = s.gsub(/\A["\s]*/, '')

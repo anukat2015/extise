@@ -22,23 +22,12 @@ v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
-BUGID_MATCHERS = [
-  /\A(\d+):?\s/,
-  /\A[\[\|](\d+)[\]][:\.\-\s]/,
-  /#(\d+)[:\.\s]/,
-  /bug\s*(\d+)[:\.\)\s]/i,
-  /bug\s*\[?(\d+)[\]\}]/i,
-  /\*\s*\[(\d+)\]/
-]
-
 # NOTE: bug identifier extraction is not accurate, moreover a single change
 # can reference and also be a solution to multiple bugs, this implementation
 # scans the input and extracts the first possible bug identifier match
 
 def extract_bugid(s)
-  s = s.gsub(/\A["\s]*/, '')
-  BUGID_MATCHERS.each { |r| s.match(r).to_a[1].tap { |b| return b if b }}
-  nil
+  s.match(/(\A|br|bug(s|zilla)?(\s+import)?(\s+(fix|id|number))?|task)[\W\s]*(?<bugid>\d+)/i).try :[], 'bugid'
 end
 
 def persist_user(a)

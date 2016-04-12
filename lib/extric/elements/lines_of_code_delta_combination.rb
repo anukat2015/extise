@@ -40,9 +40,9 @@ class Extric::Elements::LinesOfCodeDeltaCombination
   end
 
   class Combinator
-    ADDITIONS_MULTIPLIER = 1.3
-    DELETIONS_MULTIPLIER = 0.9
-    MODIFICATIONS_MULTIPLIER = 1.2
+    ADDITIONS_MULTIPLIER = 2.8
+    DELETIONS_MULTIPLIER = 1.3
+    MODIFICATIONS_MULTIPLIER = 5.3
 
     attr_accessor :multipliers
 

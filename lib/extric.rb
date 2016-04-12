@@ -52,9 +52,13 @@ module Extric
     autoload :Selections
     autoload :SourceLinesOfCode
     autoload :SubsequentEdits
+    autoload :SubsequentInteractions
+    autoload :SubsequentSelections
     autoload :StatementCount
     autoload :TypeCount
     autoload :UniqueEdits
+    autoload :UniqueInteractions
+    autoload :UniqueSelections
   end
 
   extend Resolving

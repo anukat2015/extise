@@ -1,5 +1,4 @@
-# NOTE: counts added, deleted, and modified lines
-# of code of all elements by a user during a session
+# NOTE: counts added, deleted, and modified lines of code of all elements by a user during a session
 
 class Extric::Sessions::LinesOfCodeDelta
   def initialize

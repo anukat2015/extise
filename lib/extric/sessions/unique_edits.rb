@@ -1,5 +1,4 @@
-# NOTE: counts unique user edits during a session,
-# i.e. edits that happened on at element only once
+# NOTE: counts unique user edits during a session, i.e. edits that happened on at element only once
 
 class Extric::Sessions::UniqueEdits
   include Extric::Common

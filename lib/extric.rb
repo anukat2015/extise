@@ -37,15 +37,22 @@ module Extric
   module Sessions
     extend ActiveSupport::Autoload
 
+    autoload :CommentCount
+    autoload :CommentLinesOfCode
     autoload :CyclomaticComplexity
+    autoload :LinesOfCode
     autoload :Duration
     autoload :Edits
     autoload :Interactions
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
+    autoload :MethodCount
     autoload :RecentLinesOfCode
     autoload :Selections
+    autoload :SourceLinesOfCode
     autoload :SubsequentEdits
+    autoload :StatementCount
+    autoload :TypeCount
     autoload :UniqueEdits
   end
 

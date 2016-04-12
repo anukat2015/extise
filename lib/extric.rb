@@ -37,6 +37,7 @@ module Extric
   module Sessions
     extend ActiveSupport::Autoload
 
+    autoload :ChangeIterations
     autoload :CommentCount
     autoload :CommentLinesOfCode
     autoload :CyclomaticComplexity

@@ -31,11 +31,12 @@ end
 # NOTE: some users have real names such as 'Project inbox', 'Missing name'
 # NOTE: user with login name 'eclipse' hides many real users, present as reporter or assignee
 # NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
+# NOTE: duplicate users from original data are not resolved and thus propagated further randomly matched
 
 def persist_user(user)
   persist(User, name: user.login_name) do |r|
-    r.bugs_eclipse_org_user = user
-    r.git_eclipse_org_user = GitEclipseOrg::User.where('username IN (?) OR name IN (?)', *[user.realnames << user.login_name] * 2).first
+    r.bugs_eclipse_org_user_id = user.id
+    r.git_eclipse_org_user_id = GitEclipseOrg::User.where('username IN (?) OR name IN (?)', *[user.realnames << user.login_name] * 2).pluck(:id).sample
   end
 end
 
@@ -78,6 +79,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
     r.git_eclipse_org_changes = GitEclipseOrg::Change.where bugid: b.bugid
   end
 
+  dump_record task.attributes.merge(class: Task.name, id: task.id, git_eclipse_org_changes_ids: task.git_eclipse_org_changes.pluck(:id)), :task, i
   dump_record task, :task, i
   dump_record reporter, :reporter, i + 1
   dump_record assignee, :assignee, i + 1

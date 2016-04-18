@@ -806,9 +806,9 @@ ALTER SEQUENCE extisimo_tasks_id_seq OWNED BY extisimo_tasks.id;
 CREATE TABLE extisimo_users (
     id integer NOT NULL,
     name character varying NOT NULL,
-    names character varying[] NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    eclipse_org_user_names character varying[] NOT NULL
 );
 
 
@@ -2416,10 +2416,10 @@ CREATE UNIQUE INDEX index_extisimo_users_git_eclipse_org_users_as_unique ON exti
 
 
 --
--- Name: index_extisimo_users_on_names; Type: INDEX; Schema: public; Owner: -
+-- Name: index_extisimo_users_on_eclipse_org_user_names; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_users_on_names ON extisimo_users USING btree (names);
+CREATE INDEX index_extisimo_users_on_eclipse_org_user_names ON extisimo_users USING btree (eclipse_org_user_names);
 
 
 --

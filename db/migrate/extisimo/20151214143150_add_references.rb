@@ -17,21 +17,28 @@ class AddReferences < ActiveRecord::Migration
   end
 
   def change
-    add_reference :extisimo_posts, :bugs_eclipse_org_comment, null: false
-    add_reference :extisimo_attachments, :bugs_eclipse_org_attachment, null: false
-    add_reference :extisimo_interactions, :bugs_eclipse_org_interaction, null: false
-
-    add_reference :extisimo_repositories, :git_eclipse_org_project, null: true
-
     # NOTE: each user always references one or many bugs.eclipse.org users, and none or many git.eclipse.org users
 
     add_reference :extisimo_users, :bugs_eclipse_org_user, null: false, multiple: true
     add_reference :extisimo_users, :git_eclipse_org_user, null: false, multiple: true
 
+    # NOTE: each user caches all eclipse.org user names to speed things up a little bit
+
+    add_column :extisimo_users, :eclipse_org_user_names, :string, null: false, array: true
+    add_index :extisimo_users, :eclipse_org_user_names
+
     # NOTE: each task always references single bugs.eclipse.org bug, and none or many git.eclipse.org changes
 
     add_reference :extisimo_tasks, :bugs_eclipse_org_bug, null: false
     add_reference :extisimo_tasks, :git_eclipse_org_change, null: false, multiple: true
+
+    # NOTE: each post, attachment, interaction and repository references one original eclipse.org entity
+
+    add_reference :extisimo_posts, :bugs_eclipse_org_comment, null: false
+    add_reference :extisimo_attachments, :bugs_eclipse_org_attachment, null: false
+    add_reference :extisimo_interactions, :bugs_eclipse_org_interaction, null: false
+
+    add_reference :extisimo_repositories, :git_eclipse_org_project, null: true
 
     # NOTE: each repository references project's parent since it is missing in bugs.eclipse.org original data
 

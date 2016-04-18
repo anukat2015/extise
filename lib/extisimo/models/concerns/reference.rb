@@ -3,30 +3,26 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      belongs_to :bugs_eclipse_org_user, -> { readonly }, class_name: 'BugsEclipseOrg::User'
+      has_and_belongs_to_many :bugs_eclipse_org_users, -> { readonly }, class_name: 'BugsEclipseOrg::User', association_foreign_key: :bugs_eclipse_org_user_id, foreign_key: :extisimo_user_id
 
       scope :has_mylyn_context, -> { has_attachments.merge Extisimo::Attachment.mylyn_context }
 
       class BugsEclipseOrg::User
-        has_one :extisimo_user, class_name: 'Extisimo::User', foreign_key: :bugs_eclipse_org_user_id
+        has_and_belongs_to_many :extisimo_users, -> { readonly }, class_name: 'Extisimo::User', association_foreign_key: :extisimo_user_id, foreign_key: :bugs_eclipse_org_user_id
+
+        def extisimo_user
+          self.extisimo_users.first
+        end
       end
 
-      belongs_to :git_eclipse_org_user, -> { readonly }, class_name: 'GitEclipseOrg::User'
+      has_and_belongs_to_many :git_eclipse_org_users, -> { readonly }, class_name: 'GitEclipseOrg::User', association_foreign_key: :git_eclipse_org_user_id, foreign_key: :extisimo_user_id
 
       class GitEclipseOrg::User
-        has_one :extisimo_user, class_name: 'Extisimo::User', foreign_key: :git_eclipse_org_user_id
-      end
+        has_and_belongs_to_many :extisimo_users, -> { readonly }, class_name: 'Extisimo::User', association_foreign_key: :extisimo_user_id, foreign_key: :git_eclipse_org_user_id
 
-      def bugs_eclipse_org_user_names
-        ([bugs_eclipse_org_user.login_name] + bugs_eclipse_org_user.realnames).uniq
-      end
-
-      def git_eclipse_org_user_names
-        [git_eclipse_org_user.username, git_eclipse_org_user.name].uniq
-      end
-
-      def eclipse_org_user_names
-        (bugs_eclipse_org_user_names + git_eclipse_org_user_names).uniq
+        def extisimo_user
+          self.extisimo_users.first
+        end
       end
     end
   end
@@ -59,7 +55,7 @@ module Extisimo::Reference
         has_and_belongs_to_many :extisimo_tasks, -> { readonly }, class_name: 'Extisimo::Task', association_foreign_key: :extisimo_task_id, foreign_key: :git_eclipse_org_change_id
 
         def extisimo_task
-          extisimo_tasks.first
+          self.extisimo_tasks.first
         end
       end
     end

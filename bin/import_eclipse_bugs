@@ -83,7 +83,7 @@ end
 
 def persist_user(l, n = [])
   persist(User, login_name: l) do |r|
-    r.realnames = (r.realnames.to_a + [n]).flat_map(&:presence).compact.uniq
+    r.realnames = [n].flat_map(&:presence).compact.uniq
   end
 end
 

@@ -806,10 +806,29 @@ ALTER SEQUENCE extisimo_tasks_id_seq OWNED BY extisimo_tasks.id;
 CREATE TABLE extisimo_users (
     id integer NOT NULL,
     name character varying NOT NULL,
+    names character varying[] NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    bugs_eclipse_org_user_id integer NOT NULL,
-    git_eclipse_org_user_id integer
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_users_bugs_eclipse_org_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE extisimo_users_bugs_eclipse_org_users (
+    extisimo_user_id integer NOT NULL,
+    bugs_eclipse_org_user_id integer NOT NULL
+);
+
+
+--
+-- Name: extisimo_users_git_eclipse_org_users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE extisimo_users_git_eclipse_org_users (
+    extisimo_user_id integer NOT NULL,
+    git_eclipse_org_user_id integer NOT NULL
 );
 
 
@@ -1536,6 +1555,13 @@ CREATE INDEX index_bugs_eclipse_org_bugs_on_bugzilla_id ON bugs_eclipse_org_bugs
 
 
 --
+-- Name: index_bugs_eclipse_org_bugs_on_cc; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_bugs_eclipse_org_bugs_on_cc ON bugs_eclipse_org_bugs USING btree (cc);
+
+
+--
 -- Name: index_bugs_eclipse_org_bugs_on_classification; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1571,10 +1597,24 @@ CREATE INDEX index_bugs_eclipse_org_bugs_on_delta_ts ON bugs_eclipse_org_bugs US
 
 
 --
+-- Name: index_bugs_eclipse_org_bugs_on_dependson; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_bugs_eclipse_org_bugs_on_dependson ON bugs_eclipse_org_bugs USING btree (dependson);
+
+
+--
 -- Name: index_bugs_eclipse_org_bugs_on_everconfirmed; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_bugs_eclipse_org_bugs_on_everconfirmed ON bugs_eclipse_org_bugs USING btree (everconfirmed);
+
+
+--
+-- Name: index_bugs_eclipse_org_bugs_on_keywords; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_bugs_eclipse_org_bugs_on_keywords ON bugs_eclipse_org_bugs USING btree (keywords);
 
 
 --
@@ -1771,6 +1811,13 @@ CREATE INDEX index_bugs_eclipse_org_interactions_on_version ON bugs_eclipse_org_
 --
 
 CREATE UNIQUE INDEX index_bugs_eclipse_org_users_as_unique ON bugs_eclipse_org_users USING btree (login_name);
+
+
+--
+-- Name: index_bugs_eclipse_org_users_on_realnames; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_bugs_eclipse_org_users_on_realnames ON bugs_eclipse_org_users USING btree (realnames);
 
 
 --
@@ -2341,17 +2388,38 @@ CREATE UNIQUE INDEX index_extisimo_users_as_unique ON extisimo_users USING btree
 
 
 --
--- Name: index_extisimo_users_on_bugs_eclipse_org_user_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_extisimo_users_bugs_eclipse_org_users_as_guard; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_users_on_bugs_eclipse_org_user_id ON extisimo_users USING btree (bugs_eclipse_org_user_id);
+CREATE UNIQUE INDEX index_extisimo_users_bugs_eclipse_org_users_as_guard ON extisimo_users_bugs_eclipse_org_users USING btree (bugs_eclipse_org_user_id);
 
 
 --
--- Name: index_extisimo_users_on_git_eclipse_org_user_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_extisimo_users_bugs_eclipse_org_users_as_unique; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_extisimo_users_on_git_eclipse_org_user_id ON extisimo_users USING btree (git_eclipse_org_user_id);
+CREATE UNIQUE INDEX index_extisimo_users_bugs_eclipse_org_users_as_unique ON extisimo_users_bugs_eclipse_org_users USING btree (extisimo_user_id, bugs_eclipse_org_user_id);
+
+
+--
+-- Name: index_extisimo_users_git_eclipse_org_users_as_guard; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_users_git_eclipse_org_users_as_guard ON extisimo_users_git_eclipse_org_users USING btree (git_eclipse_org_user_id);
+
+
+--
+-- Name: index_extisimo_users_git_eclipse_org_users_as_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_users_git_eclipse_org_users_as_unique ON extisimo_users_git_eclipse_org_users USING btree (extisimo_user_id, git_eclipse_org_user_id);
+
+
+--
+-- Name: index_extisimo_users_on_names; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_users_on_names ON extisimo_users USING btree (names);
 
 
 --

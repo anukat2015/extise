@@ -8,5 +8,7 @@ class CreateUsersByBugsEclipseOrg < ActiveRecord::Migration
     end
 
     add_index :bugs_eclipse_org_users, :login_name, unique: true, name: 'index_bugs_eclipse_org_users_as_unique'
+
+    add_index :bugs_eclipse_org_users, :realnames
   end
 end

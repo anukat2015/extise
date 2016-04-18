@@ -54,15 +54,18 @@ class CreateBugsByBugsEclipseOrg < ActiveRecord::Migration
     add_index :bugs_eclipse_org_bugs, :rep_platform
     add_index :bugs_eclipse_org_bugs, :op_sys
     add_index :bugs_eclipse_org_bugs, :bug_status
+    add_index :bugs_eclipse_org_bugs, :keywords
     add_index :bugs_eclipse_org_bugs, :resolution
     add_index :bugs_eclipse_org_bugs, :priority
     add_index :bugs_eclipse_org_bugs, :bug_severity
     add_index :bugs_eclipse_org_bugs, :target_milestone
+    add_index :bugs_eclipse_org_bugs, :dependson
     add_index :bugs_eclipse_org_bugs, :everconfirmed
     add_index :bugs_eclipse_org_bugs, :reporter
     add_index :bugs_eclipse_org_bugs, :reporter_name
     add_index :bugs_eclipse_org_bugs, :assigned_to
     add_index :bugs_eclipse_org_bugs, :assigned_to_name
+    add_index :bugs_eclipse_org_bugs, :cc
     add_index :bugs_eclipse_org_bugs, :votes
   end
 end

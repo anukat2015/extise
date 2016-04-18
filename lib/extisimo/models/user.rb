@@ -17,12 +17,6 @@ class Extisimo::User < ActiveRecord::Base
   alias_scope :has_tasks, :has_assigned_tasks
 
   def self.fetch(n = nil)
-    return Extisimo::User unless n
-    condition = <<-SQL.gsub(/\n/, ' ').squeeze(' ')
-      extisimo_users.name = ? OR
-      bugs_eclipse_org_users.login_name = ? OR bugs_eclipse_org_users.realnames @> ? OR
-      git_eclipse_org_users.username = ? OR git_eclipse_org_users.name = ?
-    SQL
-    Extisimo::User.joins(:bugs_eclipse_org_user, :git_eclipse_org_user).where condition, *[n] * 5
+    n ? Extisimo::User.where('eclipse_org_user_names @> ?', n) : Extisimo::User
   end
 end

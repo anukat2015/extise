@@ -44,6 +44,9 @@ module Extric
     autoload :LinesOfCode
     autoload :Duration
     autoload :Edits
+    autoload :ExtentOfEdits
+    autoload :ExtentOfInteractions
+    autoload :ExtentOfSelections
     autoload :Interactions
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination

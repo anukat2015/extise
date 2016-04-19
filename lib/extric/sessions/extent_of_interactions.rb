@@ -18,7 +18,7 @@ class Extric::Sessions::ExtentOfInteractions
       u = count_unique_interactions inside: inside, kind: kind
       t = count_interactions inside: inside
 
-      u.to_f / t.to_f
+      u.to_f / t if t != 0
     end
   end
 end

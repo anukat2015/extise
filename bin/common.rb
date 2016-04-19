@@ -92,15 +92,15 @@ def load_extise!
   # it simple, but thus sacrificing performance
 
   def persist(model, keys = {})
-    xml = keys.delete :xml
+    retries, xml = 8, keys.delete(:xml)
     # NOTE: ensures that a record is either created or updated on present
     # keys, otherwise a record is just created and never updated
     (keys.empty? ? model.new : model.find_or_initialize_by(keys)).tap do |record|
       yield record if block_given?
       record.save!
     end
-  rescue ActiveRecord::RecordNotUnique
-    retry
+  rescue ActiveRecord::RecordNotUnique => failure
+    (retries -= 1) > 0 ? retry : raise(failure)
   rescue => failure
     args = ARGD.include?('--no-color') ? %w(--no-color) : []
     Open3.popen2e(File.expand_path "lsxml #{args * ' '}", __dir__) do |i, o, t|

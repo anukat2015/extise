@@ -29,7 +29,7 @@ if e
 end
 
 Open3.popen3(File.expand_path "hist #{args * ' '}", __dir__) do |input, output, error, status|
-  threads = [Thread.new { output.each { |l| print l }}]
+  threads = [Thread.new { ignore(Errno::EPIPE) { output.each { |l| print l }}}]
   threads << Thread.new { error.each { |l| STDERR.print l }}
 
   unless data.empty?

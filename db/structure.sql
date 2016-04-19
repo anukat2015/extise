@@ -261,7 +261,7 @@ ALTER SEQUENCE bugs_eclipse_org_interactions_id_seq OWNED BY bugs_eclipse_org_in
 CREATE TABLE bugs_eclipse_org_users (
     id integer NOT NULL,
     login_name character varying NOT NULL,
-    realname character varying,
+    realname character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

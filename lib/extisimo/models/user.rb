@@ -18,6 +18,6 @@ class Extisimo::User < ActiveRecord::Base
 
   def self.fetch(*n)
     return Extisimo::User if n.blank?
-    Extisimo::User.where 'eclipse_org_user_names && ?', "{#{n * ','}}"
+    Extisimo::User.where 'name IN (?) OR eclipse_org_user_names && ?', n, "{#{n * ','}}"
   end
 end

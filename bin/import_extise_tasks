@@ -31,13 +31,56 @@ end
 # NOTE: some users have real names such as 'Project inbox', 'Missing name'
 # NOTE: user with login name 'eclipse' hides many real users, present as reporter or assignee
 # NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
-# NOTE: duplicate users from original data are not resolved and thus propagated further randomly matched
+
+AMBIGUOUS_LOGIN_NAME_PATTERN = /\?|eclipse|inbox|info|mail|triaged/i
+AMBIGUOUS_REALNAME_PATTERN = /\?|inbox|missing/i
 
 def persist_user(user)
-  persist(User, name: user.login_name) do |r|
-    r.bugs_eclipse_org_user_id = user.id
-    r.git_eclipse_org_user_id = GitEclipseOrg::User.where('username IN (?) OR name IN (?)', *[user.realnames << user.login_name] * 2).pluck(:id).sample
+  l = user.login_name !~ AMBIGUOUS_LOGIN_NAME_PATTERN ? user.login_name : nil
+  r = user.realname !~ AMBIGUOUS_REALNAME_PATTERN ? user.realname : nil
+  n = "#{l || '?'} / #{r || '?'}"
+  u = User.fetch(n).first || User.new(name: n)
+
+  login_names, realnames = Set[l].delete_if(&:nil?), Set[r].delete_if(&:nil?)
+  bugs_eclipse_org_users = Set[*u.bugs_eclipse_org_users.to_a] << user
+  git_eclipse_org_users = Set[*u.git_eclipse_org_users.to_a]
+
+  loop do
+    login_names_size, realnames_size = login_names.size, realnames.size
+
+    # NOTE: login names of bugs.eclipse.org users still pose significant ambiguity,
+    # fetch only users with similar real names since duplicates are not a problem here
+
+    if realnames.any?
+      b = BugsEclipseOrg::User.where(realname: realnames.to_a)
+      login_names.merge b.map(&:login_name).select { |n| n && n !~ AMBIGUOUS_LOGIN_NAME_PATTERN }
+      bugs_eclipse_org_users.merge b.to_a
+    end
+
+    # NOTE: user names and names of git.eclipse.org users do not pose any ambiguity, fetch
+    # users with name exactly matching login names and users with user name similar to real names
+
+    if login_names.any?
+      g = GitEclipseOrg::User.where(username: login_names.to_a)
+      login_names.merge g.map(&:username).select { |n| n && n !~ AMBIGUOUS_LOGIN_NAME_PATTERN }
+      realnames.merge g.map(&:name).select { |n| n && n !~ AMBIGUOUS_REALNAME_PATTERN }
+      git_eclipse_org_users.merge g.to_a
+    end
+
+    if realnames.any?
+      g = GitEclipseOrg::User.where(name: realnames.to_a)
+      login_names.merge g.map(&:username).select { |n| n && n !~ AMBIGUOUS_LOGIN_NAME_PATTERN }
+      realnames.merge g.map(&:name).select { |n| n && n !~ AMBIGUOUS_REALNAME_PATTERN }
+      git_eclipse_org_users.merge g.to_a
+    end
+
+    break if login_names.size == login_names_size && realnames.size == realnames_size
   end
+
+  u.eclipse_org_user_names = (login_names + realnames).to_a.sort
+  u.bugs_eclipse_org_users = bugs_eclipse_org_users.to_a
+  u.git_eclipse_org_users = git_eclipse_org_users.to_a
+  u.tap { u.save! }
 end
 
 i = 0
@@ -61,8 +104,8 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   # NOTE: keywords of original bugs have very low information value
 
   task = persist(Task, submitted_at: fix_timestamp(b.creation_ts, b.bugid), reporter_id: reporter.id) do |r|
-    r.assignee = assignee
-    r.project = project
+    r.assignee_id = assignee.id
+    r.project_id = project.id
     r.classification = b.classification.downcase.gsub(/[\-\s]+/, '_')
     r.description = b.short_desc
     r.status = b.bug_status.downcase.gsub(/[\-\s]+/, '_')
@@ -75,7 +118,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
     r.project_milestone = b.target_milestone.try! { sub(/(unspecified|\-+)/i, '').presence }
     r.cc = b.cc
     r.modified_at = fix_timestamp b.delta_ts, b.bugid
-    r.bugs_eclipse_org_bug_id = b.id
+    r.bugs_eclipse_org_bugs = [b]
     r.git_eclipse_org_changes = GitEclipseOrg::Change.where bugid: b.bugid
   end
 

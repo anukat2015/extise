@@ -6,7 +6,7 @@ A collection of tools to estimate developers' expertise
 
 - Ruby 2.2.3
 - PostgreSQL 9.5.1
-- Java 1.8
+- Java 1.7
 - Eclipse 4.3
 - JDT 3.8
 - EGit 2.2

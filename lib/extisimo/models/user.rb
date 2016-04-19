@@ -17,7 +17,9 @@ class Extisimo::User < ActiveRecord::Base
   alias_scope :has_tasks, :has_assigned_tasks
 
   def self.fetch(*n)
-    return Extisimo::User if n.blank?
-    Extisimo::User.where 'name IN (?) OR eclipse_org_user_names && ?', n, "{#{n * ','}}"
+    names = n.compact
+
+    return Extisimo::User if names.empty?
+    Extisimo::User.where 'name IN (?) OR eclipse_org_user_names && ?', names, "{#{names * ','}}"
   end
 end

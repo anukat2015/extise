@@ -81,10 +81,8 @@ def count_mylyn_context(d, o = options.bound)
   end
 end
 
-def persist_user(l, n = [])
-  persist(User, login_name: l) do |r|
-    r.realnames = [n].flat_map(&:presence).compact.uniq
-  end
+def persist_user(u)
+  persist User, login_name: u.text.presence, realname: u[0].attributes['name'].try(&:text).presence
 end
 
 i = v && !options.default?(:p) ? 1 : 0
@@ -123,8 +121,8 @@ p.each do |f|
 
   process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
     bugid = b.css('bug_id').text.presence
-    author = persist_user b.css('reporter').text.presence, b.css('reporter')[0].attributes['name'].try(&:text).presence
-    assignee = persist_user b.css('assigned_to').text.presence, b.css('assigned_to')[0].attributes['name'].try(&:text).presence
+    author = persist_user b.css('reporter')
+    assignee = persist_user b.css('assigned_to')
 
     bug = persist(Bug, bugid: bugid, xml: b) do |r|
       abort "#{Bug}:#{r.bugid} too many reporters" if b.css('reporter').count != 1
@@ -171,7 +169,7 @@ p.each do |f|
 
     b.css('long_desc').each do |c|
       commentid = c.css('commentid').text.presence
-      author = persist_user c.css('who').text.presence, c.css('who')[0].attributes['name'].try(&:text).presence
+      author = persist_user c.css('who')
 
       comment = persist(Comment, commentid: commentid, xml: c) do |r|
         abort "#{Comment}:#{r.commentid} too many authors" if c.css('who').count != 1
@@ -194,7 +192,7 @@ p.each do |f|
     b.css('attachment').each do |a|
       attachid = a.css('attachid').text.presence
       filename = a.css('filename').text.presence
-      submitter = persist_user a.css('attacher').text.presence, a.css('attacher')[0].attributes['name'].try(&:text).presence
+      submitter = persist_user a.css('attacher')
 
       attachment = persist(Attachment, attachid: attachid, xml: a) do |r|
         abort "#{Attachment}:#{r.attachid} too many attachers" if a.css('attacher').count != 1

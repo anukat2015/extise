@@ -31,7 +31,7 @@ module Extisimo::URL
     include Extisimo::URL
 
     def gerrit_url
-      GERRIT_USER.gsub(/%(user)/, '%user' => (git_eclipse_org_user.try(:name) || bugs_eclipse_org_user.realnames.first).gsub(/\s/, '+'))
+      GERRIT_USER.gsub(/%(user)/, '%user' => (git_eclipse_org_user.try(:name) || bugs_eclipse_org_user.realname).gsub(/\s/, '+'))
     end
 
     def github_url

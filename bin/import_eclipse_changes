@@ -30,11 +30,11 @@ def extract_bugid(s)
   s.match(/(\A|br|bug(s|zilla)?(\s+import)?(\s+(fix|id|number))?|task)[\W\s]*(?<bugid>\d+)/i).try :[], 'bugid'
 end
 
-def persist_user(a)
-  persist(User, accountid: a['_account_id']) do |r|
-    r.username = a['username'].presence
-    r.name = a['name'].presence
-    r.email = a['email'].presence
+def persist_user(u)
+  persist(User, accountid: u['_account_id']) do |r|
+    r.username = u['username'].presence
+    r.name = u['name'].presence
+    r.email = u['email'].presence
   end
 end
 

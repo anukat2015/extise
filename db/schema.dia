@@ -6107,7 +6107,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
       </dia:connections>
     </dia:object>
   </dia:layer>
-  <dia:layer name="git.eclipse.org" visible="true" active="true">
+  <dia:layer name="git.eclipse.org" visible="true">
     <dia:object type="UML - Class" version="0" id="O38">
       <dia:attribute name="obj_pos">
         <dia:point val="15,46"/>
@@ -8140,7 +8140,7 @@ change, label, or message#</dia:string>
       </dia:connections>
     </dia:object>
   </dia:layer>
-  <dia:layer name="bugs.eclipse.org" visible="true">
+  <dia:layer name="bugs.eclipse.org" visible="true" active="true">
     <dia:object type="UML - Class" version="0" id="O50">
       <dia:attribute name="obj_pos">
         <dia:point val="0,14"/>
@@ -9721,13 +9721,13 @@ change, label, or message#</dia:string>
         <dia:point val="33,14"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="32.95,13.95;43.945,19.45"/>
+        <dia:rectangle val="32.95,13.95;42.405,19.45"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="33,14"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="10.895"/>
+        <dia:real val="9.3550000000000004"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="5.4000000000000004"/>
@@ -9868,10 +9868,10 @@ change, label, or message#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#realnames#</dia:string>
+            <dia:string>#realname#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
-            <dia:string>#array of string#</dia:string>
+            <dia:string>#string#</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
             <dia:string>##</dia:string>
@@ -11153,16 +11153,16 @@ change, label, or message#</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="43.895,14.6"/>
+        <dia:point val="42.355,14.6"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="43.46,2.55;47.1,15.45"/>
+        <dia:rectangle val="42.305,2.55;47.1,15.45"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="43.895,14.6"/>
+        <dia:point val="42.355,14.6"/>
         <dia:point val="47,14.6"/>
         <dia:point val="47,3.3"/>
         <dia:point val="43.51,3.3"/>
@@ -11295,16 +11295,16 @@ change, label, or message#</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="obj_pos">
-        <dia:point val="43.895,14.6"/>
+        <dia:point val="42.355,14.6"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="43.845,13.85;47.1,26.15"/>
+        <dia:rectangle val="42.305,13.85;47.1,26.15"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="43.895,14.6"/>
+        <dia:point val="42.355,14.6"/>
         <dia:point val="47,14.6"/>
         <dia:point val="47,25.3"/>
         <dia:point val="44.665,25.3"/>

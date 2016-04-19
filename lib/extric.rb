@@ -41,6 +41,7 @@ module Extric
     autoload :CommentCount
     autoload :CommentLinesOfCode
     autoload :CyclomaticComplexity
+    autoload :CyclomaticComplexityOverExtentOfEdits
     autoload :LinesOfCode
     autoload :Duration
     autoload :Edits

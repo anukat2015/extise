@@ -26,8 +26,10 @@ AutoColor.disable on: self unless c
 # can reference and also be a solution to multiple bugs, this implementation
 # scans the input and extracts the first possible bug identifier match
 
+BUGID_PATTERN = /(\A|br|bug(s|zilla)?(\s+import)?(\s+(fix|id|number))?|task)[\W\s]*(?<bugid>\d+)/i
+
 def extract_bugid(s)
-  s.match(/(\A|br|bug(s|zilla)?(\s+import)?(\s+(fix|id|number))?|task)[\W\s]*(?<bugid>\d+)/i).try :[], 'bugid'
+  s.match(BUGID_PATTERN).try :[], 'bugid'
 end
 
 def persist_user(u)

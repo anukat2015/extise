@@ -32,14 +32,17 @@ end
 # NOTE: user with login name 'eclipse' hides many real users, present as reporter or assignee
 # NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
 
-AMBIGUOUS_LOGIN_NAME_PATTERN = /\?|eclipse|inbox|info|mail|triaged/i
+AMBIGUOUS_LOGIN_NAME_PATTERN = /\?|eclipse|inbox|info|mail|noreply|triaged/i
 AMBIGUOUS_REALNAME_PATTERN = /\?|inbox|missing/i
 
-def persist_user(user)
+def persist_user(user, options = {})
+  options = options.dup
+  options[:retries] ||= 8
+
   l = user.login_name !~ AMBIGUOUS_LOGIN_NAME_PATTERN ? user.login_name : nil
   r = user.realname !~ AMBIGUOUS_REALNAME_PATTERN ? user.realname : nil
   n = "#{l || '?'} / #{r || '?'}"
-  u = User.fetch(n).first || User.new(name: n)
+  u = User.fetch(n, r).first || User.new(name: n)
 
   login_names, realnames = Set[l].delete_if(&:nil?), Set[r].delete_if(&:nil?)
   bugs_eclipse_org_users = Set[*u.bugs_eclipse_org_users.to_a] << user
@@ -80,7 +83,10 @@ def persist_user(user)
   u.eclipse_org_user_names = (login_names + realnames).to_a.sort
   u.bugs_eclipse_org_users = bugs_eclipse_org_users.to_a
   u.git_eclipse_org_users = git_eclipse_org_users.to_a
+
   u.tap { u.save! }
+rescue ActiveRecord::RecordNotUnique
+  (options[:retries] -= 1) > 0 ? persist_user(user, options) : raise($!)
 end
 
 i = 0

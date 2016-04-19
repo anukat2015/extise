@@ -27,9 +27,11 @@ class AddReferences < ActiveRecord::Migration
     add_column :extisimo_users, :eclipse_org_user_names, :string, null: false, array: true
     add_index :extisimo_users, :eclipse_org_user_names
 
-    # NOTE: each task always references single bugs.eclipse.org bug, and none or many git.eclipse.org changes
+    # NOTE: each task always references single bugs.eclipse.org bug, and none or many git.eclipse.org changes,
+    # however since a bug can point to multiple changes and a change to multiple bugs both associations are
+    # marked as multiple hence enabling future implementations to create tasks merged from multiple bugs also
 
-    add_reference :extisimo_tasks, :bugs_eclipse_org_bug, null: false
+    add_reference :extisimo_tasks, :bugs_eclipse_org_bug, null: false, multiple: true
     add_reference :extisimo_tasks, :git_eclipse_org_change, null: false, multiple: true
 
     # NOTE: each post, attachment, interaction and repository references one original eclipse.org entity

@@ -3,12 +3,12 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      has_and_belongs_to_many :bugs_eclipse_org_users, -> { readonly }, class_name: 'BugsEclipseOrg::User', association_foreign_key: :bugs_eclipse_org_user_id, foreign_key: :extisimo_user_id
+      has_and_belongs_to_many :bugs_eclipse_org_users, -> { readonly }, class_name: 'BugsEclipseOrg::User', association_foreign_key: :bugs_eclipse_org_user_id, foreign_key: :extisimo_user_id, join_table: :extisimo_users_bugs_eclipse_org_users
 
       scope :has_mylyn_context, -> { has_attachments.merge Extisimo::Attachment.mylyn_context }
 
       class BugsEclipseOrg::User
-        has_and_belongs_to_many :extisimo_users, -> { readonly }, class_name: 'Extisimo::User', association_foreign_key: :extisimo_user_id, foreign_key: :bugs_eclipse_org_user_id
+        has_and_belongs_to_many :extisimo_users, -> { readonly }, class_name: 'Extisimo::User', association_foreign_key: :extisimo_user_id, foreign_key: :bugs_eclipse_org_user_id, join_table: :extisimo_users_bugs_eclipse_org_users
 
         def extisimo_user
           self.extisimo_users.first
@@ -39,14 +39,18 @@ module Extisimo::Reference
     extend ActiveSupport::Concern
 
     included do
-      belongs_to :bugs_eclipse_org_bug, -> { readonly }, class_name: 'BugsEclipseOrg::Bug'
+      has_and_belongs_to_many :bugs_eclipse_org_bugs, -> { readonly }, class_name: 'BugsEclipseOrg::Bug', association_foreign_key: :bugs_eclipse_org_bug_id, foreign_key: :extisimo_task_id, join_table: :extisimo_tasks_bugs_eclipse_org_bugs
 
       has_many :mylyn_contexts, -> { mylyn_context }, class_name: :Attachment
 
       scope :with_mylyn_context, -> { with_attachments.merge Extisimo::Attachment.mylyn_context }
 
       class BugsEclipseOrg::Bug
-        has_one :extisimo_task, class_name: 'Extisimo::Task', foreign_key: :bugs_eclipse_org_bug_id
+        has_and_belongs_to_many :extisimo_tasks, -> { readonly }, class_name: 'Extisimo::Task', association_foreign_key: :extisimo_task_id, foreign_key: :bugs_eclipse_org_bug_id, join_table: :extisimo_tasks_bugs_eclipse_org_bugs
+
+        def extisimo_task
+          self.extisimo_tasks.first
+        end
       end
 
       has_and_belongs_to_many :git_eclipse_org_changes, -> { readonly }, class_name: 'GitEclipseOrg::Change', association_foreign_key: :git_eclipse_org_change_id, foreign_key: :extisimo_task_id

@@ -765,7 +765,16 @@ CREATE TABLE extisimo_tasks (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     submitted_at timestamp without time zone NOT NULL,
-    modified_at timestamp without time zone NOT NULL,
+    modified_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: extisimo_tasks_bugs_eclipse_org_bugs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE extisimo_tasks_bugs_eclipse_org_bugs (
+    extisimo_task_id integer NOT NULL,
     bugs_eclipse_org_bug_id integer NOT NULL
 );
 
@@ -2318,6 +2327,20 @@ CREATE UNIQUE INDEX index_extisimo_tasks_as_unique ON extisimo_tasks USING btree
 
 
 --
+-- Name: index_extisimo_tasks_bugs_eclipse_org_bugs_as_guard; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_tasks_bugs_eclipse_org_bugs_as_guard ON extisimo_tasks_bugs_eclipse_org_bugs USING btree (bugs_eclipse_org_bug_id);
+
+
+--
+-- Name: index_extisimo_tasks_bugs_eclipse_org_bugs_as_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_extisimo_tasks_bugs_eclipse_org_bugs_as_unique ON extisimo_tasks_bugs_eclipse_org_bugs USING btree (extisimo_task_id, bugs_eclipse_org_bug_id);
+
+
+--
 -- Name: index_extisimo_tasks_git_eclipse_org_changes_as_guard; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2329,13 +2352,6 @@ CREATE UNIQUE INDEX index_extisimo_tasks_git_eclipse_org_changes_as_guard ON ext
 --
 
 CREATE UNIQUE INDEX index_extisimo_tasks_git_eclipse_org_changes_as_unique ON extisimo_tasks_git_eclipse_org_changes USING btree (extisimo_task_id, git_eclipse_org_change_id);
-
-
---
--- Name: index_extisimo_tasks_on_bugs_eclipse_org_bug_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_extisimo_tasks_on_bugs_eclipse_org_bug_id ON extisimo_tasks USING btree (bugs_eclipse_org_bug_id);
 
 
 --

@@ -82,7 +82,11 @@ def count_mylyn_context(d, o = options.bound)
 end
 
 def persist_user(u)
-  persist User, login_name: u.text.presence, realname: u[0].attributes['name'].try(&:text).presence
+
+  # NOTE: although claimed by bugs.eclipse.org user login names are not unique and real names may not be set,
+  # uniqueness of the user is then determined by both login and real names, hence the real name can not left unset
+
+  persist User, login_name: u.text.presence, realname: u[0].attributes['name'].try(&:text).presence || '?'
 end
 
 i = v && !options.default?(:p) ? 1 : 0

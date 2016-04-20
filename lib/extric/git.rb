@@ -9,7 +9,7 @@ module Extric::Git
   COPIES_TRACKING = { track_copies_any_commit_copies: true }.freeze
 
   def open_repository(name: nil)
-    Rugged::Repository.new(File.join GitEclipseOrg::DIRECTORY, name)
+    Rugged::Repository.new(File.join GitEclipseOrg::DIRECTORY, 'repositories', name)
   end
 
   def blame_recent(repository: nil, commit: nil, element: nil, git: nil, identifier: nil, file: nil)

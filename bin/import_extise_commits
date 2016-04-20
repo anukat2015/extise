@@ -70,6 +70,8 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   dump_record commit, :commit, 1
 
+  # TODO import all with skipping elements here, so aliases can be resolved
+
   # NOTE: consider only elements from the revision file, the actual difference itself is not included implicitly
   # in the the model but rather computed later between the original (not previous) and revision commit files
 

@@ -14,7 +14,7 @@ module Dyna
     load file unless defined? type
     object = block ? block.call(type.constantize) : type.constantize.new
     return file, object
-  rescue LoadError
+  rescue LoadError, SyntaxError
     raise "unable to load #{file}"
   rescue
     raise "unable to create #{type}"

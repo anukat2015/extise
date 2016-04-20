@@ -21,6 +21,7 @@ A collection of tools to estimate developers' expertise
     lib                     Libraries along binary dependencies
       bugs_eclipse_org      Eclipse bugs and Mylyn context model
       database              Database access and model bindings
+      expric                Experimental metrics
       extinf                Concept inferencers
       extise                Java DOM manipulation, IR utilities, SW metrics
       extisimo              Custom data model
@@ -37,7 +38,7 @@ Every executable command responds to:
     -h, --help
         --version
 
-additionally, if appropriate to:
+additionally if appropriate to:
 
     -c, --[no-]color                        Default true
     -s, --[no-]sort                         Default true or false

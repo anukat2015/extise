@@ -10,8 +10,8 @@ class Extric::Sessions::CyclomaticComplexityOverExtentOfEdits
   end
 
   def measure(user, session)
-    c = measure_metric @cyclomatic_complexity, user, session
-    e = measure_metric @extent_of_edits, user, session
+    c = fetch_value via: @cyclomatic_complexity, of: user, on: session
+    e = fetch_value via: @extent_of_edits, of: user, on: session
 
     return unless c && e
 

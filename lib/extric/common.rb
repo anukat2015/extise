@@ -9,15 +9,15 @@ module Extric::Common
 
   attr_accessor :context
 
+  def fetch_value(via: nil, of: nil, on: nil)
+    via.measure(of, on).try! :[], :value
+  end
+
   def reuse_metric(metric)
     metric = metric.is_a?(Class) ? metric.new : metric
     (@reused_metrics ||= []) << metric
     metric.reporting_object = self
     metric
-  end
-
-  def measure_metric(metric, user, subject)
-    metric.measure(user, subject).try! :[], :value
   end
 
   def measure_on_element(element, options = {})
@@ -65,6 +65,18 @@ module Extric::Common
   end
 
   class_methods do
+    def alias_metric(metric)
+      metric = metric.is_a?(Class) ? metric.new : metric
+
+      define_method :initialize do
+        @aliased_metric = reuse_metric metric
+      end
+
+      define_method :measure do |user, subject|
+        @aliased_metric.metric.measure user, subject
+      end
+    end
+
     # TODO caching fetched sources on fetch_source method level may increase performance
     # TODO also a global cache for subjects on read_metric may increase performance
 

@@ -51,6 +51,7 @@ module Extric
     autoload :Interactions
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
+    autoload :LogicalLinesOfCode
     autoload :MethodCount
     autoload :RecentLinesOfCode
     autoload :Selections

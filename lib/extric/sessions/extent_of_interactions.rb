@@ -2,15 +2,14 @@
 
 class Extric::Sessions::ExtentOfInteractions
   include Extric::Common
-  include Extric::Sessions::ExtentOfInteractions::Counting
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: count_extent_of_interactions inside: session }
+    { value: count_extent_of_interactions(inside: session) }
   end
 
   module Counting
-    extends ActiveSupport::Concern
+    extend ActiveSupport::Concern
 
     include Extric::Sessions::Interactions::Counting
 
@@ -21,4 +20,6 @@ class Extric::Sessions::ExtentOfInteractions
       u.to_f / t if t != 0
     end
   end
+
+  include Extric::Sessions::ExtentOfInteractions::Counting
 end

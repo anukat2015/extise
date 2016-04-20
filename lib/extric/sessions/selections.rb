@@ -6,6 +6,6 @@ class Extric::Sessions::Selections
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: count_interactions inside: session, kind: 'selection' }
+    { value: count_interactions(inside: session, kind: 'selection') }
   end
 end

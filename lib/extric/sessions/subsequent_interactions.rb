@@ -7,6 +7,6 @@ class Extric::Sessions::SubsequentInteractions
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: count_subsequent_interactions inside: session }
+    { value: count_subsequent_interactions(inside: session) }
   end
 end

@@ -6,6 +6,6 @@ class Extric::Sessions::ExtentOfEdits
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: count_extent_of_interactions inside: session, kind: 'edit' }
+    { value: count_extent_of_interactions(inside: session, kind: 'edit') }
   end
 end

@@ -56,6 +56,12 @@ when :session
   -> (session) { [session.user] }
 end
 
+# NOTE: set handle context so the measure setup will be available to the metric's handle object
+
+metrics.each { |_, handle| handle.context = { until: u } if handle.respond_to? :context= }
+
+# NOTE: measure for each subject through each fetched user via each metric's handle object
+
 process subjects, progress: p do |subject|
   inform "fetch users for #{m}:#{subject.id} who somehow relate" if v unless q
 

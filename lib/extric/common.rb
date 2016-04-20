@@ -7,11 +7,17 @@ module Extric::Common
   include Extric::Caching
   include Extric::Reporting
 
+  attr_accessor :context
+
   def reuse_metric(metric)
     metric = metric.is_a?(Class) ? metric.new : metric
     (@reused_metrics ||= []) << metric
     metric.reporting_object = self
     metric
+  end
+
+  def measure_metric(metric, user, subject)
+    metric.measure(user, subject).try! :[], :value
   end
 
   def measure_on_element(element, options = {})
@@ -58,11 +64,6 @@ module Extric::Common
     true
   end
 
-  def reporting_object=(object)
-    (@reused_metrics || []).each { |metric| metric.reporting_object = object if metric.respond_to? :reporting_object= }
-    super
-  end
-
   class_methods do
     # TODO caching fetched sources on fetch_source method level may increase performance
     # TODO also a global cache for subjects on read_metric may increase performance
@@ -72,4 +73,15 @@ module Extric::Common
       cache_method :measure, -> (user, subject) { [user.id, subject.id] }
     end
   end
+
+  def self.propagate_to_reused_metrics(attribute: nil)
+    writer = "#{attribute}=".to_sym
+    define_method writer do |value|
+      (@reused_metrics || []).each { |metric| metric.public_send(writer, value) if metric.respond_to? writer }
+      super
+    end
+  end
+
+  propagate_to_reused_metrics attribute: :context
+  propagate_to_reused_metrics attribute: :reporting_object
 end

@@ -79,13 +79,16 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
   # and a session identified by commit C is created, then C is revision commit, B is original commit, and A is a commit
   # by the same author previous to revision, the session is then bounded by A and C
 
-  previous, revision = *commits.limit(3)
+  previous, revision = *commits.limit(2)
 
   # NOTE: skip all interactions of initial session, i.e. ignore all unbounded sessions
 
   next unless previous
 
-  abort "#{BugsEclipseOrg::Interaction}:#{i.id} revision commit not found" unless revision
+  unless revision
+    warn "#{BugsEclipseOrg::Interaction}:#{i.id} revision commit not found"
+    next
+  end
 
   session = persist(Session, user: user, revision_commit: revision) do |r|
     r.previous_commit = previous
@@ -101,10 +104,7 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   # NOTE: skip interactions with missing data in structure handle (hence sessions with zero interactions may exist)
 
-  unless handle
-    warn "#{BugsEclipseOrg::Interaction}:#{i.id} missing data in structure handle"
-    next
-  end
+  next unless handle
 
   # NOTE: crop node paths to match top level Java type declarations
 

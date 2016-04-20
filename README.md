@@ -100,11 +100,17 @@ Import Extise tasks from Eclipse bugs, fill `extisimo_{users,projects,tasks,post
 
     import_extise_tasks
 
+#### `patch_extise_users`
+
+Patch Extise users with aliases, fill `extisimo_{users}` tables
+
+    patch_extise_users ../data/bugs.eclipse.org/users-to-aliases.csv
+
 #### `map_extise_repositories`
 
 Map Extise repositories to projects, fill `extisimo_{repositories}` tables
 
-    map_extise_repositories ../data/bugs.eclipse.org/repositories-to-projects-map.csv
+    map_extise_repositories ../data/bugs.eclipse.org/repositories-to-projects.csv
 
 #### `import_extise_commits`
 

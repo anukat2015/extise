@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise! { include Extisimo }
+
+c, s, t, v, q, p = true, false, 80, true, false, [STDIN]
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] [<path>...]'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  arg 'p [<path>...]'
+end
+
+AutoColor.disable on: self unless c
+
+p.each do |f|
+  d = CSV.new(File.open_or f)
+
+  process(d, progress: false) do |r|
+    n, a = *r
+
+    begin
+      user = User.fetch(n).first!
+    rescue ActiveRecord::RecordNotFound
+      warn "#{User}:? not found by #{n}"
+      next
+    end
+
+    user.eclipse_org_user_names = ((user.eclipse_org_user_names || []) << a).uniq.sort
+    user.save!
+
+    dump_record user, :user
+  end
+end

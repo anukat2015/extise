@@ -15,7 +15,7 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-l = File.expand_path l || File.join(%w(.. .. lib extinf)), __FILE__
+l = File.expand_path File.join(%w(.. ..) + (l ? [l] : %w(lib extinf))), __FILE__
 p = Dir[File.join(%W(#{l} {#{Inferencer::TARGETS.map(&:pluralize) * ','}} *.rb))] if p.empty?
 
 AutoColor.disable on: self unless c

@@ -20,7 +20,7 @@ p = Dir[File.join(%W(#{l} {#{Inferencer::TARGETS.map(&:pluralize) * ','}} *.rb))
 
 AutoColor.disable on: self unless c
 
-p.map { |f| File.absolute_path f }.each do |f|
+p.map { |f| File.absolute_path f }.sort.each do |f|
   target, name, _, type, _ = Extinf.resolve_inferencer! file: f, library: l rescue abort $!
 
   if !options.assigned? :u

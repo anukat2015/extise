@@ -7,14 +7,24 @@ require 'expric/version'
 module Expric
   extend ActiveSupport::Autoload
 
+  autoload :Shared
+
   module Sessions
     extend ActiveSupport::Autoload
 
-    autoload :DP_CC
+    autoload :DfDloc
+    autoload :DfDlocDr
+    autoload :DfDlocMs
 
-    autoload :DK_ND
-    autoload :DK_WD
-    autoload :DK_MS
+    autoload :DfRloc
+    autoload :DfRlocDr
+    autoload :DfRlocMs
+
+    autoload :DpCcC
+    autoload :DpCcT
+
+    autoload :DpLocdcC
+    autoload :DpLocdcT
   end
 
   extend Extric::Resolving

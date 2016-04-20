@@ -2,6 +2,6 @@ development:
   adapter: postgresql
   encoding: unicode
   database: extise_development
-  pool: 100
+  pool: 200
   username: extise
   password: extise

@@ -23,6 +23,7 @@ module Extric
     autoload :CommentCount
     autoload :CommentLinesOfCode
     autoload :CyclomaticComplexity
+    autoload :DefaultLinesOfCode
     autoload :LinesOfCode
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
@@ -42,6 +43,7 @@ module Extric
     autoload :CommentLinesOfCode
     autoload :CyclomaticComplexity
     autoload :CyclomaticComplexityOverExtentOfEdits
+    autoload :DefaultLinesOfCode
     autoload :LinesOfCode
     autoload :Duration
     autoload :Edits

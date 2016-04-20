@@ -7,6 +7,13 @@ module Extric::Common
   include Extric::Caching
   include Extric::Reporting
 
+  def reuse_metric(metric)
+    metric = metric.is_a?(Class) ? metric.new : metric
+    (@reused_metrics ||= []) << metric
+    metric.reporting_object = self
+    metric
+  end
+
   def measure_on_element(element, options = {})
     commit = element.commit
     repository = commit.repository
@@ -49,6 +56,11 @@ module Extric::Common
     end
 
     true
+  end
+
+  def reporting_object=(object)
+    (@reused_metrics || []).each { |metric| metric.reporting_object = object if metric.respond_to? :reporting_object= }
+    super
   end
 
   class_methods do

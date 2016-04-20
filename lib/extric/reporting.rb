@@ -10,8 +10,8 @@ module Extric::Reporting
     Extric::Reporting.message reporting_object, user, subject, content
   end
 
-  def reporting_object=(metric)
-    @reporting_object = metric || raise
+  def reporting_object=(object)
+    @reporting_object = object || raise
   end
 
   def reporting_object

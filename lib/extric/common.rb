@@ -78,7 +78,7 @@ module Extric::Common
     writer = "#{attribute}=".to_sym
     define_method writer do |value|
       (@reused_metrics || []).each { |metric| metric.public_send(writer, value) if metric.respond_to? writer }
-      super
+      super value
     end
   end
 

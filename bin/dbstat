@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-c, s, v, p = true, true, true, nil
+c, s, v, p = true, true, false, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<prefix>]'
@@ -16,7 +16,7 @@ AutoColor.disable on: self unless c
 configuration = ActiveRecord::Base.connection_config
 connection = ActiveRecord::Base.connection
 
-tables = connection.tables.reject { |t| t =~ /\A(extisimo_(tasks|users)_(bugs|git)_eclipse_org|schema)/ }
+tables = connection.tables.reject { |t| !v && t =~ /\A(extisimo_(tasks|users)_(bugs|git)_eclipse_org|schema)/ }
 groups = tables.tap { |t| t.sort! if s }.inject({}) { |g, t| (g[t.sub(/_[a-z]+\z/, '')] ||= []) << t; g }
 groups = Hash[[groups.find { |g, _| g == p }].compact] if p
 

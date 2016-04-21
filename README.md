@@ -15,6 +15,22 @@ A collection of tools to estimate developers' expertise
 
 ## Structure
 
+    data                    Data to process
+    extise                  Project repository
+
+#### Data
+
+    bugs.eclipse.org        
+      bugzilla-bugs         Bugzilla bugs
+      mylyn-contexts        Mylyn contexts
+    extise.fiit.stuba.sk
+      database-exports      Database exports     
+    git.eclipse.org         
+      gerrit-changes        Gerrit changes
+      repositories          Git repositories
+
+#### Extise
+
     bin                     Runnable commands and utilities
     db                      Database configuration and migrations
     docs                    Generated and other documentation
@@ -66,7 +82,7 @@ Download Gerrit change files according to input URL
 
 Download and unpack Mylyn context files from remote server according to input bugs file  
 
-    fetch_mylyn_contexts ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
+    fetch_mylyn_contexts ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml
 
 ## Data import
 
@@ -76,10 +92,10 @@ Following commands should be executed subsequently:
 
 Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attachments}` tables  
 
-    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --stat
-    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml
-    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829
-    import_eclipse_bugs ../data/bugs.eclipse.org/all-with-mylyn-context-20160110-1824.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829 --mylyn-contexts-mode=delete
+    import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml --stat
+    import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml
+    import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829
+    import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829 --mylyn-contexts-mode=delete
 
 #### `import_eclipse_changes`
 
@@ -153,7 +169,7 @@ Load expertise metrics, fill `extisimo_{metrics}` tables
 
 Import from raw SQL 
 
-    psql -U extise extise_development < ../data/extise.fiit.stuba.sk/extise_development-bugs_eclipse_org-20160411_all-with-mylyn-context-20160110-1824.sql
+    psql -U extise extise_development < ../data/extise.fiit.stuba.sk/database-exports/extise_development-bugs_eclipse_org-20160420_bugzilla-bugs-20160110-1824.sql
 
 ## Data export
 
@@ -163,7 +179,8 @@ Import from raw SQL
 
 Export to raw SQL
 
-    pg_dump -U extise --exclude-table=schema_\* --data-only extise_development > extise_development.sql
+    pg_dump -U extise --data-only --exclude-table=schema_\* extise_development > extise_development.sql
+    pg_dump -U extise --data-only --table=bugs_eclipse_org_\* extise_development > extise_development-bugs_eclipse_org.sql
 
 ## Data lookup
 

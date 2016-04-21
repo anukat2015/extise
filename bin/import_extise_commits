@@ -1,12 +1,13 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-d, n, w, r = nil, 4, :thread, nil
+d, e, n, w, r = nil, :unit, 4, :thread, nil
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <repository>'
   opt 'd -d --directory=<path>'
+  opt 'e -e --extract=(none|unit)'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -70,7 +71,9 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   dump_record commit, :commit, 1
 
-  # TODO import all with skipping elements here, so aliases can be resolved
+  # NOTE: skip elements extraction if not desired
+
+  next if e.to_sym == :none
 
   # NOTE: consider only elements from the revision file, the actual difference itself is not included implicitly
   # in the the model but rather computed later between the original (not previous) and revision commit files

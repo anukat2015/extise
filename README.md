@@ -26,7 +26,7 @@ A collection of tools to estimate developers' expertise
       extinf                Concept inferencers
       extise                Java DOM manipulation, IR utilities, SW metrics
       extisimo              Custom data model
-      extric                Expertise metrics
+      extric                Basic metrics
       git_eclipse_org       Eclipse Git repository utilities
     log                     Log files
     spec                    Test suites
@@ -153,7 +153,7 @@ Load expertise metrics, fill `extisimo_{metrics}` tables
 
 Import from raw SQL 
 
-    psql -U extise extise_development < ../data/extise.fiit.stuba.sk/database-exports/extise_development-bugs_eclipse_org-20160420_bugzilla-bugs-20160110-1824.sql
+    psql -U extise extise_development < ../data/extise.fiit.stuba.sk/database-exports/extise_development-bugs_eclipse_org-20160422-0110_bugzilla-bugs-20160110-1824.sql
 
 ## Data export
 

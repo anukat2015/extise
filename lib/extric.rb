@@ -6,6 +6,7 @@ require 'extric/version'
 module Extric
   extend ActiveSupport::Autoload
 
+  autoload :Aliasing
   autoload :Caching
   autoload :Extise
   autoload :Git
@@ -71,3 +72,5 @@ module Extric
 
   extend Resolving
 end
+
+Module.send(:include, Extric::Aliasing)

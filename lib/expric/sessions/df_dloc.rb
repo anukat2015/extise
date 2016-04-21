@@ -1,5 +1,3 @@
-class Expric::Sessions::DfDloc
-  include Extric::Common
-
-  alias_metric Extric::Sessions::DefaultLinesOfCode
+module Expric::Sessions
+  alias_metric 'Expric::Sessions::DfDloc', 'Extric::Sessions::DefaultLinesOfCode'
 end

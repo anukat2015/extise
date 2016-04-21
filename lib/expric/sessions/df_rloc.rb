@@ -1,6 +1,3 @@
-class Expric::Sessions::DfRloc
-  include Extric::Common
-  include Expric::Shared
-
-  alias_metric Extric::Sessions::RecentLinesOfCode
+module Expric::Sessions
+  alias_metric 'Expric::Sessions::DfRloc', 'Extric::Sessions::RecentLinesOfCode'
 end

@@ -1,5 +1,5 @@
-require 'argd'
 require 'colored'
+require 'core_ext/object/command_line_arguments'
 
 module KernelColors
   alias_method :inform, :puts

@@ -20,6 +20,7 @@ A collection of tools to estimate developers' expertise
     docs                    Generated and other documentation
     lib                     Libraries along binary dependencies
       bugs_eclipse_org      Eclipse bugs and Mylyn context model
+      core_ext              Extensions to Ruby core libraries
       database              Database access and model bindings
       expric                Experimental metrics
       extinf                Concept inferencers

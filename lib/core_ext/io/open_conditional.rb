@@ -1,4 +1,4 @@
-module IO::OpenConditional
+class IO
   def open_if(*args)
     yield(*args) ? open(*args) : args.first
   end
@@ -7,5 +7,3 @@ module IO::OpenConditional
     open_if(*args) { !args.first.is_a? IO }
   end
 end
-
-IO.extend IO::OpenConditional

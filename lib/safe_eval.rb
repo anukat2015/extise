@@ -23,7 +23,7 @@ module SafeEval
 
     def read_with_safe_eval(o, eval: nil, context: nil, as: nil)
       raise if eval.nil?
-      require 'io_open_conditional'
+      require 'core_ext/io/open_conditional'
       eval ? read_and_safe_eval(o, context: context, as: as) : File.open_or(o).readlines
     end
   end

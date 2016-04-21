@@ -63,8 +63,8 @@ module Extric::Common
     # TODO also a global cache for subjects on read_metric may increase performance
 
     def cache_measure(options = {})
-      return cache_method :measure, -> (_, subject) { subject.id } if options[:on]
-      cache_method :measure, -> (user, subject) { [user.id, subject.id] }
+      return cache_method :measure, key: -> (_, subject) { subject.id } if options[:on]
+      cache_method :measure, key: -> (user, subject) { [user.id, subject.id] }
     end
   end
 

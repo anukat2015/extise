@@ -12,6 +12,7 @@ module Extric
   autoload :Common
   autoload :Reporting
   autoload :Resolving
+  autoload :Reusing
 
   module Concepts
     extend ActiveSupport::Autoload

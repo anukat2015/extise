@@ -1,4 +1,6 @@
 module Extric::Reporting
+  extend ActiveSupport::Concern
+
   def self.message(object, user, subject, content = $!)
     message = "#{object.class} #{content.respond_to?(:message) ? content.message : (content || '?').to_s}"
     message << " on #{subject.class}:#{subject.id} for #{user.class}:#{user.id}"

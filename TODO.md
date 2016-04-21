@@ -10,7 +10,8 @@
 
 *   since elements are not linked with interactions via structure handles, other element types can be considered to import 
 
-    - support top-level-types (as is now), all types in general, and methods
+    - support top-level-types (aka units, as is now), all types in general, and methods
+    - element type should be stored on DB level
     - elements must be packed like: pack_files -> file + path
     - blocks on import must be grouped by file + path too
     - overall if there is somewhere just file as a key then it should be reviewed

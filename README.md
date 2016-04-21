@@ -15,22 +15,6 @@ A collection of tools to estimate developers' expertise
 
 ## Structure
 
-    data                    Data to process
-    extise                  Project repository
-
-#### Data
-
-    bugs.eclipse.org        
-      bugzilla-bugs         Bugzilla bugs
-      mylyn-contexts        Mylyn contexts
-    extise.fiit.stuba.sk
-      database-exports      Database exports     
-    git.eclipse.org         
-      gerrit-changes        Gerrit changes
-      repositories          Git repositories
-
-#### Extise
-
     bin                     Runnable commands and utilities
     db                      Database configuration and migrations
     docs                    Generated and other documentation

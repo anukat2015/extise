@@ -10,8 +10,10 @@ module Expric::Shared
   include Extric::Git
 
   def calculate_decay_factor(via: nil, on: nil, options: nil)
-    g = open_repository on.commit.repository.name
-    t = g.lookup('HEAD').time.utc
+    g = open_repository name: on.commit.repository.name
+    t = g.rev_parse('HEAD').time.utc
+
+    options ||= {}
 
     case via
     when :duration_ratio

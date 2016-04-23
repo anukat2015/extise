@@ -56,7 +56,7 @@ and if parallelism is supported to:
 
 Following commands do not have to be executed subsequently:
 
-#### `fetch_eclipse_pages`
+#### `fetch_gerrit_changes`
 
 Download Gerrit change files according to input URL
 

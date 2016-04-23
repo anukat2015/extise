@@ -20,10 +20,16 @@ v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
+include Extisimo::Naming
+
 def fetch_user(u)
-  users = User.fetch(u.login_name, u.realname).take 2
-  abort "#{User}:? ambiguous name #{c.login_name} / #{c.realname}" if authors.count >= 2
-  abort "#{User}:? not found by #{c.login_name} / #{c.realname}" unless users.first
+  l = filter_names(u.login_name, AMBIGUOUS_USER_NAME_PATTERN).first
+  r = filter_names(u.realname, AMBIGUOUS_REAL_NAME_PATTERN).first
+  n = compose_name l, r
+
+  users = User.fetch(n, r).take 2
+  abort "#{User}:? ambiguous name #{n}" if users.count >= 2
+  abort "#{User}:? not found by #{n}" unless users.first
   users.first
 end
 

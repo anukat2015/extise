@@ -21,6 +21,8 @@ v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
+include Extisimo::Naming
+
 # NOTE: many users have ambiguous login names, such as 'AJDT-inbox', 'mylyn-triaged'
 # NOTE: some users have real names such as 'Project inbox', 'Missing name'
 # NOTE: some users represent tools such as 'CDT Genie', 'Gerrit Code Review', 'Husdon CI'
@@ -30,24 +32,17 @@ AutoColor.disable on: self unless c
 # NOTE: user records with no real names which aggregate or hide one or many real users are considered ambiguous
 # NOTE: user records representing a tool are not considered ambiguous and hence persisted properly
 
-AMBIGUOUS_USER_NAME_PATTERN = /\?|eclipse|inbox|info|mail|noreply|project|triaged/i
-AMBIGUOUS_REAL_NAME_PATTERN = /\?|birt-report|emf compare|epp error|inbox|info|missing|project|triaged|\A(bod|jpv|php ui|unused)\z/i
-
-def fetch_names(r, f, p)
-  r.map { |u| u.public_send(f).try! :squish }.select { |n| n && n !~ p }
-end
-
-# TODO implement similar name search via unaccent.downcase.gsub(/[^a-z]/i, '')
+# TODO implement similar name search via Naming.pack_names
 
 def persist_user(u, o = {})
   o[:retries] ||= 8
 
-  user_name = fetch_names([u], :user_name, AMBIGUOUS_USER_NAME_PATTERN).first
-  real_name = fetch_names([u], :real_name, AMBIGUOUS_REAL_NAME_PATTERN).first
+  user_name = filter_names(u.user_name, AMBIGUOUS_USER_NAME_PATTERN).first
+  real_name = filter_names(u.real_name, AMBIGUOUS_REAL_NAME_PATTERN).first
 
   # NOTE: merge partly or fully ambiguous users
 
-  name = "#{user_name || '?'} / #{real_name || '?'}"
+  name = compose_name user_name, real_name
   users = User.fetch(name, real_name).all
 
   users = User.fetch(name) if users.count >= 2
@@ -58,8 +53,8 @@ def persist_user(u, o = {})
 
   eclipse_org_users = bugs_eclipse_org_users + git_eclipse_org_users
 
-  user_names = fetch_names(eclipse_org_users, :user_name, AMBIGUOUS_USER_NAME_PATTERN).to_set
-  real_names = fetch_names(eclipse_org_users, :real_name, AMBIGUOUS_REAL_NAME_PATTERN).to_set
+  user_names = filter_names(eclipse_org_users.map(&:user_name), AMBIGUOUS_USER_NAME_PATTERN).to_set
+  real_names = filter_names(eclipse_org_users.map(&:real_name), AMBIGUOUS_REAL_NAME_PATTERN).to_set
 
   # NOTE: collect user names and real names by propagating through whole user base
 
@@ -71,8 +66,8 @@ def persist_user(u, o = {})
 
     if real_names.any?
       r = BugsEclipseOrg::User.where(realname: real_names.to_a)
-      user_names.merge fetch_names(r, :login_name, AMBIGUOUS_USER_NAME_PATTERN)
-      real_names.merge fetch_names(r, :realname, AMBIGUOUS_REAL_NAME_PATTERN)
+      user_names.merge filter_names r.map(&:login_name), AMBIGUOUS_USER_NAME_PATTERN
+      real_names.merge filter_names r.map(&:realname), AMBIGUOUS_REAL_NAME_PATTERN
       bugs_eclipse_org_users.merge r.to_a
     end
 
@@ -81,15 +76,15 @@ def persist_user(u, o = {})
 
     if user_names.any?
       r = GitEclipseOrg::User.where(username: user_names.to_a)
-      user_names.merge fetch_names(r, :username, AMBIGUOUS_USER_NAME_PATTERN)
-      real_names.merge fetch_names(r, :name, AMBIGUOUS_REAL_NAME_PATTERN)
+      user_names.merge filter_names r.map(&:username), AMBIGUOUS_USER_NAME_PATTERN
+      real_names.merge filter_names r.map(&:name), AMBIGUOUS_REAL_NAME_PATTERN
       git_eclipse_org_users.merge r.to_a
     end
 
     if real_names.any?
       r = GitEclipseOrg::User.where(name: real_names.to_a)
-      user_names.merge fetch_names(r, :username, AMBIGUOUS_USER_NAME_PATTERN)
-      real_names.merge fetch_names(r, :name, AMBIGUOUS_REAL_NAME_PATTERN)
+      user_names.merge filter_names r.map(&:username), AMBIGUOUS_USER_NAME_PATTERN
+      real_names.merge filter_names r.map(&:name), AMBIGUOUS_REAL_NAME_PATTERN
       git_eclipse_org_users.merge r.to_a
     end
 

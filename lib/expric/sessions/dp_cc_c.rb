@@ -2,11 +2,15 @@ class Expric::Sessions::DpCcC
   include Extric::Common
   include Expric::Shared
 
+  def initialize
+    @p = reuse_metric Extric::Sessions::CyclomaticComplexity
+  end
+
   def measure(user, session)
-    return unless user_matches? session, user
+    p = fetch_value via: @p, of: user, on: session
 
-    # TODO implement!
+    return unless p
 
-    { value: nil }
+    { value: calculate_interactive_productivity(on: session, volume: p) }
   end
 end

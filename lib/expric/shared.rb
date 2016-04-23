@@ -22,7 +22,7 @@ module Expric::Shared
     when :memory_strength
       strength = options[:strength] || DEFAULT_MEMORY_STRENGTH
       unit = 1.public_send options[:unit] || DEFAULT_MEMORY_UNIT
-      ((t - on.finished_at) / unit).ceil / strength
+      Math.exp -((t - on.finished_at) / unit).ceil / strength
     else
       raise
     end

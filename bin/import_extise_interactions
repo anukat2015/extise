@@ -5,7 +5,7 @@ n, w, r = 4, :thread, nil
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>] <project>'
+  use '[<options>] <repository>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'

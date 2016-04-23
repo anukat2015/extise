@@ -95,17 +95,24 @@ Import Mylyn context interactions, fill `bugs_eclipse_org_{interactions}` tables
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-contexts-20160110-1829/71687.xml --stat
     import_mylyn_contexts ../data/bugs.eclipse.org/mylyn-contexts-20160110-1829/71687.xml
 
-#### `import_extise_tasks`
+#### `import_extise_users`
 
-Import Extise tasks from Eclipse bugs, fill `extisimo_{users,projects,tasks,posts,attachments}` tables
+Import Extise users from Eclipse bugs and changes, fill `extisimo_{users}` tables
 
-    import_extise_tasks
+    import_extise_users bugs_eclipse_org
+    import_extise_users git_eclipse_org
 
 #### `patch_extise_users`
 
 Patch Extise users with aliases, fill `extisimo_{users}` tables
 
     patch_extise_users ../data/bugs.eclipse.org/users-to-aliases.csv
+
+#### `import_extise_tasks`
+
+Import Extise tasks from Eclipse bugs, fill `extisimo_{projects,tasks,posts,attachments}` tables
+
+    import_extise_tasks
 
 #### `map_extise_repositories`
 

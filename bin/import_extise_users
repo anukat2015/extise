@@ -1,0 +1,125 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise! { include Extisimo }
+
+n, w, m = 4, :thread, nil
+c, s, t, v, q = true, false, 80, true, false
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] <schema>'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  arg 'm <schema>', &matches('<schema>', /\A(bugs_eclipse_org|git_eclipse_org)\z/)
+end
+
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
+
+AutoColor.disable on: self unless c
+
+# NOTE: many users have ambiguous login names, such as 'AJDT-inbox', 'mylyn-triaged'
+# NOTE: some users have real names such as 'Project inbox', 'Missing name'
+# NOTE: some users represent tools such as 'CDT Genie', 'Gerrit Code Review', 'Husdon CI'
+# NOTE: user with login name 'eclipse' hides many real users, present as reporter or assignee
+# NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
+
+# NOTE: user records with no real names which aggregate or hide one or many real users are considered ambiguous
+# NOTE: user records representing a tool are not considered ambiguous and hence persisted properly
+
+AMBIGUOUS_USER_NAME_PATTERN = /\?|eclipse|inbox|info|mail|noreply|project|triaged/i
+AMBIGUOUS_REAL_NAME_PATTERN = /\?|birt-report|emf compare|epp error|inbox|info|missing|project|triaged|\A(bod|jpv|php ui|unused)\z/i
+
+def fetch_names(r, f, p)
+  r.map { |u| u.public_send(f).try! :squish }.select { |n| n && n !~ p }
+end
+
+# TODO implement similar name search via unaccent.downcase.gsub(/[^a-z]/i, '')
+
+def persist_user(u, o = {})
+  o[:retries] ||= 8
+
+  user_name = fetch_names([u], :user_name, AMBIGUOUS_USER_NAME_PATTERN).first
+  real_name = fetch_names([u], :real_name, AMBIGUOUS_REAL_NAME_PATTERN).first
+
+  # NOTE: merge partly or fully ambiguous users
+
+  name = "#{user_name || '?'} / #{real_name || '?'}"
+  users = User.fetch(name, real_name).all
+
+  users = User.fetch(name) if users.count >= 2
+  user = users.first || User.new
+
+  bugs_eclipse_org_users = user.bugs_eclipse_org_users.to_set.tap { |r| r << u if u.is_a? BugsEclipseOrg::User }
+  git_eclipse_org_users = user.git_eclipse_org_users.to_set.tap { |r| r << u if u.is_a? GitEclipseOrg::User }
+
+  eclipse_org_users = bugs_eclipse_org_users + git_eclipse_org_users
+
+  user_names = fetch_names(eclipse_org_users, :user_name, AMBIGUOUS_USER_NAME_PATTERN).to_set
+  real_names = fetch_names(eclipse_org_users, :real_name, AMBIGUOUS_REAL_NAME_PATTERN).to_set
+
+  # NOTE: collect user names and real names by propagating through whole user base
+
+  loop do
+    user_names_size, real_names_size = user_names.size, real_names.size
+
+    # NOTE: login names of bugs.eclipse.org users still pose significant ambiguity,
+    # fetch only users with similar real names since duplicates are not a problem here
+
+    if real_names.any?
+      r = BugsEclipseOrg::User.where(realname: real_names.to_a)
+      user_names.merge fetch_names(r, :login_name, AMBIGUOUS_USER_NAME_PATTERN)
+      real_names.merge fetch_names(r, :realname, AMBIGUOUS_REAL_NAME_PATTERN)
+      bugs_eclipse_org_users.merge r.to_a
+    end
+
+    # NOTE: user names and names of git.eclipse.org users do not pose any ambiguity, fetch
+    # users with name exactly matching user names and users with user name similar to real names
+
+    if user_names.any?
+      r = GitEclipseOrg::User.where(username: user_names.to_a)
+      user_names.merge fetch_names(r, :username, AMBIGUOUS_USER_NAME_PATTERN)
+      real_names.merge fetch_names(r, :name, AMBIGUOUS_REAL_NAME_PATTERN)
+      git_eclipse_org_users.merge r.to_a
+    end
+
+    if real_names.any?
+      r = GitEclipseOrg::User.where(name: real_names.to_a)
+      user_names.merge fetch_names(r, :username, AMBIGUOUS_USER_NAME_PATTERN)
+      real_names.merge fetch_names(r, :name, AMBIGUOUS_REAL_NAME_PATTERN)
+      git_eclipse_org_users.merge r.to_a
+    end
+
+    break if user_names.size == user_names_size && real_names.size == real_names_size
+  end
+
+  user.name = "#{user_names.sort.first || '?'} / #{real_names.sort.first || '?'}"
+
+  user.eclipse_org_user_names = (user_names + real_names).sort
+  user.bugs_eclipse_org_users = bugs_eclipse_org_users.to_a
+  user.git_eclipse_org_users = git_eclipse_org_users.to_a
+
+  user.tap { user.save! }
+rescue ActiveRecord::RecordNotUnique
+  (o[:retries] -= 1) > 0 ? persist_user(u, o) : raise($!)
+rescue ActiveRecord::StatementInvalid
+  $!.cause.is_a?(PG::TRDeadlockDetected) ? persist_user(u, o) : raise($!)
+end
+
+raise unless User.respond_to? :fetch
+
+users = case m.to_sym
+when :bugs_eclipse_org
+  BugsEclipseOrg::User.order :login_name
+when :git_eclipse_org
+  GitEclipseOrg::User.order :username
+end
+
+process users, count: n, worker: w, progress: !n.zero? do |u|
+  user = persist_user u
+
+  dump_record user
+end

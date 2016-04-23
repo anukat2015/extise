@@ -20,73 +20,18 @@ v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
+def fetch_user(u)
+  users = User.fetch(u.login_name, u.realname).take 2
+  abort "#{User}:? ambiguous name #{c.login_name} / #{c.realname}" if authors.count >= 2
+  abort "#{User}:? not found by #{c.login_name} / #{c.realname}" unless users.first
+  users.first
+end
+
 # NOTE: since original data entities omit milliseconds in their timestamps and in order for unique indices to
 # work as intended these milliseconds are automatically computed from identifiers of respective entities
 
 def fix_timestamp(time, unique)
   Time.at time.to_i + (Zlib::crc32(unique.to_s) % 1000).to_f / 1000
-end
-
-# NOTE: many users have ambiguous login names, such as 'AJDT-inbox', 'mylyn-triaged', 'emo'
-# NOTE: some users have real names such as 'Project inbox', 'Missing name'
-# NOTE: user with login name 'eclipse' hides many real users, present as reporter or assignee
-# NOTE: user with login name 'bugs.eclipse.org' seems to be a real user
-
-AMBIGUOUS_LOGIN_NAME_PATTERN = /\?|eclipse|inbox|info|mail|noreply|triaged/i
-AMBIGUOUS_REALNAME_PATTERN = /\?|inbox|missing/i
-
-def persist_user(user, options = {})
-  options = options.dup
-  options[:retries] ||= 8
-
-  l = user.login_name !~ AMBIGUOUS_LOGIN_NAME_PATTERN ? user.login_name : nil
-  r = user.realname !~ AMBIGUOUS_REALNAME_PATTERN ? user.realname : nil
-  n = "#{l || '?'} / #{r || '?'}"
-  u = User.fetch(n, r).first || User.new(name: n)
-
-  login_names, realnames = Set[l].delete_if(&:nil?), Set[r].delete_if(&:nil?)
-  bugs_eclipse_org_users = Set[*u.bugs_eclipse_org_users.to_a] << user
-  git_eclipse_org_users = Set[*u.git_eclipse_org_users.to_a]
-
-  loop do
-    login_names_size, realnames_size = login_names.size, realnames.size
-
-    # NOTE: login names of bugs.eclipse.org users still pose significant ambiguity,
-    # fetch only users with similar real names since duplicates are not a problem here
-
-    if realnames.any?
-      b = BugsEclipseOrg::User.where(realname: realnames.to_a)
-      login_names.merge b.map(&:login_name).select { |n| n && n !~ AMBIGUOUS_LOGIN_NAME_PATTERN }
-      bugs_eclipse_org_users.merge b.to_a
-    end
-
-    # NOTE: user names and names of git.eclipse.org users do not pose any ambiguity, fetch
-    # users with name exactly matching login names and users with user name similar to real names
-
-    if login_names.any?
-      g = GitEclipseOrg::User.where(username: login_names.to_a)
-      login_names.merge g.map(&:username).select { |n| n && n !~ AMBIGUOUS_LOGIN_NAME_PATTERN }
-      realnames.merge g.map(&:name).select { |n| n && n !~ AMBIGUOUS_REALNAME_PATTERN }
-      git_eclipse_org_users.merge g.to_a
-    end
-
-    if realnames.any?
-      g = GitEclipseOrg::User.where(name: realnames.to_a)
-      login_names.merge g.map(&:username).select { |n| n && n !~ AMBIGUOUS_LOGIN_NAME_PATTERN }
-      realnames.merge g.map(&:name).select { |n| n && n !~ AMBIGUOUS_REALNAME_PATTERN }
-      git_eclipse_org_users.merge g.to_a
-    end
-
-    break if login_names.size == login_names_size && realnames.size == realnames_size
-  end
-
-  u.eclipse_org_user_names = (login_names + realnames).to_a.sort
-  u.bugs_eclipse_org_users = bugs_eclipse_org_users.to_a
-  u.git_eclipse_org_users = git_eclipse_org_users.to_a
-
-  u.tap { u.save! }
-rescue ActiveRecord::RecordNotUnique
-  (options[:retries] -= 1) > 0 ? persist_user(user, options) : raise($!)
 end
 
 i = 0
@@ -103,8 +48,8 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent reporter" if b.reporter != b.author.login_name
   abort "#{BugsEclipseOrg::Bug}:#{b.id} inconsistent assignee" if b.assigned_to != b.assignee.login_name
 
-  reporter = persist_user(b.author)
-  assignee = persist_user(b.assignee)
+  reporter = fetch_user b.author
+  assignee = fetch_user b.assignee
   project = persist(Project, product: b.product, component: b.component)
 
   # NOTE: keywords of original bugs have very low information value
@@ -137,7 +82,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   b.comments.order(bug_when: :asc).find_each do |c|
     abort "#{BugsEclipseOrg::Comment}:#{c.id} inconsistent author" if c.who != c.author.login_name
 
-    author = persist_user(c.author)
+    author = fetch_user c.author
 
     # NOTE: original comments do not contain modification timestamp, creation timestamp is used instead
 
@@ -154,7 +99,7 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   b.attachments.order(date: :asc).find_each do |a|
     abort "#{BugsEclipseOrg::Attachment}:#{a.id} inconsistent author" if a.attacher != a.submitter.login_name
 
-    author = persist_user(a.submitter)
+    author = fetch_user a.submitter
 
     attachment = persist(Attachment, submitted_at: fix_timestamp(a.date, a.attachid), author_id: author.id, task_id: task.id) do |r|
       r.file = a.filename

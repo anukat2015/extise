@@ -51,13 +51,13 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   next if c.parents.count != 1
 
-  authors = User.fetch(c.author[:name]).all
+  authors = User.fetch(c.author[:name]).take 2
 
   abort "#{User}:? ambiguous name #{c.author[:name]}" if authors.count >= 2
 
   author = authors.first
 
-  # NOTE: skip commits for users who can not be identified, i.e. with no tasks or interactions
+  # NOTE: skip commits for users who can not be identified
 
   unless author
     warn "#{User}:? not found by #{c.author[:name]}"

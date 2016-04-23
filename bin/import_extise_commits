@@ -53,7 +53,7 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   next if c.parents.count != 1
 
-  authors = User.fetch(compose_name(nil, c.author[:name]), compose_name(c.author[:name], nil), c.author[:name]).to_a
+  authors = User.fetch(compose_names(nil, c.author[:name]), compose_names(c.author[:name], nil), c.author[:name]).to_a
 
   abort "#{User}:? ambiguous name #{c.author[:name]}" if authors.count >= 2
 

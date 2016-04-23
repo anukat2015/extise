@@ -25,7 +25,7 @@ include Extisimo::Naming
 def fetch_user(u)
   l = filter_names(u.login_name, AMBIGUOUS_USER_NAME_PATTERN).first
   r = filter_names(u.realname, AMBIGUOUS_REAL_NAME_PATTERN).first
-  n = compose_name l, r
+  n = compose_names l, r
 
   users = User.fetch(n, r).to_a
   users = User.fetch(n) if users.count >= 2

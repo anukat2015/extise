@@ -5,7 +5,7 @@ module Extisimo::Naming
   NAME_SEPARATOR = ' / '
   UNKNOWN_NAME = '?'
 
-  def compose_name(*a)
+  def compose_names(*a)
     a.flatten.map { |n| n || UNKNOWN_NAME } * NAME_SEPARATOR
   end
 

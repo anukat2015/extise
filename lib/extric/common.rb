@@ -61,6 +61,7 @@ module Extric::Common
   class_methods do
     # TODO caching fetched sources on fetch_source method level may increase performance
     # TODO also a global cache for subjects on read_metric may increase performance
+    # TODO cache all open repositories in open_repository
 
     def cache_measure(options = {})
       return cache_method :measure, key: -> (_, subject) { subject.id } if options[:on]

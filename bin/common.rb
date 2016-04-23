@@ -125,7 +125,11 @@ def load_extise!
       ActiveRecord::Base.connection.reconnect!
     end
     process_without_active_record items, options do |item|
-      ActiveRecord::Base.connection_pool.with_connection { block.call item }
+      # NOTE: speeds up item persistence and ensures that on failure
+      # all or none records are actually inserted or updated by the item
+      ActiveRecord::Base.connection_pool.with_connection do |connection|
+        connection.transaction { block.call item }
+      end
     end
   end
 

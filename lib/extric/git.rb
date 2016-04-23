@@ -1,6 +1,6 @@
 module Extric::Git
 
-  # NOTE: possible options include:
+  # NOTE: possible copies tracking options:
   # track_copies_same_file
   # track_copies_same_commit_moves
   # track_copies_same_commit_copies
@@ -21,7 +21,7 @@ module Extric::Git
   end
 
   def count_recent(blame: nil, names: nil)
-    blame.select { |l| names.include? l[:final_signature][:name] }.count
+    blame.to_a.select { |l| names.include? l[:final_signature][:name] }.count
   end
 
   def fetch_source(repository: nil, commit: nil, element: nil, git: nil, identifier: nil, file: nil, offset: nil, length: nil)

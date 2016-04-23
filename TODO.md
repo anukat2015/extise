@@ -1,5 +1,7 @@
 # TODO
 
+*   support parametrized metrics, parameters should be included in the unique key for expertise records 
+
 *   implement JGibbLDA bindings, force `--option` instead of `-option` on command line
 
 *   implement JGibbLDA based concept infering & add some metrics on concept level

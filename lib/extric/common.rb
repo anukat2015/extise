@@ -21,7 +21,7 @@ module Extric::Common
     s = fetch_source repository: repository, commit: commit, element: element
     v = Float read_metric metric: options[:metric], sources: s
 
-    { sources: { total: 1 }, value: v }
+    options[:raw] ? v : { sources: { total: 1 }, value: v }
   end
 
   def measure_on_elements(commit, options = {})
@@ -31,19 +31,19 @@ module Extric::Common
     return unless elements.any?
 
     g = open_repository name: repository.name
-    s, v, t = [], 0, 0
+    s, v = [], []
 
     elements.each do |element|
       s << [[element.file, element.path], fetch_source(git: g, commit: commit, element: element)]
     end
 
     read_metric metric: options[:metric], sources: s do |r|
-      v, t = v + Float(r), t + 1
+      v << Float(r)
     end
 
-    raise if s.size != t
+    raise if s.size != v.size
 
-    { sources: { total: t }, value: v }
+    options[:raw] ? v : { sources: { total: v.size }, value: v.sum }
   end
 
   def user_matches?(record, various)

@@ -81,7 +81,8 @@ def load_extise!
     print "#{'  ' * i}#{"#{n.to_s.blue}: " if n}"
     puts "#{attributes.delete(:class).green}#{":#{attributes[:id].to_s.yellow}" unless o[:v]}"
     attributes.to_a.tap { |a| a.sort_by! { |p| p[0] } if o[:s] }.each do |k, v|
-      v = v.to_s.strip.gsub(/\r|\r?\n/, '↵').truncate [o[:t] - (2 * i + k.to_s.size + 1), 1].max, omission: '…'
+      v = v.to_s.strip.gsub(/\r|\r?\n/, '↵')
+      v = v.truncate [o[:t] - (2 * i + k.to_s.size + 1), 1].max, omission: '…' unless o[:t].zero?
       dump_attribute k, v, i + 1
     end if o[:v]
   end

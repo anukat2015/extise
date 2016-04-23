@@ -43,8 +43,7 @@ def persist_user(u, o = {})
   # NOTE: merge partly or fully ambiguous users
 
   name = compose_name user_name, real_name
-  users = User.fetch(name, real_name).all
-
+  users = User.fetch(name, real_name).to_a
   users = User.fetch(name) if users.count >= 2
   user = users.first || User.new
 

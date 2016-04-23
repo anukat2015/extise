@@ -27,7 +27,8 @@ def fetch_user(u)
   r = filter_names(u.realname, AMBIGUOUS_REAL_NAME_PATTERN).first
   n = compose_name l, r
 
-  users = User.fetch(n, r).take 2
+  users = User.fetch(n, r).to_a
+  users = User.fetch(n) if users.count >= 2
   abort "#{User}:? ambiguous name #{n}" if users.count >= 2
   abort "#{User}:? not found by #{n}" unless users.first
   users.first

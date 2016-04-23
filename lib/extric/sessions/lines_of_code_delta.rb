@@ -4,8 +4,8 @@ class Extric::Sessions::LinesOfCodeDelta
   include Extric::Common
 
   def initialize
-    multipliers = { additions: 1, deletions: 1, modifications: 1 }
-    combinator = Extric::Elements::LinesOfCodeDeltaCombination::Combinator.new multipliers
+    coefficients = { additions: 1, deletions: 1, modifications: 1 }
+    combinator = Extric::Elements::LinesOfCodeDeltaCombination::Combinator.new coefficients
     @combination = reuse_metric Extric::Sessions::LinesOfCodeDeltaCombination.new combinator
   end
 

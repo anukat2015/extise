@@ -40,18 +40,18 @@ class Extric::Elements::LinesOfCodeDeltaCombination
   end
 
   class Combinator
-    ADDITIONS_MULTIPLIER = 2.8
-    DELETIONS_MULTIPLIER = 1.3
-    MODIFICATIONS_MULTIPLIER = 5.3
+    ADDITIONS_COEFFICIENT = 2.8
+    DELETIONS_COEFFICIENT = 1.3
+    MODIFICATIONS_COEFFICIENT = 5.3
 
-    attr_accessor :multipliers
+    attr_accessor :coefficients
 
-    def initialize(multipliers = nil)
-      @multipliers = multipliers || { additions: ADDITIONS_MULTIPLIER, deletions: DELETIONS_MULTIPLIER, modifications: MODIFICATIONS_MULTIPLIER }
+    def initialize(coefficients = nil)
+      @coefficients = coefficients || {additions: ADDITIONS_COEFFICIENT, deletions: DELETIONS_COEFFICIENT, modifications: MODIFICATIONS_COEFFICIENT }
     end
 
     def combine_and_return(a, d, m, t)
-      v = multipliers[:additions] * a + multipliers[:deletions] * d + multipliers[:modifications] * m
+      v = coefficients[:additions] * a + coefficients[:deletions] * d + coefficients[:modifications] * m
 
       {
         difference: { additions: a, deletions: d, modifications: m, total: t },

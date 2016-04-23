@@ -27,16 +27,18 @@ module Expric::Shared
   end
 
   def calculate_interactive_productivity(on: nil, volume: nil, coefficients: nil)
-    h = Extric::Sessions::Interactions::Counting
+    h = Module.new.extend Extric::Sessions::Interactions::Counting
 
     v = volume
+    c = coefficients || {}
+
     e = h.count_unique_interactions inside: on, kind: 'edit'
     s = h.count_unique_interactions inside: on, kind: 'selection'
     i = h.count_subsequent_interactions inside: on, kind: 'edit'
     l = h.count_subsequent_interactions inside: on, kind: 'selection'
 
-    c0 = coefficients[:fraction] || {}
-    c1 = coefficients[:sum] || {}
+    c0 = c[:fraction] || {}
+    c1 = c[:sum] || {}
 
     v0 = c0[:volume] || 0.5
     e0 = c0[:unique_edits] || 0.25

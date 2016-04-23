@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise! { include Extisimo }
+
+p, u, m, r = false, 'now', nil, []
+c, s, t, v, q = true, false, 80, true, false
+
+ARGV.bind_and_parse! to: :locals do
+  use "[<options>] #{to_arg Metric::TARGETS} [<metric>...]"
+  opt 'p    --progress'
+  opt 'u    --method=(rescale|sigmoid|tanh|z-score)'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  arg "m #{to_arg Metric::TARGETS}", &included_in(Metric::TARGETS)
+  arg 'r [<metric>...]'
+end
+
+v, q = false, true if p
+
+AutoColor.disable on: self unless c
+
+# TODO implement

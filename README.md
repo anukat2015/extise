@@ -204,20 +204,35 @@ Run Java source code or text analysis
 
 #### `jgibblda`
 
-TODO
+Run JGibbLDA for parameter estimation or inference
+
+    TODO
 
 ## Concept inference
 
 #### `infer`
 
-TODO
+Infer concepts by inferencer
+
+    TODO
 
 ## Expertise estimation
 
 #### `measure`
 
-    measure session
-    measure element recent_lines_of_code
+Measure expertises by metric
+
+    measure element
+    measure session recent_lines_of_code
+    measure session recent_lines_of_code --until=now
+
+#### `normalize`
+
+Normalize expertises measured by metric
+
+    normalize element
+    normalize session recent_lines_of_code
+    normalize session recent_lines_of_code --method=tanh
 
 ## Statistical analysis
 
@@ -260,6 +275,12 @@ Calculate correlation coefficient between expertises
     rcor -e 'Extisimo::Expertise.fetch(on: :session, by: :edits).pluck :value' 'Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck :value'
 
     echo 'Extisimo::Expertise.fetch(on: :session, by: :edits).pluck(:value) + Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck(:value)' | rcor -e 
+
+#### `ucor`
+
+Calculate correlation coefficient between expertises for each user
+
+    ucor session:edits session:lines_of_code_delta
 
 ## Utilities
 

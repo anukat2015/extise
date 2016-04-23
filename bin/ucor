@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+require_relative 'common' and load_extise! { include Extisimo }
+
+require 'statsample'
+
+m, c, s, t, v, x, y = :spearman, true, true, 80, true, nil, nil
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] <target:name> <target:name>'
+  opt 'm -m --method=(pearson|spearman)'
+  opt 'c -c --[no-]color'
+  opt 's -s --[no-]sort'
+  opt 't -t --trim[=<length:Integer>]'
+  opt 'v -v --[no-]verbose'
+  arg 'x <x>'
+  arg 'y <y>'
+end
+
+AutoColor.disable on: self unless c
+
+def calculate_correlation(x, y, s = nil, u = nil, o = options.bound)
+  args = [x, y] + { method: o[:m], subject: s, user: u }.map { |k, v| "--#{k}=#{v}" if v }.compact + %w(--no-color --no-verbose)
+  command = "rcor #{args * ' '}"
+  inform "#{command}" if o[:v] unless o[:q]
+  Open3.popen3(File.expand_path command, __dir__) do |input, output, error, status|
+    v, e = *[output, error].map { |s| s.read.strip.downcase.presence }
+    [input, output, error].each &:close
+    { subject: s, user: u, value: v.blank? || v =~ /nan/i ? Float::NAN : Float(v), status: status.value.to_i, message: e }
+  end
+end
+
+def compare_correlation(a, b)
+  c, v, u = a[:status] <=> b[:status], a[:value], b[:value]
+  return c unless c.zero?
+  c = (v.nan? ? Float::INFINITY : v) <=> (u.nan? ? Float::INFINITY : u)
+  !c.zero? ? c : a[:name] <=> b[:name]
+end
+
+users = User.joins(:expertises).order(:name).distinct
+correlations = Hash[users.pluck(:id, :name).map { |id, name| [name, calculate_correlation(x, y, nil, id)] }]
+correlations = Hash[correlations.sort { |*a| compare_correlation *a.map { |p| p[1].merge name: p[0]}}] if s
+
+if v
+  correlations.each do |name, data|
+    dump_record class: 'Extisimo::Correlation', value: data[:value], status: data[:status] == 0 ? 'success' : 'failure', message: data[:message]
+    dump_record({ class: User.name, id: data[:user], name: name }, :user, 1)
+  end
+else
+  correlations = correlations.transform_keys { |n| n.split(Extisimo::Naming::NAME_SEPARATOR).first }
+  padding = correlations.keys.max_by(&:length).length
+
+  correlations.each do |name, data|
+    dump_attribute name.rjust(padding), "#{'%+.12f' % data[:value]}#{" (#{data[:message]})" unless data[:status].zero?}"
+  end
+end

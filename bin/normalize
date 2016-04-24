@@ -3,13 +3,14 @@ require_relative 'common' and load_extise! { include Extisimo }
 
 require 'daru'
 
-m, p, g, r = :rescale, false, nil, nil
+m, n, w, g, r = :rescale, 4, :thread, nil, nil
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use "[<options>] #{to_arg Metric::TARGETS} <metric>"
   opt 'm    --method=(rescale|sigmoid|tanh|z-score)'
-  opt 'p    --progress'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -19,7 +20,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'r <metric>'
 end
 
-v, q = false, true if p
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
@@ -36,7 +38,7 @@ warn "no expertises fetched for #{g}:#{r} to normalize" unless expertises.any?
 
 handle = factory.call Daru::Vector[*expertises.map(&:value)] rescue abort("#{type}:? unable to initialize")
 
-process expertises, progress: p do |expertise|
+process expertises, count: n, worker: w, progress: !n.zero? do |expertise|
   data = handle.normalize expertise.value
 
   unless data

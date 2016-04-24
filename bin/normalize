@@ -8,7 +8,7 @@ c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use "[<options>] #{to_arg Metric::TARGETS} <metric>"
-  opt 'm    --method=(rescale|sigmoid|tanh|z-score)'
+  opt 'm    --method=(length|rescale|sigmoid|tanh|z-score)'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'

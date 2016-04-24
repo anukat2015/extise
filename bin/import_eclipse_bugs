@@ -128,7 +128,7 @@ p.each do |f|
     author = persist_user b.css('reporter')
     assignee = persist_user b.css('assigned_to')
 
-    bug = persist(Bug, bugid: bugid, xml: b) do |r|
+    bug = persist(Bug, bugid: bugid) do |r|
       abort "#{Bug}:#{r.bugid} too many reporters" if b.css('reporter').count != 1
       abort "#{Bug}:#{r.bugid} too many assignees" if b.css('assigned_to').count != 1
 
@@ -175,7 +175,7 @@ p.each do |f|
       commentid = c.css('commentid').text.presence
       author = persist_user c.css('who')
 
-      comment = persist(Comment, commentid: commentid, xml: c) do |r|
+      comment = persist(Comment, commentid: commentid) do |r|
         abort "#{Comment}:#{r.commentid} too many authors" if c.css('who').count != 1
 
         r.bug_id = bug.id
@@ -198,7 +198,7 @@ p.each do |f|
       filename = a.css('filename').text.presence
       submitter = persist_user a.css('attacher')
 
-      attachment = persist(Attachment, attachid: attachid, xml: a) do |r|
+      attachment = persist(Attachment, attachid: attachid) do |r|
         abort "#{Attachment}:#{r.attachid} too many attachers" if a.css('attacher').count != 1
 
         r.bug_id = bug.id

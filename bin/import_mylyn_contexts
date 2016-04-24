@@ -75,7 +75,7 @@ p.each do |f|
   end
 
   process d.css('InteractionEvent'), count: n, worker: w, progress: !n.zero? do |e|
-    interaction = persist(Interaction, xml: e) do |r|
+    interaction = persist(Interaction) do |r|
       r.attachment_id = context.id
       r.bug_url = bug_url
       r.version = version

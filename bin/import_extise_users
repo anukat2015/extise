@@ -95,8 +95,8 @@ def persist_user(u, o = {})
   user.git_eclipse_org_users = git_eclipse_org_users.to_a
 
   user.tap { user.save! }
-rescue ActiveRecord::RecordNotUnique
-  (o[:retries] = ((o[:retries] || 8) - 1)) > 0 ? retry : raise($!)
+rescue ActiveRecord::RecordNotUnique => failure
+  (o[:retries] = ((o[:retries] || 8) - 1)) > 0 ? retry : raise(failure)
 end
 
 raise unless User.respond_to? :fetch

@@ -93,7 +93,7 @@ def load_extise!
   # it simple, but thus sacrificing performance
 
   def persist(model, keys = {})
-    retries, xml = 8, keys.delete(:xml)
+    retries ||= 8
     # NOTE: ensures that a record is either created or updated on present
     # keys, otherwise a record is just created and never updated
     (keys.empty? ? model.new : model.find_or_initialize_by(keys)).tap do |record|
@@ -102,20 +102,6 @@ def load_extise!
     end
   rescue ActiveRecord::RecordNotUnique => failure
     (retries -= 1) > 0 ? retry : raise(failure)
-  rescue => failure
-    args = ARGD.include?('--no-color') ? %w(--no-color) : []
-    Open3.popen2e(File.expand_path "lsxml #{args * ' '}", __dir__) do |i, o, t|
-      i.write xml
-      i.close
-      Thread.new {
-        STDERR.print "\n--XML-DEBUG--\n\n"
-        o.each { |l| STDERR.print l }
-        STDERR.print "\n--XML-DEBUG--\n\n"
-      }.join
-      o.close
-      t.join
-    end if xml
-    failure.is_a?(ActiveRecord::ActiveRecordError) ? abort(failure.message.to_s) : raise(failure)
   end
 
   alias process_without_active_record process
@@ -132,10 +118,10 @@ def load_extise!
           # NOTE: speeds up item persistence and ensures that on failure
           # all or none records are actually inserted or updated by the item
           connection.transaction { block.call item }
-        rescue ActiveRecord::StatementInvalid => failure
+        rescue ActiveRecord::ActiveRecordError => failure
           # NOTE: retry again on transaction failure or deadlock detected since once a transaction
           # is failed it can not ever succeed again and deadlock freezes must be avoided somehow too
-          [PG::InFailedSqlTransaction, PG::TRDeadlockDetected].include?($!.cause) ? retry : raise(failure)
+          [PG::InFailedSqlTransaction, PG::TRDeadlockDetected].include?(failure.cause.class) ? retry : raise(failure)
         end
       end
     end

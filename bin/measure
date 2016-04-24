@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-p, u, m, r = false, 'now', nil, []
+p, u, g, r = false, 'now', nil, []
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
@@ -13,7 +13,7 @@ ARGV.bind_and_parse! to: :locals do
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
-  arg "m #{to_arg Metric::TARGETS}", &included_in(Metric::TARGETS)
+  arg "g #{to_arg Metric::TARGETS}", &included_in(Metric::TARGETS)
   arg 'r [<metric>...]'
 end
 
@@ -22,11 +22,11 @@ v, q = false, true if p
 
 AutoColor.disable on: self unless c
 
-metrics = Metric.on(m)
-metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n} on #{m}") } unless r.blank?
+metrics = Metric.on(g)
+metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n} on #{g}") } unless r.blank?
 metrics = Hash[metrics.map { |metric| [metric, (Dyna.load_and_create!(file: metric.file, type: metric.type).last rescue abort $!)] }]
 
-subjects = case m.to_sym
+subjects = case g.to_sym
 when :concept
   Concept.left_joins conceptualities: [element: [commit: [repository: [project: :tasks]]]]
 when :element
@@ -47,7 +47,7 @@ warn "no subjects fetched until #{options.assigned?(:u) ? u : 'now'}" unless sub
 # NOTE: measure on all users who worked on elements with same node path, such users may not have assigned tasks
 # NOTE: measure on the session associated user only, such user has assigned at least one task
 
-users_fetcher = case m.to_sym
+users_fetcher = case g.to_sym
 when :concept
   -> (concept) { User.joins(commits: [elements: [conceptualities: :concept]]).where("#{Concept.table_name}.id = ?", concept.id).distinct }
 when :element
@@ -63,15 +63,15 @@ metrics.each { |_, handle| handle.context = { until: u } if handle.respond_to? :
 # NOTE: measure for each subject through each fetched user via each metric's handle object
 
 process subjects, progress: p do |subject|
-  inform "fetch users for #{m}:#{subject.id} who somehow relate" if v unless q
+  inform "fetch users for #{g}:#{subject.id} who somehow relate" if v unless q
 
   users = users_fetcher.call subject
 
-  warn "no users fetched for #{m}:#{subject.id} who somehow relate" unless users.any?
+  warn "no users fetched for #{g}:#{subject.id} who somehow relate" unless users.any?
 
   users.each do |user|
     metrics.each do |metric, handle|
-      inform "measure on #{m}:#{subject.id} for #{user.name} with #{metric.name}" if v unless q
+      inform "measure on #{g}:#{subject.id} for #{user.name} with #{metric.name}" if v unless q
 
       # NOTE: do not catch any exceptions here since each metric is responsible for its own behavior,
       # this ensures that any fatal failures immediately terminate execution and backtrace is shown

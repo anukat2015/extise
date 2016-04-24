@@ -8,9 +8,9 @@ module Extric
 
   autoload :Aliasing
   autoload :Caching
+  autoload :Common
   autoload :Extise
   autoload :Git
-  autoload :Common
   autoload :Reporting
   autoload :Resolving
   autoload :Reusing

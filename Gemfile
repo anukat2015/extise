@@ -22,6 +22,7 @@ gem 'parallel', '~> 1.6.1'
 # utilities
 
 gem 'colored', '~> 1.2'
+gem 'hashugar', '~> 1.0.1'
 gem 'optbind', '~> 0.3.2'
 gem 'nokogiri', '~> 1.6.6'
 gem 'ruby-progressbar', '~> 1.7.5'

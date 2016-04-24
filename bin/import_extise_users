@@ -35,8 +35,6 @@ include Extisimo::Naming
 # TODO implement similar name search via Naming.pack_names
 
 def persist_user(u, o = {})
-  o[:retries] ||= 8
-
   user_name = filter_names(u.user_name, AMBIGUOUS_USER_NAME_PATTERN).first
   real_name = filter_names(u.real_name, AMBIGUOUS_REAL_NAME_PATTERN).first
 
@@ -98,9 +96,7 @@ def persist_user(u, o = {})
 
   user.tap { user.save! }
 rescue ActiveRecord::RecordNotUnique
-  (o[:retries] -= 1) > 0 ? persist_user(u, o) : raise($!)
-rescue ActiveRecord::StatementInvalid
-  $!.cause.is_a?(PG::TRDeadlockDetected) ? persist_user(u, o) : raise($!)
+  (o[:retries] = ((o[:retries] || 8) - 1)) > 0 ? retry : raise($!)
 end
 
 raise unless User.respond_to? :fetch

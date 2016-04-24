@@ -127,10 +127,16 @@ def load_extise!
       ActiveRecord::Base.connection.reconnect!
     end
     process_without_active_record items, options do |item|
-      # NOTE: speeds up item persistence and ensures that on failure
-      # all or none records are actually inserted or updated by the item
       ActiveRecord::Base.connection_pool.with_connection do |connection|
-        connection.transaction { block.call item }
+        begin
+          # NOTE: speeds up item persistence and ensures that on failure
+          # all or none records are actually inserted or updated by the item
+          connection.transaction { block.call item }
+        rescue ActiveRecord::StatementInvalid => failure
+          # NOTE: retry again on transaction failure or deadlock detected since once a transaction
+          # is failed it can not ever succeed again and deadlock freezes must be avoided somehow too
+          [PG::InFailedSqlTransaction, PG::TRDeadlockDetected].include?($!.cause) ? retry : raise(failure)
+        end
       end
     end
   end

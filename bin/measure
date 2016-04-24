@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-p, u, g, r = false, 'now', nil, []
+u, p, g, r = 'now', false, nil, []
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use "[<options>] #{to_arg Metric::TARGETS} [<metric>...]"
-  opt 'p    --progress'
   opt 'u    --until=<time:Time>'
+  opt 'p    --progress'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'

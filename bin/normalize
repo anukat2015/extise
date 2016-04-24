@@ -1,24 +1,60 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-p, u, m, r = false, 'now', nil, []
+require 'daru'
+
+m, p, g, r = :rescale, false, nil, nil
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
-  use "[<options>] #{to_arg Metric::TARGETS} [<metric>...]"
+  use "[<options>] #{to_arg Metric::TARGETS} <metric>"
+  opt 'm    --method=(rescale|sigmoid|tanh|z-score)'
   opt 'p    --progress'
-  opt 'u    --method=(rescale|sigmoid|tanh|z-score)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
-  arg "m #{to_arg Metric::TARGETS}", &included_in(Metric::TARGETS)
-  arg 'r [<metric>...]'
+  arg "g #{to_arg Metric::TARGETS}", &included_in(Metric::TARGETS)
+  arg 'r <metric>'
 end
 
 v, q = false, true if p
 
 AutoColor.disable on: self unless c
 
-# TODO implement
+metric = Metric.on(g).where(name: r).first || abort("#{Metric}:? not found by #{r} on #{g}")
+target, name, file, type, factory = Extnorm.resolve_normalization! target: g, name: r, method: m
+normalization = Metric.find_or_create_by! target: target, name: name, file: file, type: type
+
+inform "fetch expertises for #{g}:#{r} to normalize" if v unless q
+
+attributes = %i(subject_type subject_id user_id value)
+expertises = Expertise.by(metric).pluck(*attributes).map { |values| Hash[attributes.zip(values)].to_hashugar }
+
+warn "no expertises fetched for #{g}:#{r} to normalize" unless expertises.any?
+
+handle = factory.call Daru::Vector[*expertises.map(&:value)] rescue abort("#{type}:? unable to initialize")
+
+process expertises, progress: p do |expertise|
+  data = handle.normalize expertise.value
+
+  unless data
+    warn Extric::Reporting.message handle, user, subject, 'no data returned'
+    next
+  end
+
+  value = Float data[:value] rescue nil
+
+  unless value
+    warn Extric::Reporting.message handle, user, subject, 'value not numeric'
+    next
+  end
+
+  expertise = persist(Expertise, metric: normalization, subject_type: expertise.subject_type, subject_id: expertise.subject_id, user_id: expertise.user_id) do |r|
+    r.metric_data = data.except(:value).merge raw: expertise.value
+    r.value = value
+  end
+
+  dump_record expertise, :expertise
+end

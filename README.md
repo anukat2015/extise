@@ -26,6 +26,7 @@ A collection of tools to estimate developers' expertise
       extinf                Concept inferencers
       extise                Java DOM manipulation, IR utilities, SW metrics
       extisimo              Custom data model
+      extnorm               Basic normalizations
       extric                Basic metrics
       git_eclipse_org       Eclipse Git repository utilities
     log                     Log files
@@ -234,7 +235,7 @@ Infer concepts by inferencer
 
 Measure expertises by metric, fill `extisimo_{expertises}` tables
 
-    measure element
+    measure session
     measure session recent_lines_of_code
     measure session recent_lines_of_code --until=now
 
@@ -242,7 +243,6 @@ Measure expertises by metric, fill `extisimo_{expertises}` tables
 
 Normalize expertises measured by metric, fill `extisimo_{expertises}` tables
 
-    normalize element
     normalize session recent_lines_of_code
     normalize session recent_lines_of_code --method=tanh
 

@@ -28,7 +28,6 @@ Colored.colorize_defaults = { extra: :bold }
 
 trap(:SIGINT) { abort }
 
-# TODO move VERSION to each executable file
 VERSION = '0.0.0'
 
 def options(source = ARGV)

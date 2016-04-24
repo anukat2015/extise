@@ -5,8 +5,10 @@ l, u, c, s, t, v, q, p = nil, :restrict, true, false, 80, true, false, []
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<path>...]'
+  use '[<options>] --unload [<path>...]'
+  use "[<options>] --unload #{to_arg Metric::TARGETS} [<name>...]"
   opt 'l    --library=<path>'
-  opt 'u    --unload[=(delete|restrict)]'
+  opt 'u    --unload[=(force|restrict)]'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -15,29 +17,48 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-l = File.expand_path File.join(%w(.. ..) + (l ? [l] : %w(lib extric))), __FILE__
-p = Dir[File.join(%W(#{l} {#{Metric::TARGETS.map(&:pluralize) * ','}} *.rb))] if p.empty?
-
 AutoColor.disable on: self unless c
 
-p.map { |f| File.absolute_path f }.sort.each do |f|
-  target, name, _, type, _ = Extric.resolve_metric! file: f, library: l rescue abort $!
+def fetch_metric(target, name)
+  Metric.find_by(target: target, name: name) || abort("#{Metric}:? not found by #{name} on #{target}")
+end
+
+def load_metric(target, name, file, type)
+  metric = persist(Metric, target: target, name: name) { |r| r.file, r.type = file, type }
+
+  dump_record metric, :metric
+end
+
+def unload_metric(metric, force = false)
+  count = Expertise.by(metric).count
+
+  dump_record metric, :metric
+
+  if force
+    Expertise.by(metric).delete_all
+    warn "#{Metric}:#{metric.id} has #{count} expertises -> delete" unless q || count.zero?
+  end
+
+  metric.destroy! rescue abort "#{Metric}:#{metric.id} has #{count} expertises -> restrict"
+end
+
+if options.assigned?(:u) && (p.none? || Metric::TARGETS.include?(p.first.to_s))
+  target, names = p[0], p[1..-1] || []
+  metrics = Metric.order(:target, :name)
+  metrics = metrics.where(target: target) if target
+  metrics = names.map { |name| fetch_metric target, name } if names.any?
+
+  metrics.each { |metric| unload_metric metric, u.try(:to_sym) == :force }
+else
+  l = File.expand_path File.join(%w(.. ..) + (l ? [l] : %w(lib extric))), __FILE__
+  p = Dir[File.join(%W(#{l} {#{Metric::TARGETS.map(&:pluralize) * ','}} *.rb))] if p.empty?
+  d = p.map { |f| File.absolute_path f }.sort.map { |f| Extric.resolve_metric! file: f, library: l rescue abort $! }
 
   if !options.assigned? :u
-    metric = persist(Metric, target: target, name: name) { |r| r.file, r.type = f, type }
-
-    dump_record metric, :metric
+    d.each { |target, name, file, type| load_metric target, name, file, type }
   else
-    metric = Metric.find_by(target: target, name: name) || abort("#{Metric}:? not found by #{name} on #{target}")
-    count = Expertise.by(metric).count
+    metrics = d.map { |target, name, _, _| fetch_metric target, name }
 
-    dump_record metric, :metric
-
-    if u.try(:to_sym) == :delete
-      Expertise.by(metric).delete_all
-      warn "#{Metric}:#{metric.id} has #{count} expertises -> delete" unless q || count.zero?
-    end
-
-    metric.destroy! rescue abort "#{Metric}:#{metric.id} has #{count} expertises -> restrict"
+    metrics.each { |metric| unload_metric metric, u.try(:to_sym) == :force }
   end
 end

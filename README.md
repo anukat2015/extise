@@ -78,6 +78,10 @@ Import Eclipse bugs, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attac
 
     import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml --stat
     import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml
+
+Import Eclipse bugs with Mylyn context interactions, fill `bugs_eclipse_org_{bugzillas,users,bugs,comments,attachments,interactions}` tables
+
+    import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829 --stat
     import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829
     import_eclipse_bugs ../data/bugs.eclipse.org/bugzilla-bugs-20160110-1824/with-mylyn-contexts.xml --mylyn-contexts=../data/bugs.eclipse.org/mylyn-contexts-20160110-1829 --mylyn-contexts-mode=delete
 
@@ -136,12 +140,11 @@ Import Extise interactions from tasks and commits, fill `extisimo_{sessions,inte
 
 Load concept inferencers, fill `extisimo_{inferencers}` tables
 
-    load_inferencers
-    load_inferencers lib/extinf/tasks/*
-    load_inferencers --library=lib/extinf
+    TODO
 
-    load_inferencers --unload
-    load_inferencers --unload=delete lib/extric/tasks/jgibblda.rb
+Unloads concept inferencers, deplete `extisimo_{inferencers,concepts}` tables
+
+    TODO
 
 #### `load_metrics`
 
@@ -151,8 +154,17 @@ Load expertise metrics, fill `extisimo_{metrics}` tables
     load_metrics lib/extric/elements/*
     load_metrics --library=lib/extric
 
+Unloads expertise metrics, deplete `extisimo_{metrics}` tables
+
     load_metrics --unload
-    load_metrics --unload=delete lib/extric/sessions/recent_lines_of_code.rb
+    load_metrics --unload session
+    load_metrics --unload session recent_lines_of_code
+    load_metrics --unload lib/extric/elements/*
+    load_metrics --unload --library=lib/extric
+
+Unloads expertise metrics along with corresponding expertises, deplete `extisimo_{metrics,expertises}` tables
+
+    load_metrics --unload=force
 
 ### Raw import
 
@@ -220,7 +232,7 @@ Infer concepts by inferencer
 
 #### `measure`
 
-Measure expertises by metric
+Measure expertises by metric, fill `extisimo_{expertises}` tables
 
     measure element
     measure session recent_lines_of_code
@@ -228,7 +240,7 @@ Measure expertises by metric
 
 #### `normalize`
 
-Normalize expertises measured by metric
+Normalize expertises measured by metric, fill `extisimo_{expertises}` tables
 
     normalize element
     normalize session recent_lines_of_code

@@ -2281,28 +2281,28 @@ CREATE INDEX index_extisimo_sessions_on_finished_at ON extisimo_sessions USING b
 -- Name: index_extisimo_sessions_on_previous_commit_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_sessions_on_previous_commit_id ON extisimo_sessions USING btree (previous_commit_id);
+CREATE UNIQUE INDEX index_extisimo_sessions_on_previous_commit_id ON extisimo_sessions USING btree (previous_commit_id);
 
 
 --
 -- Name: index_extisimo_sessions_on_previous_identifier; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_sessions_on_previous_identifier ON extisimo_sessions USING btree (previous_identifier);
+CREATE UNIQUE INDEX index_extisimo_sessions_on_previous_identifier ON extisimo_sessions USING btree (previous_identifier);
 
 
 --
 -- Name: index_extisimo_sessions_on_revision_commit_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_sessions_on_revision_commit_id ON extisimo_sessions USING btree (revision_commit_id);
+CREATE UNIQUE INDEX index_extisimo_sessions_on_revision_commit_id ON extisimo_sessions USING btree (revision_commit_id);
 
 
 --
 -- Name: index_extisimo_sessions_on_revision_identifier; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_extisimo_sessions_on_revision_identifier ON extisimo_sessions USING btree (revision_identifier);
+CREATE UNIQUE INDEX index_extisimo_sessions_on_revision_identifier ON extisimo_sessions USING btree (revision_identifier);
 
 
 --

@@ -17,11 +17,11 @@ class CreateSessions < ActiveRecord::Migration
     add_index :extisimo_sessions, [:revision_commit_id, :user_id], unique: true, name: 'index_extisimo_sessions_as_unique'
 
     add_index :extisimo_sessions, :user_id
-    add_index :extisimo_sessions, :previous_commit_id
-    add_index :extisimo_sessions, :revision_commit_id
+    add_index :extisimo_sessions, :previous_commit_id, unique: true
+    add_index :extisimo_sessions, :revision_commit_id, unique: true
 
-    add_index :extisimo_sessions, :previous_identifier
-    add_index :extisimo_sessions, :revision_identifier
+    add_index :extisimo_sessions, :previous_identifier, unique: true
+    add_index :extisimo_sessions, :revision_identifier, unique: true
 
     add_index :extisimo_sessions, :started_at
     add_index :extisimo_sessions, :finished_at

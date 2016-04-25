@@ -21,7 +21,7 @@ options.binder.abort OptionParser::MissingArgument::Reason unless x && y unless 
 AutoColor.disable on: self unless c
 
 def fetch_expertise_values(q, s = nil, u = nil)
-  t, n = *q.split(/:/)
+  t, n = *q.split(/:/, 2)
   metric = Metric.find_by(target: t, name: n) || abort("#{Metric}:? not found by #{n} on #{t}")
   Hash[Expertise.fetch(by: metric, on: s, of: u).all.map { |e| [[e.user_id, e.subject_id], e.value] }]
 end

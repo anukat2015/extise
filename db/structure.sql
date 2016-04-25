@@ -34,18 +34,6 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE ar_internal_metadata (
-    key character varying NOT NULL,
-    value character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
 -- Name: bugs_eclipse_org_attachments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1051,6 +1039,18 @@ ALTER SEQUENCE git_eclipse_org_users_id_seq OWNED BY git_eclipse_org_users.id;
 
 
 --
+-- Name: schema_metadata; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE schema_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1239,14 +1239,6 @@ ALTER TABLE ONLY git_eclipse_org_projects ALTER COLUMN id SET DEFAULT nextval('g
 --
 
 ALTER TABLE ONLY git_eclipse_org_users ALTER COLUMN id SET DEFAULT nextval('git_eclipse_org_users_id_seq'::regclass);
-
-
---
--- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY ar_internal_metadata
-    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
 
 
 --
@@ -1455,6 +1447,14 @@ ALTER TABLE ONLY git_eclipse_org_projects
 
 ALTER TABLE ONLY git_eclipse_org_users
     ADD CONSTRAINT git_eclipse_org_users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schema_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY schema_metadata
+    ADD CONSTRAINT schema_metadata_pkey PRIMARY KEY (key);
 
 
 --

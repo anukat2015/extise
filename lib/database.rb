@@ -23,6 +23,7 @@ module Database
 
   def establish_connection(options = {})
     ActiveRecord::Base.default_timezone = :utc
+    ActiveRecord::Base.protected_environments = []
     ActiveRecord::Base.schema_format = :sql
 
     ActiveRecord::Base.internal_metadata_table_name = 'schema_metadata'

@@ -120,9 +120,9 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
     Extise::Data.parse_blocks(o).group_by { |b| b[:file] }
   end
 
-  abort("#{Commit}:#{commit.id} elements extraction failed") if blocks === false
-  abort "#{Commit}:#{commit.id} no elements extracted" if blocks.empty?
-  abort "#{Commit}:#{commit.id} some elements not extracted" if blocks.size < files.size
+  warn "#{Commit}:#{commit.id} elements extraction failed" if blocks === false
+  warn "#{Commit}:#{commit.id} no elements extracted" if blocks.empty?
+  warn "#{Commit}:#{commit.id} some elements not extracted" if blocks.size < files.size
 
   files.each do |f|
     k = f[:path]

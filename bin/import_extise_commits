@@ -124,6 +124,8 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
   warn "#{Commit}:#{commit.id} no elements extracted" if blocks.empty?
   warn "#{Commit}:#{commit.id} some elements not extracted" if blocks.size < files.size
 
+  next if blocks.blank? || blocks.size < files.size
+
   files.each do |f|
     k = f[:path]
 

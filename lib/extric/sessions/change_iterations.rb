@@ -1,14 +1,11 @@
-# NOTE: sums amounts of iterations in corresponding Gerrit changes
+# NOTE: sums amount of change iterations of tasks associated with a session
 
 class Extric::Sessions::ChangeIterations
   include Extric::Common
+  include Extric::Shared
 
   def measure(user, session)
     return unless user_matches? session, user
-
-    r = { change: [extisimo_tasks: [attachments: [interactions: :session]]] }
-    v = GitEclipseOrg::Message.joins(r).where(Session.table_name => { id: session.id }).distinct.count
-
-    { value: v }
+    { value: fetch_change_messages(of: session).count }
   end
 end

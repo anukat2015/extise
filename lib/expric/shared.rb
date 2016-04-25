@@ -9,6 +9,8 @@ module Expric::Shared
   include Extric::Extise
   include Extric::Git
 
+  include Extric::Shared
+
   def calculate_decay_factor(via: nil, on: nil, unit: nil, strength: nil)
     g = open_repository name: on.commit.repository.name
     t = g.rev_parse('HEAD').time.utc

@@ -3,7 +3,7 @@
 
 class Extric::Sessions::UniqueInteractions
   include Extric::Common
-  include Extric::Sessions::Interactions::Counting
+  include Extric::Shared
 
   def measure(user, session)
     return unless user_matches? session, user

@@ -1,5 +1,8 @@
 require 'active_support'
 
+require 'bugs_eclipse_org'
+require 'git_eclipse_org'
+
 require 'extisimo'
 require 'extric/version'
 
@@ -14,6 +17,7 @@ module Extric
   autoload :Reporting
   autoload :Resolving
   autoload :Reusing
+  autoload :Shared
 
   module Concepts
     extend ActiveSupport::Autoload
@@ -41,6 +45,7 @@ module Extric
     extend ActiveSupport::Autoload
 
     autoload :ChangeIterations
+    autoload :ChangeUploads
     autoload :CommentCount
     autoload :CommentLinesOfCode
     autoload :CyclomaticComplexity
@@ -64,6 +69,8 @@ module Extric
     autoload :SubsequentInteractions
     autoload :SubsequentSelections
     autoload :StatementCount
+    autoload :TaskPriority
+    autoload :TaskSeverity
     autoload :TypeCount
     autoload :UniqueEdits
     autoload :UniqueInteractions

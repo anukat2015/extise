@@ -3,6 +3,7 @@ module Extric::Common
 
   include Extric::Extise
   include Extric::Git
+  include Extric::Shared
 
   include Extric::Caching
   include Extric::Reporting

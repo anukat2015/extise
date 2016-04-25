@@ -26,6 +26,8 @@ metrics = Metric.on(g)
 metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n} on #{g}") } unless r.blank?
 metrics = Hash[metrics.map { |metric| [metric, (Dyna.load_and_create!(file: metric.file, type: metric.type).last rescue abort $!)] }]
 
+# NOTE: measure on subjects somehow related to tasks submitted prior to the desired time
+
 subjects = case g.to_sym
 when :concept
   Concept.left_joins conceptualities: [element: [commit: [repository: [project: :tasks]]]]
@@ -33,27 +35,30 @@ when :element
   Element.left_joins commit: [repository: [project: :tasks]]
 when :session
   Session.left_joins interactions: [attachment: :task]
+when :project
+  Project.left_joins :tasks
 end
-
-# NOTE: measure on subjects related to tasks submitted prior to the desired time
 
 inform "fetch subjects through tasks submitted until #{options.assigned?(:u) ? u : 'now'}" if v unless q
 
-subjects = subjects.where("#{Task.table_name}.submitted_at <= ?", u).order(created_at: :asc).distinct
+subjects = subjects.where(Task.table_name => { submitted_at:  u }).order(created_at: :asc).distinct
 
 warn "no subjects fetched until #{options.assigned?(:u) ? u : 'now'}" unless subjects.any?
 
-# NOTE: measure on all users associated with a concept via element's commit, such users may not have assigned tasks
-# NOTE: measure on all users who worked on elements with same node path, such users may not have assigned tasks
-# NOTE: measure on the session associated user only, such user has assigned at least one task
+# NOTE: measure for users associated with a concept via element's commit, such users may not have assigned tasks
+# NOTE: measure for users who modified elements with same node path, such users may not have assigned tasks
+# NOTE: measure for session user only, such user has assigned at least one task
+# NOTE: measure for users who contributed commits to a project, such users may not have assigned tasks
 
 users_fetcher = case g.to_sym
 when :concept
-  -> (concept) { User.joins(commits: [elements: [conceptualities: :concept]]).where("#{Concept.table_name}.id = ?", concept.id).distinct }
+  -> (concept) { User.joins(commits: [elements: [conceptualities: :concept]]).where(Concept.table_name => { id: concept.id }).distinct }
 when :element
-  -> (element) { User.joins(commits: :elements).where("#{Element.table_name}.path = ?", element.path).distinct }
+  -> (element) { User.joins(commits: :elements).where(Element.table_name => { path: element.path }).distinct }
 when :session
   -> (session) { [session.user] }
+when :project
+  -> (project) { User.joins(commits: [repository: :project]).where(Project.table_name => { id: project.id }).distinct }
 end
 
 # NOTE: set handle context so the measure setup will be available to the metric's handle object

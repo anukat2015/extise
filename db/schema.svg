@@ -120,14 +120,15 @@
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1891.1" y="967"></text>
   </g>
   <g>
-    <polygon style="fill: #ffffff" points="1380,220 1524.6,220 1536.6,232 1536.6,302 1380,302 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1380,220 1524.6,220 1536.6,232 1536.6,302 1380,302 "/>
+    <polygon style="fill: #ffffff" points="1380,220 1524.6,220 1536.6,232 1536.6,318 1380,318 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1380,220 1524.6,220 1536.6,232 1536.6,318 1380,318 "/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="1524.6,220 1524.6,232 1536.6,232 "/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1387" y="244.9">
       <tspan x="1387" y="244.9">expertise.subject:</tspan>
       <tspan x="1387" y="260.9">  element</tspan>
       <tspan x="1387" y="276.9">  session</tspan>
-      <tspan x="1387" y="292.9">  concept</tspan>
+      <tspan x="1387" y="292.9">  project</tspan>
+      <tspan x="1387" y="308.9">  concept</tspan>
     </text>
   </g>
   <g>
@@ -210,8 +211,8 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="1555.4,140 1555.4,152 1567.4,152 "/>
     <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1387" y="164.9">
       <tspan x="1387" y="164.9">conceptuality.subject:</tspan>
-      <tspan x="1387" y="180.9">  task</tspan>
-      <tspan x="1387" y="196.9">  element</tspan>
+      <tspan x="1387" y="180.9">  element</tspan>
+      <tspan x="1387" y="196.9">  task</tspan>
     </text>
   </g>
   <g>
@@ -528,7 +529,7 @@
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="660,970 560,970 560,954 510.2,954 "/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="562" y="962"></text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="562" y="959"></text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:end;font-family:monospace;font-style:normal;font-weight:normal" x="656" y="967">0..*</text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="514.2" y="951">1</text>
   </g>
@@ -550,13 +551,13 @@
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="862.5,954 920,954 920,1234 839.4,1234 "/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="922" y="1094"></text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="922" y="1091"></text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="866.5" y="951">0..*</text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="843.4" y="1231">1</text>
   </g>
   <g>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="187.1,1266 240,1266 240,1360 749.7,1360 749.7,1340 "/>
-    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="494.85" y="1360"></text>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="494.85" y="1357"></text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="191.1" y="1263">0..*</text>
     <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="753.7" y="1352">1</text>
   </g>

@@ -1,5 +1,5 @@
 class Extisimo::Metric < ActiveRecord::Base
-  TARGETS = %w(concept element session).freeze
+  TARGETS = %w(concept element session project).freeze
 
   has_many :expertises, dependent: :restrict_with_exception
 

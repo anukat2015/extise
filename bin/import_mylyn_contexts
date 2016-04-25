@@ -28,7 +28,7 @@ i = v && !options.default?(:p) ? 1 : 0
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
-  inform f unless q || i.zero?
+  inform f if (!q && i != 0) || (n != 0 && p.size > 1)
 
   if z
     q = false

@@ -29,7 +29,7 @@ FileUtils.mkpath contexts_directory = o || File.join(BugsEclipseOrg::DIRECTORY, 
 p.each do |f|
   d = Nokogiri::XML File.open_or f
 
-  inform f unless q || i.zero?
+  inform f if (!q && i != 0) || (n != 0 && p.size > 1)
 
   process d.css('bug'), count: n, worker: w, progress: !n.zero? do |b|
     bug_id = b.css('bug_id').text.strip

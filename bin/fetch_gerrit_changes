@@ -22,15 +22,15 @@ AutoColor.enable on: self, colored: c, colorings: {
   /\A *(change): \d+/ => -> (s, _) { s.sub(/(change): (\d+)/, "#{'\1'.blue}: #{'\2'.yellow}") }
 }
 
+r = 10
+l = 80_000
 i = v && !options.default?(:u) ? 1 : 0
 u = u.flat_map { |a| a.is_a?(IO) ? d.readlines.map(&:strip) : a }
-l = 80_000
-r = 10
 
 FileUtils.mkpath changes_directory = o || File.join(GitEclipseOrg::DIRECTORY, 'gerrit-changes')
 
 u.each do |a|
-  inform a unless q || i.zero?
+  inform a if (!q && i != 0) || (n != 0 && u.size > 1)
 
   retries = r
 

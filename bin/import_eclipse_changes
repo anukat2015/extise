@@ -44,7 +44,7 @@ i = v && !options.default?(:p) ? 1 : 0
 p = p.flat_map { |d| d.is_a?(IO) ? d.readlines.map(&:strip) : d }
 
 p.each do |d|
-  inform d unless q || i.zero?
+  inform d if (!q && i != 0) || (n != 0 && p.size > 1)
 
   files = Dir[File.join d, '*.json']
 

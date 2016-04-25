@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-e, c, s, t, v, m = false, true, true, 80, true, [STDIN]
+e, c, s, n, t, v, m = false, true, true, nil, 80, true, [STDIN]
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<path>...]'
@@ -9,6 +9,7 @@ ARGV.bind_and_parse! to: :locals do
   opt 'e -e --eval'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
+  opt 'n -n --lines=<count:Integer>'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   arg 'm [<mix>...]'
@@ -27,11 +28,14 @@ end
 abort 'No input data' if h.empty?
 
 pad_x = h.values.max_by { |x| x.to_s.length }.to_s.length
-pad_k = [h.keys.max_by { |k| k.length }.length, t - pad_x + (v ? 0 : 1 + 1 + 6 + 1) - 1].min
+pad_k = [h.keys.max_by { |k| k.length }.to_s.length, t - pad_x + (v ? 0 : 1 + 1 + 6 + 1) - 1].min
 max_b = [IO.console.winsize[1] - pad_k - (v ? 1 + pad_x + 1 + 6 + 1 : 1), 1].max
 sum = h.values.inject :+
 
+n = h.count + n if n.to_i < 0
+
 h.each do |k, x|
+  break if n && (n -= 1) < 0
   r = x.to_f / sum
   print "%#{pad_k}s".yellow % k[0..(pad_k - 1)]
   print " %#{pad_x}s" % x if v

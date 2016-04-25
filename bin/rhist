@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-e, c, s, t, v, m, a = false, true, true, 80, true, nil, nil
+e, c, s, n, t, v, m, a = false, true, true, nil, 80, true, nil, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <model> <attribute>'
@@ -9,6 +9,7 @@ ARGV.bind_and_parse! to: :locals do
   opt 'e -e --eval'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
+  opt 'n -n --lines=<count:Integer>'
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   arg 'm [<model>]'
@@ -21,7 +22,7 @@ AutoColor.disable on: self unless c
 
 data = Class.const_get(m).pluck(a) rescue abort("Unable to #{m}.pluck #{a}") unless e
 args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
-args.insert -2, "-t#{t}"
+args = args.insert(-2, "-t#{t}").tap { |a| a.insert -3, "-n#{n}" if n }
 
 if e
   data, args = %w(load_extise!) + ([m, a] + ARGV).compact.map { |x| Shellwords.escape x }, args << '-e'

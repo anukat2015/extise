@@ -14,6 +14,8 @@ class Extric::Sessions::TaskPriority
 
     p = fetch_tasks(of: session).pluck(:priority).map(&:to_sym).max_by { |p| PRIORITY_TO_VALUE[p] || raise }
 
+    return unless p
+
     { raw: p, value: PRIORITY_TO_VALUE[p] }
   end
 end

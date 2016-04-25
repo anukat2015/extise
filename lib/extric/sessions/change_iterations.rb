@@ -6,6 +6,11 @@ class Extric::Sessions::ChangeIterations
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: fetch_change_messages(of: session).count }
+
+    v = fetch_change_messages(of: session).count
+
+    return if v.zero?
+
+    { value: v }
   end
 end

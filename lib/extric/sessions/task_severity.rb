@@ -14,6 +14,8 @@ class Extric::Sessions::TaskSeverity
 
     s = fetch_tasks(of: session).pluck(:severity).map(&:to_sym).max_by { |s| SEVERITY_TO_VALUE[s] || raise }
 
+    return unless s
+
     { raw: s, value: SEVERITY_TO_VALUE[s] }
   end
 end

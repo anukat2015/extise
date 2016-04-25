@@ -11,7 +11,9 @@ class Extric::Sessions::ChangeUploads
 
     v = fetch_change_messages(of: session).pluck(:message).map { |m|
       Integer(m.match(/\A\s*uploade?d?\s+patch\s+set\s+(\d+)/i).to_a[1]) rescue 0
-    }.max || 0
+    }.max
+
+    return unless v
 
     { value: v }
   end

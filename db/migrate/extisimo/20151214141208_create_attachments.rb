@@ -1,4 +1,4 @@
-class CreateAttachments < ActiveRecord::Migration
+class CreateAttachments < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_attachments do |t|
       t.references :task, null: false

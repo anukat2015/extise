@@ -1,4 +1,4 @@
-class CreateChangesByGitEclipseOrg < ActiveRecord::Migration
+class CreateChangesByGitEclipseOrg < ActiveRecord::Migration[5.0]
   def change
     create_table :git_eclipse_org_changes do |t|
       t.references :project, null: false

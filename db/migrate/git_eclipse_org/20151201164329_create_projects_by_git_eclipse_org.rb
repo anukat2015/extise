@@ -1,4 +1,4 @@
-class CreateProjectsByGitEclipseOrg < ActiveRecord::Migration
+class CreateProjectsByGitEclipseOrg < ActiveRecord::Migration[5.0]
   def change
     create_table :git_eclipse_org_projects do |t|
       t.string :parent, null: false

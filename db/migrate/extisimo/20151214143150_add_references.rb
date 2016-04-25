@@ -1,4 +1,4 @@
-class AddReferences < ActiveRecord::Migration
+class AddReferences < ActiveRecord::Migration[5.0]
   def add_reference(table, reference, options = {})
     if options.delete :multiple
       references = "#{table}_#{reference.to_s.pluralize}"

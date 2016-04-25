@@ -1,4 +1,4 @@
-class CreateLabelsByGitEclipseOrg < ActiveRecord::Migration
+class CreateLabelsByGitEclipseOrg < ActiveRecord::Migration[5.0]
   def change
     create_table :git_eclipse_org_labels do |t|
       t.references :change, null: false

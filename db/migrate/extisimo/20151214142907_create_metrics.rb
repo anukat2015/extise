@@ -1,4 +1,4 @@
-class CreateMetrics < ActiveRecord::Migration
+class CreateMetrics < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_metrics do |t|
       t.string :target, null: false

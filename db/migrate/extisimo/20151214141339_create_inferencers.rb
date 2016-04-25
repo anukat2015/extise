@@ -1,4 +1,4 @@
-class CreateInferencers < ActiveRecord::Migration
+class CreateInferencers < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_inferencers do |t|
       t.string :target, null: false

@@ -1,4 +1,4 @@
-class CreateBugzillasByBugsEclipseOrg < ActiveRecord::Migration
+class CreateBugzillasByBugsEclipseOrg < ActiveRecord::Migration[5.0]
   def change
     create_table :bugs_eclipse_org_bugzillas do |t|
       t.string :version, null: false

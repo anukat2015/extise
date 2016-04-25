@@ -1,4 +1,4 @@
-class CreateUsersByGitEclipseOrg < ActiveRecord::Migration
+class CreateUsersByGitEclipseOrg < ActiveRecord::Migration[5.0]
   def change
     create_table :git_eclipse_org_users do |t|
       t.integer :accountid, null: false

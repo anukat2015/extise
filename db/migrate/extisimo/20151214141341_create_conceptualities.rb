@@ -1,4 +1,4 @@
-class CreateConceptualities < ActiveRecord::Migration
+class CreateConceptualities < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_conceptualities do |t|
       t.references :inferencer, null: false

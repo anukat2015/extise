@@ -1,4 +1,4 @@
-class CreateUsers < ActiveRecord::Migration
+class CreateUsers < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_users do |t|
       t.string :name, null: false

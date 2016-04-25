@@ -1,4 +1,4 @@
-class CreateRepositories < ActiveRecord::Migration
+class CreateRepositories < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_repositories do |t|
       t.references :project, null: false

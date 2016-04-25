@@ -1,4 +1,4 @@
-class CreateExpertises < ActiveRecord::Migration
+class CreateExpertises < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_expertises do |t|
       t.references :metric, null: false

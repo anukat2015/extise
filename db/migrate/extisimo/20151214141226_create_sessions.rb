@@ -1,4 +1,4 @@
-class CreateSessions < ActiveRecord::Migration
+class CreateSessions < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_sessions do |t|
       t.references :user, null: false

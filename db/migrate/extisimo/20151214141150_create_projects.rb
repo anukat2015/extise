@@ -1,4 +1,4 @@
-class CreateProjects < ActiveRecord::Migration
+class CreateProjects < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_projects do |t|
       t.string :product, null: false

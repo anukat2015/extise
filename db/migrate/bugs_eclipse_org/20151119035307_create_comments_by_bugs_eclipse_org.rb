@@ -1,4 +1,4 @@
-class CreateCommentsByBugsEclipseOrg < ActiveRecord::Migration
+class CreateCommentsByBugsEclipseOrg < ActiveRecord::Migration[5.0]
   def change
     create_table :bugs_eclipse_org_comments do |t|
       t.references :bug, null: false

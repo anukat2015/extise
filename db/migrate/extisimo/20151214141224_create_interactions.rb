@@ -1,4 +1,4 @@
-class CreateInteractions < ActiveRecord::Migration
+class CreateInteractions < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_interactions do |t|
       t.references :attachment, null: false

@@ -1,4 +1,4 @@
-class CreateConcepts < ActiveRecord::Migration
+class CreateConcepts < ActiveRecord::Migration[5.0]
   def change
     create_table :extisimo_concepts do |t|
       t.string :name, null: false

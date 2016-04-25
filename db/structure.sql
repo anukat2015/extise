@@ -34,6 +34,18 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
 -- Name: bugs_eclipse_org_attachments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1230,6 +1242,14 @@ ALTER TABLE ONLY git_eclipse_org_users ALTER COLUMN id SET DEFAULT nextval('git_
 
 
 --
+-- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
 -- Name: bugs_eclipse_org_attachments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1435,6 +1455,14 @@ ALTER TABLE ONLY git_eclipse_org_projects
 
 ALTER TABLE ONLY git_eclipse_org_users
     ADD CONSTRAINT git_eclipse_org_users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY schema_migrations
+    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
 
 
 --
@@ -2635,69 +2663,11 @@ CREATE INDEX index_git_eclipse_org_users_on_username ON git_eclipse_org_users US
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
-
-
---
 -- PostgreSQL database dump complete
 --
 
 SET search_path TO "$user", public;
 
-INSERT INTO schema_migrations (version) VALUES ('20151119035247');
+INSERT INTO schema_migrations (version) VALUES ('20151119035247'), ('20151119035252'), ('20151119035257'), ('20151119035307'), ('20151119035313'), ('20151119035321'), ('20151201164319'), ('20151201164329'), ('20151201164357'), ('20151201164409'), ('20151201164416'), ('20151214141051'), ('20151214141150'), ('20151214141155'), ('20151214141203'), ('20151214141208'), ('20151214141224'), ('20151214141226'), ('20151214141311'), ('20151214141321'), ('20151214141326'), ('20151214141339'), ('20151214141341'), ('20151214141344'), ('20151214142907'), ('20151214142912'), ('20151214143150');
 
-INSERT INTO schema_migrations (version) VALUES ('20151119035252');
-
-INSERT INTO schema_migrations (version) VALUES ('20151119035257');
-
-INSERT INTO schema_migrations (version) VALUES ('20151119035307');
-
-INSERT INTO schema_migrations (version) VALUES ('20151119035313');
-
-INSERT INTO schema_migrations (version) VALUES ('20151119035321');
-
-INSERT INTO schema_migrations (version) VALUES ('20151201164319');
-
-INSERT INTO schema_migrations (version) VALUES ('20151201164329');
-
-INSERT INTO schema_migrations (version) VALUES ('20151201164357');
-
-INSERT INTO schema_migrations (version) VALUES ('20151201164409');
-
-INSERT INTO schema_migrations (version) VALUES ('20151201164416');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141051');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141150');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141155');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141203');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141208');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141224');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141226');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141311');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141321');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141326');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141339');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141341');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214141344');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214142907');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214142912');
-
-INSERT INTO schema_migrations (version) VALUES ('20151214143150');
 

@@ -35,6 +35,8 @@ include Extisimo::Naming
 # TODO implement similar name search via Naming.pack_names
 
 def persist_user(u, o = {})
+  raise unless User.respond_to? :fetch
+
   user_name = filter_names(u.user_name, AMBIGUOUS_USER_NAME_PATTERN).first
   real_name = filter_names(u.real_name, AMBIGUOUS_REAL_NAME_PATTERN).first
 
@@ -98,8 +100,6 @@ def persist_user(u, o = {})
 rescue ActiveRecord::RecordNotUnique => failure
   (o[:retries] = ((o[:retries] || 8) - 1)) > 0 ? retry : raise(failure)
 end
-
-raise unless User.respond_to? :fetch
 
 users = case m.to_sym
 when :bugs_eclipse_org

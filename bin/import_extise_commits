@@ -30,6 +30,14 @@ AutoColor.disable on: self unless c
 
 include Extisimo::Naming
 
+def fetch_user(u)
+  raise unless User.respond_to? :fetch
+
+  users = User.fetch(compose_names(nil, u[:name]), compose_names(u[:name], nil), u[:name]).to_a
+  abort "#{User}:? ambiguous name #{u[:name]}" if users.count >= 2
+  users.first
+end
+
 # NOTE: since the sum of interactions is far greater than the sum commits,
 # we first process commits and leave interactions for later processing
 
@@ -53,11 +61,7 @@ process git.walk('HEAD', sort).to_a, count: n, worker: w, progress: !n.zero? do 
 
   next if c.parents.count != 1
 
-  authors = User.fetch(compose_names(nil, c.author[:name]), compose_names(c.author[:name], nil), c.author[:name]).to_a
-
-  abort "#{User}:? ambiguous name #{c.author[:name]}" if authors.count >= 2
-
-  author = authors.first
+  author = fetch_user c.author
 
   # NOTE: skip commits for users who can not be identified
 

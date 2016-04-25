@@ -10,9 +10,9 @@ gem 'upsert', '~> 2.1.1'
 
 # modeling
 
-gem 'activemodel', '~> 5.0.0.beta1'
-gem 'activerecord', '~> 5.0.0.beta1'
-gem 'activesupport', '~> 5.0.0.beta1'
+gem 'activemodel', '~> 5.0.0.beta3'
+gem 'activerecord', '~> 5.0.0.beta3'
+gem 'activesupport', '~> 5.0.0.beta3'
 
 # processing
 

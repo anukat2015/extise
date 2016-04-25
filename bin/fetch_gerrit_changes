@@ -5,14 +5,14 @@ o, n, w, u = nil, 4, :thread, STDIN
 c, v, q = true, false, false
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>] [<url>]'
+  use '[<options>] [<url>...]'
   opt 'o -o --output=<path>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 'v -v --[no-]verbose'
   opt 'q -q --quiet'
-  arg 'u [<url>]'
+  arg 'u [<url>...]'
 end
 
 n = 0 unless options.assigned? :n
@@ -23,23 +23,33 @@ AutoColor.enable on: self, colored: c, colorings: {
 }
 
 i = v && !options.default?(:u) ? 1 : 0
-u = u.read.strip if u.is_a? IO
-r = 1..Float::INFINITY
+u = u.flat_map { |a| a.is_a?(IO) ? d.readlines.map(&:strip) : a }
+l = 80_000
+r = 10
 
 FileUtils.mkpath changes_directory = o || File.join(GitEclipseOrg::DIRECTORY, 'gerrit-changes')
 
-inform u unless q || i.zero?
+u.each do |a|
+  inform a unless q || i.zero?
 
-process r, count: n, worker: w, progress: !n.zero? do |change_id|
-  file = File.join changes_directory, "#{change_id}.json"
+  retries = r
 
-  puts "#{'  ' * i}change: #{change_id}" unless q
+  process 1..l, count: n, worker: w, progress: !n.zero? do |change_id|
+    file = File.join changes_directory, "#{change_id}.json"
 
-  next if File.exist? file
+    puts "#{'  ' * i}change: #{change_id}" unless q
 
-  content = `curl -#{'s' if !v || q}S #{u}/changes/#{change_id}/detail`.sub(/\A\)\]\}'\s*/, '')
+    next if File.exist? file
 
-  next if content.blank? || content =~ /\ANot\s+Found/i
+    content = `curl -#{'s' if !v || q}S #{a}/changes/#{change_id}/detail`.sub(/\A\)\]\}'\s*/, '')
 
-  File.write file, content
+    if content.blank? || content =~ /\ANot\s+Found/i
+      next if (retries -= 1) > 0
+      raise Parallel::Break
+    end
+
+    File.write file, content
+
+    retries = r
+  end
 end

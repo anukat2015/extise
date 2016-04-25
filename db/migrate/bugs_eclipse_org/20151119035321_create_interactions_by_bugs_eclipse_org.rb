@@ -18,8 +18,6 @@ class CreateInteractionsByBugsEclipseOrg < ActiveRecord::Migration[5.0]
       t.timestamps null: false
     end
 
-    add_index :bugs_eclipse_org_interactions, :attachment_id
-
     # NOTE: provided attributes of available Mylyn context data from bugs.eclipse.org still
     # pose significant ambiguity and hence its impossible to specify a unique index here
 

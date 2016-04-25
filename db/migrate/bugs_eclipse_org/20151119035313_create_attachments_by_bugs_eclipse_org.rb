@@ -20,9 +20,6 @@ class CreateAttachmentsByBugsEclipseOrg < ActiveRecord::Migration[5.0]
       t.timestamps null: false
     end
 
-    add_index :bugs_eclipse_org_attachments, :bug_id
-    add_index :bugs_eclipse_org_attachments, :submitter_id
-
     add_index :bugs_eclipse_org_attachments, :attachid, unique: true, name: 'index_bugs_eclipse_org_attachments_as_unique'
     add_index :bugs_eclipse_org_attachments, :date
     add_index :bugs_eclipse_org_attachments, :delta_ts

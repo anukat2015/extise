@@ -15,9 +15,6 @@ class CreateCommentsByBugsEclipseOrg < ActiveRecord::Migration[5.0]
       t.timestamps null: false
     end
 
-    add_index :bugs_eclipse_org_comments, :bug_id
-    add_index :bugs_eclipse_org_comments, :author_id
-
     add_index :bugs_eclipse_org_comments, :commentid, unique: true, name: 'index_bugs_eclipse_org_comments_as_unique'
     add_index :bugs_eclipse_org_comments, :who
     add_index :bugs_eclipse_org_comments, :who_name

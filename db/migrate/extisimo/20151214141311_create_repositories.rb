@@ -9,7 +9,5 @@ class CreateRepositories < ActiveRecord::Migration[5.0]
     end
 
     add_index :extisimo_repositories, :name, unique: true, name: 'index_extisimo_repositories_as_unique'
-
-    add_index :extisimo_repositories, :project_id
   end
 end

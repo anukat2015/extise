@@ -18,9 +18,6 @@ class CreateInteractions < ActiveRecord::Migration[5.0]
     # NOTE: provided attributes of available Mylyn context data from bugs.eclipse.org still
     # pose significant ambiguity and hence its impossible to specify a unique index here
 
-    add_index :extisimo_interactions, :attachment_id
-    add_index :extisimo_interactions, :session_id
-
     add_index :extisimo_interactions, :kind
 
     add_index :extisimo_interactions, :file

@@ -11,9 +11,6 @@ class CreateMessagesByGitEclipseOrg < ActiveRecord::Migration[5.0]
       t.timestamps null: false
     end
 
-    add_index :git_eclipse_org_messages, :change_id
-    add_index :git_eclipse_org_messages, :author_id
-
     add_index :git_eclipse_org_messages, :identifier, unique: true, name: 'index_git_eclipse_org_messages_as_unique'
     add_index :git_eclipse_org_messages, :date
   end

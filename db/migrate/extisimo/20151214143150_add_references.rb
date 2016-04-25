@@ -4,8 +4,8 @@ class AddReferences < ActiveRecord::Migration[5.0]
       references = "#{table}_#{reference.to_s.pluralize}"
 
       create_table references, id: false do |t|
-        t.references table.to_s.singularize, options
-        t.references reference, options
+        t.references table.to_s.singularize, options.merge(index: false)
+        t.references reference, options.merge(index: false)
       end
 
       add_index references, %W(#{table.to_s.singularize}_id #{reference}_id), unique: true, name: "index_#{references}_as_unique"

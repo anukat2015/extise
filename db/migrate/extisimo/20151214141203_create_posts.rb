@@ -14,9 +14,6 @@ class CreatePosts < ActiveRecord::Migration[5.0]
 
     add_index :extisimo_posts, [:submitted_at, :author_id, :task_id], unique: true, name: 'index_extisimo_posts_as_unique'
 
-    add_index :extisimo_posts, :task_id
-    add_index :extisimo_posts, :author_id
-
     add_index :extisimo_posts, :submitted_at
     add_index :extisimo_posts, :modified_at
   end

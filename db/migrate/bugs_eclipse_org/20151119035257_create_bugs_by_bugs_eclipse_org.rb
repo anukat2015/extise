@@ -39,10 +39,6 @@ class CreateBugsByBugsEclipseOrg < ActiveRecord::Migration[5.0]
       t.timestamps null: false
     end
 
-    add_index :bugs_eclipse_org_bugs, :bugzilla_id
-    add_index :bugs_eclipse_org_bugs, :author_id
-    add_index :bugs_eclipse_org_bugs, :assignee_id
-
     add_index :bugs_eclipse_org_bugs, :bugid, unique: true, name: 'index_bugs_eclipse_org_bugs_as_unique'
     add_index :bugs_eclipse_org_bugs, :creation_ts
     add_index :bugs_eclipse_org_bugs, :delta_ts

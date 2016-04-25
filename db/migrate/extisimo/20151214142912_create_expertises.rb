@@ -14,10 +14,7 @@ class CreateExpertises < ActiveRecord::Migration[5.0]
 
     add_index :extisimo_expertises, [:user_id, :subject_id, :subject_type, :metric_id], unique: true, name: 'index_extisimo_expertises_as_unique'
 
-    add_index :extisimo_expertises, :metric_id
     add_index :extisimo_expertises, :subject_type
-    add_index :extisimo_expertises, :subject_id
-    add_index :extisimo_expertises, :user_id
 
     add_index :extisimo_expertises, :value
   end

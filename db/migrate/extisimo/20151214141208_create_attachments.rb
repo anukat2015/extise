@@ -17,9 +17,6 @@ class CreateAttachments < ActiveRecord::Migration[5.0]
 
     add_index :extisimo_attachments, [:submitted_at, :author_id, :task_id], unique: true, name: 'index_extisimo_attachments_as_unique'
 
-    add_index :extisimo_attachments, :task_id
-    add_index :extisimo_attachments, :author_id
-
     add_index :extisimo_attachments, :file
     add_index :extisimo_attachments, :type
 

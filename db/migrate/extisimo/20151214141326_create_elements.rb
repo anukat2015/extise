@@ -16,8 +16,6 @@ class CreateElements < ActiveRecord::Migration[5.0]
 
     add_index :extisimo_elements, [:commit_id, :file, :path], unique: true, name: 'index_extisimo_elements_as_unique'
 
-    add_index :extisimo_elements, :commit_id
-
     add_index :extisimo_elements, :file
     add_index :extisimo_elements, :path
   end

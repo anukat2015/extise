@@ -77,7 +77,7 @@ def load_extise!
 
   def dump_record(r, n = nil, i = 0, o = options.bound)
     return if o[:q]
-    attributes = r.is_a?(Hash) ? r.dup : r.attributes.merge(class: r.class.name)
+    attributes = r.is_a?(Hash) ? r.symbolize_keys : r.attributes.symbolize_keys.merge(class: r.class.name, id: r.id)
     print "#{'  ' * i}#{"#{n.to_s.blue}: " if n}"
     puts "#{attributes.delete(:class).green}#{":#{attributes[:id].to_s.yellow}" unless o[:v]}"
     attributes.to_a.tap { |a| a.sort_by! { |p| p[0] } if o[:s] }.each do |k, v|

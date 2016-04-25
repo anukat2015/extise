@@ -5,3 +5,5 @@
 *.jar binary
 *.tgz binary
 *.zip binary
+
+lib/extise/src/stopwords/* linguist-vendored

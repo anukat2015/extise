@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-u, n, w, g, r = 'now', 4, :thread, nil, []
+u, n, w, g, r = :now, 4, :thread, nil, []
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
@@ -23,7 +23,7 @@ v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
 
-u = Time.now if u == 'now'
+u = Time.now if u.to_sym == :now
 
 metrics = Metric.on(g)
 metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n} on #{g}") } unless r.blank?

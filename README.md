@@ -250,7 +250,7 @@ Normalize expertises measured by metric, fill `extisimo_{expertises}` tables
 
 Run measure or normalize batch, fill `extisimo_{expertises}` 
 
-    bae ../samples/metrics-batch
+    bae ../data/extise.fiit.stuba.sk/metric-batches/interactions
 
     echo session edits\nsession edits:tanh | bae
 

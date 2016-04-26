@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-u, p, g, r = 'now', false, nil, []
+u, n, w, g, r = 'now', 4, :thread, nil, []
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use "[<options>] #{to_arg Metric::TARGETS} [<metric>...]"
   opt 'u    --until=<time:Time>'
-  opt 'p    --progress'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -17,10 +18,12 @@ ARGV.bind_and_parse! to: :locals do
   arg 'r [<metric>...]'
 end
 
-u = Time.now if u == 'now'
-v, q = false, true if p
+n = 0 unless options.assigned? :n
+v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
+
+u = Time.now if u == 'now'
 
 metrics = Metric.on(g)
 metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n} on #{g}") } unless r.blank?
@@ -67,7 +70,7 @@ metrics.each { |_, handle| handle.context = { until: u } if handle.respond_to? :
 
 # NOTE: measure for each subject through each fetched user via each metric's handle object
 
-process subjects, progress: p do |subject|
+process subjects, count: n, worker: w, progress: !n.zero? do |subject|
   inform "fetch users for #{g}:#{subject.id} who somehow relate" if v unless q
 
   users = users_fetcher.call subject

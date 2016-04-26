@@ -19,10 +19,6 @@ module Extric
   autoload :Reusing
   autoload :Shared
 
-  module Concepts
-    extend ActiveSupport::Autoload
-  end
-
   module Elements
     extend ActiveSupport::Autoload
 
@@ -75,6 +71,19 @@ module Extric
     autoload :UniqueEdits
     autoload :UniqueInteractions
     autoload :UniqueSelections
+  end
+
+  module Projects
+    extend ActiveSupport::Autoload
+
+    autoload :AssignedTasks
+    autoload :OpenedChanges
+    autoload :ReportedTasks
+    autoload :ReviewedChanges
+  end
+
+  module Concepts
+    extend ActiveSupport::Autoload
   end
 
   extend Resolving

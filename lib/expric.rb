@@ -27,5 +27,9 @@ module Expric
     autoload :DpLocdcT
   end
 
+  module Projects
+    extend ActiveSupport::Autoload
+  end
+
   extend Extric::Resolving
 end

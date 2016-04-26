@@ -1,4 +1,4 @@
-# NOTE: sums amount of change uploads of tasks associated with a session
+# NOTE: sums amount of Gerrit change uploads of tasks associated with a session
 
 class Extric::Sessions::ChangeUploads
   include Extric::Common

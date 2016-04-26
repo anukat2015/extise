@@ -1,4 +1,4 @@
-# NOTE: sums amount of change iterations of tasks associated with a session
+# NOTE: sums amount of Gerrit change iterations of tasks associated with a session
 
 class Extric::Sessions::ChangeIterations
   include Extric::Common

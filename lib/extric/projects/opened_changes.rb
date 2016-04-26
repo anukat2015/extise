@@ -6,7 +6,7 @@ class Extric::Projects::OpenedChanges
 
   def measure(user, project)
     c = { project: project, GitEclipseOrg::Change.table_name => { owner_id: user.git_eclipse_org_users }}
-    v = Extisimo::Task.joins(:git_eclipse_org_changes).where(c).count
+    v = Extisimo::Task.joins(:git_eclipse_org_changes).where(c).distinct.count
 
     { value: v }
   end

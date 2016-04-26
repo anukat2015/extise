@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require_relative 'common'
+
+u, n, w, g, p = :now, 4, :thread, nil, [STDIN]
+c, s, t, v, q = true, false, 80, true, false
+
+ARGV.bind_and_parse! to: :locals do
+  use '[<options>] [<path>...]'
+  opt 'u    --until=<time>'
+  opt 'n    --parallel[=<count:Integer>]'
+  opt 'w    --parallel-worker=(process|thread)'
+  opt 'c -c --[no-]color'
+  opt 'v -v --[no-]verbose'
+  opt 'q -q --quiet'
+  arg 'p [<path>...]'
+end
+
+AutoColor.disable on: self unless c
+
+def run(*a)
+  c, o = (a.flatten << '--no-color') * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L')
+  l = File.expand_path File.join(%W(.. .. log #{a[0]} #{o}.log)), __FILE__
+  FileUtils.mkpath File.dirname l
+  File.write l, "#{o}\n\n#{c}\n\n"
+  puts "#{a[0..3] * ' '}".cyan
+  r = system "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l}"
+  puts r ? 'success'.green : 'failure'.red
+end
+
+h = Set[]
+
+p.each do |f|
+  File.open_or(f).each_line.reject { |l| l =~ /\A\s*#|\A\s*\z/ }.map(&:strip).each do |d|
+    d = d.match(/\A\s*#|\A(?<t>\w+)\s+(?<m>\w+)(:(?<n>\w+))?\z/)
+    p = %W(--parallel=#{n} --parallel-worker=#{w})
+
+    next unless d
+
+    run 'measure', d[:t], d[:m], "--until=#{u}", p if h.add? d.to_a[1..2]
+    run 'normalize', d[:t], d[:m], "--method=#{d[:n]}", p if d[:n] && h.add?(d.to_a[1..3])
+  end
+end

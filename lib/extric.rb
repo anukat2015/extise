@@ -1,4 +1,5 @@
 require 'active_support'
+require 'daru'
 
 require 'bugs_eclipse_org'
 require 'git_eclipse_org'

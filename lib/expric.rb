@@ -1,4 +1,5 @@
 require 'active_support'
+require 'daru'
 
 require 'extisimo'
 require 'extric'
@@ -29,6 +30,10 @@ module Expric
 
   module Projects
     extend ActiveSupport::Autoload
+
+    autoload :DpCcC
+
+    autoload :DpLocdcC
   end
 
   extend Extric::Resolving

@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-require 'statsample'
-
 m, c, s, t, v, x, y = :spearman, true, true, 80, true, nil, nil
 
 ARGV.bind_and_parse! to: :locals do
@@ -17,6 +15,8 @@ ARGV.bind_and_parse! to: :locals do
 end
 
 AutoColor.disable on: self unless c
+
+require 'statsample'
 
 def calculate_correlation(x, y, s = nil, u = nil, o = options.bound)
   args = [x, y] + { method: o[:m], subject: s, user: u }.map { |k, v| "--#{k}=#{v}" if v }.compact + %w(--no-color --no-verbose)

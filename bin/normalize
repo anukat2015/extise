@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-require 'daru'
-
 m, n, w, g, r = :rescale, 4, :thread, nil, nil
 c, s, t, v, q = true, false, 80, true, false
 
@@ -24,6 +22,8 @@ n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
+
+require 'daru'
 
 metric = Metric.on(g).where(name: r).first || abort("#{Metric}:? not found by #{r} on #{g}")
 target, name, file, type, factory = Extnorm.resolve_normalization! target: g, name: r, method: m

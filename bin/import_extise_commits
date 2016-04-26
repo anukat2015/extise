@@ -22,7 +22,6 @@ end
 # method parameters, as well as proper interactions' structure handle parsing to be able to, at least partially,
 # match elements of commits with those of interactions
 
-d ||= File.join GitEclipseOrg::DIRECTORY, 'repositories'
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
@@ -37,6 +36,8 @@ def fetch_user(u)
   abort "#{User}:? ambiguous name #{u[:name]}" if users.count >= 2
   users.first
 end
+
+d ||= File.join GitEclipseOrg::DIRECTORY, 'repositories'
 
 # NOTE: since the sum of interactions is far greater than the sum commits,
 # we first process commits and leave interactions for later processing

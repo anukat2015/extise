@@ -7,3 +7,4 @@
 *.zip binary
 
 lib/extise/src/stopwords/* linguist-vendored
+spec/fixtures/* linguist-vendored

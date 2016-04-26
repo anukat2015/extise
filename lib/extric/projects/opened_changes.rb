@@ -5,6 +5,9 @@ class Extric::Projects::OpenedChanges
   include Extric::Shared
 
   def measure(user, project)
-    { value: user.reported_tasks.joins(:git_eclipse_org_changes).where(project: project, owner: user).count }
+    c = { project: project, GitEclipseOrg::Change.table_name => { owner_id: user.git_eclipse_org_users }}
+    v = Extisimo::Task.joins(:git_eclipse_org_changes).where(c).count
+
+    { value: v }
   end
 end

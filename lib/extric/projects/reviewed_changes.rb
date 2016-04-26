@@ -5,6 +5,9 @@ class Extric::Projects::ReviewedChanges
   include Extric::Shared
 
   def measure(user, project)
-    { value: user.reported_tasks.joins(git_eclipse_org_changes: :labels).where(project: project, user: user).count }
+    c = { project: project, GitEclipseOrg::Label.table_name => { user_id: user.git_eclipse_org_users }}
+    v = Extisimo::Task.joins(git_eclipse_org_changes: :labels).where(c).count
+
+    { value: v }
   end
 end

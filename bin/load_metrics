@@ -36,7 +36,7 @@ def unload_metric(metric, force = false)
 
   if force
     Expertise.by(metric).delete_all
-    warn "#{Metric}:#{metric.id} has #{count} expertises -> delete" unless q || count.zero?
+    warn "#{Metric}:#{metric.id} has #{count} expertises -> delete" unless options.bound[:q] || count.zero?
   end
 
   metric.destroy! rescue abort "#{Metric}:#{metric.id} has #{count} expertises -> restrict"

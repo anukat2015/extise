@@ -41,7 +41,7 @@ end
 
 inform "fetch subjects through tasks submitted until #{options.assigned?(:u) ? u : 'now'}" if v unless q
 
-subjects = subjects.where(Task.table_name => { submitted_at:  u }).order(created_at: :asc).distinct
+subjects = subjects.where("#{Task.table_name}.submitted_at <= ?", u).order(created_at: :asc).distinct
 
 warn "no subjects fetched until #{options.assigned?(:u) ? u : 'now'}" unless subjects.any?
 

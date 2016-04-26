@@ -78,6 +78,7 @@ module Extric
     extend ActiveSupport::Autoload
 
     autoload :AssignedTasks
+    autoload :Commits
     autoload :OpenedChanges
     autoload :ReportedTasks
     autoload :ReviewedChanges

@@ -6,7 +6,7 @@ c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use "[<options>] #{to_arg Metric::TARGETS} [<metric>...]"
-  opt 'u    --until=<time:Time>'
+  opt 'u    --until=<time>', &as_time_with(now: -> { Time.now })
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -22,8 +22,6 @@ n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 
 AutoColor.disable on: self unless c
-
-u = Time.now if u.to_sym == :now
 
 metrics = Metric.on(g)
 metrics = r.map { |n| metrics.where(name: n).first || abort("#{Metric}:? not found by #{n} on #{g}") } unless r.blank?

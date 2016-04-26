@@ -21,6 +21,7 @@ require 'parallen'
 require 'progresso'
 require 'rugged'
 require 'safe_eval'
+require 'set'
 require 'shellwords'
 require 'yaml'
 

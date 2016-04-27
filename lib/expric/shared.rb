@@ -37,24 +37,14 @@ module Expric::Shared
     i = count_subsequent_interactions inside: on, kind: 'edit'
     l = count_subsequent_interactions inside: on, kind: 'selection'
 
-    c0 = c[:fraction] || {}
-    c1 = c[:sum] || {}
+    v0 = c[:volume] || 0.5
+    e0 = c[:unique_edits] || 0.25
+    s0 = c[:unique_selections] || 0.1
+    i0 = c[:subsequent_edits] || 0.1
+    l0 = c[:subsequent_selections] || 0.05
 
-    v0 = c0[:volume] || 0.5
-    e0 = c0[:unique_edits] || 0.25
-    s0 = c0[:unique_selections] || 0.1
-    i0 = c0[:subsequent_edits] || 0.1
-    l0 = c0[:subsequent_selections] || 0.05
+    # NOTE: volume of change (reflects work done) per interactions (reflects time spent)
 
-    v1 = c1[:volume] || 0.5
-    e1 = c1[:unique_edits] || 0.25
-    s1 = c1[:unique_selections] || 0.25
-    i1 = c1[:subsequent_edits] || 0
-    l1 = c1[:subsequent_selections] || 0
-
-    p0 = (v0 * v) / (e0 * e + s0 * s + i0 * i + l0 * l)
-    p1 = (v1 * v) + (e1 * e + s1 * s + i1 * i + l1 * l)
-
-    p0 * p1
+    (v0 * v) / (e0 * e + s0 * s + i0 * i + l0 * l)
   end
 end

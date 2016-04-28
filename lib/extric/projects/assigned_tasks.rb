@@ -5,6 +5,6 @@ class Extric::Projects::AssignedTasks
   include Extric::Shared
 
   def measure(user, project)
-    { value: user.assigned_tasks.joins(:project).where(project: project).count }
+    { value: user.assigned_tasks.where(project_id: project.id).count }
   end
 end

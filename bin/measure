@@ -53,13 +53,13 @@ warn "no subjects fetched until #{options.assigned?(:u) ? u : 'now'}" unless sub
 
 users_fetcher = case g.to_sym
 when :concept
-  -> (concept) { User.joins(commits: [elements: [conceptualities: :concept]]).where(Concept.table_name => { id: concept.id }).distinct }
+  -> (concept) { User.joins(commits: [elements: :conceptualities]).where(Conceptuality.table_name => { concept_id: concept.id }).distinct }
 when :element
   -> (element) { User.joins(commits: :elements).where(Element.table_name => { path: element.path }).distinct }
 when :session
   -> (session) { [session.user] }
 when :project
-  -> (project) { User.joins(commits: [repository: :project]).where(Project.table_name => { id: project.id }).distinct }
+  -> (project) { User.joins(commits: :repository).where(Repository.table_name => { project_id: project.id }).distinct }
 end
 
 # NOTE: set handle context so the measure setup will be available to the metric's handle object

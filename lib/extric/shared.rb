@@ -5,12 +5,12 @@ module Extric::Shared
 
   def fetch_tasks(of: nil)
     through = { attachments: [interactions: :session] }
-    Extisimo::Task.left_joins(through).where(Session.table_name => { id: of.id }).distinct
+    Extisimo::Task.joins(through).where(Session.table_name => { id: of.id }).distinct
   end
 
   def fetch_change_messages(of: nil)
     through = { change: [extisimo_tasks: [attachments: [interactions: :session]]] }
-    GitEclipseOrg::Message.left_joins(through).where(Session.table_name => { id: of.id }).distinct
+    GitEclipseOrg::Message.joins(through).where(Session.table_name => { id: of.id }).distinct
   end
 
   def count_interactions(inside: nil, kind: DEFAULT_KIND)

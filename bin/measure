@@ -31,13 +31,13 @@ metrics = Hash[metrics.map { |metric| [metric, (Dyna.load_and_create!(file: metr
 
 subjects = case g.to_sym
 when :concept
-  Concept.left_joins conceptualities: [element: [commit: [repository: [project: :tasks]]]]
+  Concept.joins conceptualities: [element: [commit: [repository: [project: :tasks]]]]
 when :element
-  Element.left_joins commit: [repository: [project: :tasks]]
+  Element.joins commit: [repository: [project: :tasks]]
 when :session
-  Session.left_joins interactions: [attachment: :task]
+  Session.joins interactions: [attachment: :task]
 when :project
-  Project.left_joins :tasks
+  Project.joins :tasks
 end
 
 inform "fetch subjects through tasks submitted until #{options.assigned?(:u) ? u : 'now'}" if v unless q

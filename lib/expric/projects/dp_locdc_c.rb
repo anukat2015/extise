@@ -8,7 +8,7 @@ class Expric::Projects::DpLocdcC
 
   def measure(user, project)
     t = { interactions: [attachment: :task] }
-    r = user.sessions.left_joins(t).where(Extisimo::Task.table_name => { project_id: project.id }).distinct.to_a
+    r = user.sessions.joins(t).where(Extisimo::Task.table_name => { project_id: project.id }).distinct.to_a
 
     return unless r.any?
 

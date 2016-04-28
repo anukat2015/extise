@@ -3,7 +3,10 @@ package sk.stuba.fiit.extise;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,16 +16,15 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ComputationException;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
-import static java.lang.System.in;
-import static java.lang.System.out;
-
 import static com.google.common.base.Ascii.FS;
 import static com.google.common.base.Ascii.US;
 import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterators.forArray;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
@@ -32,7 +34,7 @@ import static com.google.common.io.Resources.getResource;
 public final class Bootstrap {
   private Bootstrap() {}
 
-  public static void run(final Function<? super Collection<String>, ? extends Collection<?>> function, final String ... files) throws Exception {
+  public static void run(final Environment environment, final Function<? super Collection<String>, ? extends Collection<?>> function, final String ... files) throws IOException {
     List<String> inputs;
 
     if (files.length != 0) {
@@ -42,15 +44,38 @@ public final class Bootstrap {
         inputs.add(file + ((char) US) + Files.toString(new File(file), UTF_8));
       }
     } else {
-      Reader reader = new BufferedReader(new InputStreamReader(in, UTF_8));
+      Reader reader = new BufferedReader(new InputStreamReader(environment.input, UTF_8));
 
       inputs = Splitter.on((char) FS).splitToList(CharStreams.toString(reader));
     }
 
-    Collection<?> outputs = function.apply(inputs);
+    PrintWriter writer = new PrintWriter(environment.output, true);
+
+    Collection<?> outputs;
+
+    try {
+      outputs = function.apply(inputs);
+    } catch (Exception failure) {
+      throw new ComputationException(failure);
+    }
 
     for (Object output: outputs) {
-      out.println(output);
+      writer.println(output);
+    }
+  }
+
+  public static final class Environment {
+    final InputStream input;
+
+    final OutputStream output;
+
+    private Environment(final InputStream input, final OutputStream output) {
+      this.input = checkNotNull(input);
+      this.output = checkNotNull(output);
+    }
+
+    public static Environment withStreams(final InputStream input, final OutputStream output) {
+      return new Environment(input, output);
     }
   }
 

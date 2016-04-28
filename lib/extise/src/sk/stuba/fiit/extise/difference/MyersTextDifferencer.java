@@ -13,16 +13,10 @@ import difflib.myers.MyersDiff;
 
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 
-import static sk.stuba.fiit.extise.Bootstrap.run;
-
 import static sk.stuba.fiit.perconik.utilities.MoreStrings.lines;
 
 public final class MyersTextDifferencer extends Differencer {
   public MyersTextDifferencer() {}
-
-  public static void main(final String ... args) throws Exception {
-    run(new MyersTextDifferencer(), args);
-  }
 
   static String chunk(final Chunk<String> chunk) {
     return chunk.getPosition() + ":" + chunk.getLines().size();

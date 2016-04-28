@@ -15,14 +15,9 @@ import static java.util.Arrays.asList;
 
 import static com.google.common.collect.Sets.newLinkedHashSetWithExpectedSize;
 
-import static sk.stuba.fiit.extise.Bootstrap.run;
 import static sk.stuba.fiit.extise.Java.parse;
 
 public final class LogicalLinesOfCode extends NumericMetric<Integer> {
-  public static void main(final String ... args) throws Exception {
-    run(new LogicalLinesOfCode(), args);
-  }
-
   @Override
   public Collection<Integer> apply(final String input) {
     CompilationUnit unit = (CompilationUnit) parse(input);

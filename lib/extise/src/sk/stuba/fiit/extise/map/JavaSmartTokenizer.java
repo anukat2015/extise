@@ -12,8 +12,6 @@ import sk.stuba.fiit.perconik.core.java.dom.NodeCollectors;
 import sk.stuba.fiit.perconik.core.java.dom.NodeTokenizer;
 import sk.stuba.fiit.perconik.utilities.function.ListCollector;
 
-import static sk.stuba.fiit.extise.Bootstrap.run;
-
 import static sk.stuba.fiit.perconik.eclipse.jdt.core.dom.NodeType.BLOCK_COMMENT;
 import static sk.stuba.fiit.perconik.eclipse.jdt.core.dom.NodeType.JAVADOC;
 import static sk.stuba.fiit.perconik.eclipse.jdt.core.dom.NodeType.LINE_COMMENT;
@@ -49,9 +47,5 @@ public final class JavaSmartTokenizer extends JavaTokenizer {
         return NodeTokenizer.builder().collector(collector).transformer(transformer).build();
       }
     };
-  }
-
-  public static void main(final String ... args) throws Exception {
-    run(new JavaSmartTokenizer(), args);
   }
 }

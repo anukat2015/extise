@@ -210,10 +210,17 @@ Open data entity
 
 Run Java source code or text analysis
 
-    extise --list
+    extise list
+
     extise MethodPositionExtractor < spec/fixtures/classes/HashMap.java
     extise CyclomaticComplexity -- spec/fixtures/classes/HashMap.java spec/fixtures/classes/TimeUnit.java 
     extise JavaQualifiedNameTokenizer UnaccentFilter LowercaseFilter PorterStemmer ElasticsearchStopwordsFilter WhitespaceFilter UniqueFilter SortFilter -- spec/fixtures/classes/*
+
+    extise server
+    extise server --address=localhost:7153 --pool=200
+    
+    curl -H 'Argument: CyclomaticComplexity' -H 'Argument: --' -H 'Argument: spec/fixtures/classes/Component.java' localhost:7153
+    curl -H 'Argument: CyclomaticComplexity' -X POST --data-binary @- localhost:7153 < spec/fixtures/classes/Component.java
 
 #### `jgibblda`
 

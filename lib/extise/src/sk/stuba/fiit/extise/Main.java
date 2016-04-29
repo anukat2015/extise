@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ComputationException;
@@ -18,7 +20,9 @@ import org.elasticsearch.common.cli.commons.ParseException;
 import org.elasticsearch.common.cli.commons.UnrecognizedOptionException;
 import sk.stuba.fiit.extise.Bootstrap.Environment;
 
+import static java.lang.String.format;
 import static java.lang.System.err;
+import static java.lang.System.exit;
 import static java.lang.System.in;
 import static java.lang.System.out;
 import static java.lang.reflect.Modifier.isAbstract;
@@ -28,6 +32,7 @@ import static java.util.Arrays.copyOfRange;
 
 import static com.google.common.base.Functions.compose;
 import static com.google.common.base.Throwables.getStackTraceAsString;
+import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Lists.newArrayList;
 
 import static sk.stuba.fiit.extise.Bootstrap.Environment.withStreams;
@@ -40,31 +45,88 @@ public final class Main {
   private Main() {}
 
   public static void main(final String ... args) {
+    String p = args.length >= 1 ? args[0] : PROGRAM;
+
     try {
-      execute(withStreams(in, out), processOptions(args));
-    }
-    catch (ComputationException e) {
-      reportFailure("unable to compute", e);
-    }
-    catch (ReflectiveOperationException e) {
-      reportFailure("unable to resolve function", e);
-    }
-    catch (IOException e) {
-      reportFailure("unable to read input", e);
-    }
-    catch (ParseException e) {
-      reportFailure(e.getMessage(), e);
+      switch (p) {
+        case "list":
+          list(copyOfRange(args, 1, args.length));
+          break;
+
+        case "server":
+          server(copyOfRange(args, 1, args.length));
+          break;
+
+        default:
+          p = PROGRAM;
+
+          try {
+            String[] a = processOptions(args);
+
+            if (a != null) {
+              bootstrap(withStreams(in, out), a);
+            }
+          } catch (ComputationException e) {
+            reportFailure(p, "unable to compute", e);
+          } catch (IOException e) {
+            reportFailure(p, "unable to read input", e);
+          } catch (ReflectiveOperationException e) {
+            reportFailure(p, "unable to resolve function", e);
+          }
+      }
+    } catch (ParseException e) {
+      reportFailure(p, e.getMessage(), e);
+    } catch (RuntimeException e) {
+      reportFailure(p, "internal failure", e);
     }
   }
 
-  public static void execute(final Environment environment, final String ... args) throws IOException, ReflectiveOperationException {
-    runBootstrap(environment, args);
+  public static void bootstrap(final Environment env, final String ... args) throws IOException, ReflectiveOperationException {
+    runBootstrap(env, args);
   }
 
-  private static final String[] knownPackages = { "sk.stuba.fiit.extise.difference", "sk.stuba.fiit.extise.dom", "sk.stuba.fiit.extise.map", "sk.stuba.fiit.extise.metric" };
+  public static void list(final String ... args) throws ParseException {
+    if (args.length != 0) {
+      throw new ParseException("too many arguments");
+    }
+
+    try {
+      ClassLoader loader = ClassLoader.getSystemClassLoader();
+      ClassPath path = ClassPath.from(loader);
+
+      for (String prefix: knownPackages) {
+        out.printf("%s%n", prefix);
+
+        for (ClassInfo info: path.getTopLevelClasses(prefix)) {
+          String name = info.getSimpleName();
+
+          if (name.equals("package-info")) {
+            continue;
+          }
+
+          Class<?> type = Class.forName(info.getName());
+          int modifiers = type.getModifiers();
+
+          if (Function.class.isAssignableFrom(type) && !isAbstract(modifiers) && isPublic(modifiers)) {
+            out.printf("  %s%n", name);
+          }
+        }
+      }
+    } catch (ClassNotFoundException e) {
+      throw propagate(e);
+    } catch (IOException e) {
+      throw new ParseException("unable to list functions");
+    }
+  }
+
+  public static void server(final String ... args) throws ParseException {
+    Server.run(args);
+  }
+
+  private static final String[] knownPackages = {"sk.stuba.fiit.extise.difference", "sk.stuba.fiit.extise.dom", "sk.stuba.fiit.extise.map", "sk.stuba.fiit.extise.metric"};
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  static void runBootstrap(final Environment environment, final String ... args) throws IOException, ReflectiveOperationException {
+  static void runBootstrap(final Environment env, final String ... args) throws IOException, ReflectiveOperationException {
     Function function = null;
     int index = 0;
 
@@ -84,7 +146,7 @@ public final class Main {
 
     String[] paths = index < args.length ? copyOfRange(args, index + 1, args.length) : new String[0];
 
-    Bootstrap.run(environment, function, paths);
+    Bootstrap.run(env, function, paths);
   }
 
   private static Function<? super Collection<String>, ? extends Collection<?>> resolveFunction(final String name) throws ReflectiveOperationException {
@@ -107,13 +169,11 @@ public final class Main {
     return Function.class.cast(type.newInstance());
   }
 
-  static String[] processOptions(final String ... args) throws ClassNotFoundException, ParseException {
+  static String[] processOptions(final String ... args) throws ParseException {
     int index = asList(args).indexOf("--");
 
     Options options = new Options();
 
-    options.addOption("list", false, "");
-    options.addOption("server", false, "");
     options.addOption("h", "help", false, "");
     options.addOption("version", false, "");
 
@@ -122,48 +182,19 @@ public final class Main {
       CommandLine line = parser.parse(options, args);
 
       if (line.hasOption("help")) {
-        out.printf("usage: %s [<options>] <function...> [--] [<file...>]%n%n", PROGRAM);
-        out.printf("        --list%n");
+        out.printf("usage: %s [<options>] <function...> [--] [<file...>]%n", PROGRAM);
+        out.printf("   or: %s list%n", PROGRAM);
+        out.printf("   or: %s server [<options>]%n%n", PROGRAM);
         out.printf("    -h, --help%n");
         out.printf("        --version%n%n");
 
-        System.exit(0);
+        return null;
       }
 
       if (line.hasOption("version")) {
         out.printf("%s %s%n", PROGRAM, VERSION);
 
-        System.exit(0);
-      }
-
-      if (line.hasOption("list")) {
-        try {
-          ClassLoader loader = ClassLoader.getSystemClassLoader();
-          ClassPath path = ClassPath.from(loader);
-
-          for (String prefix: knownPackages) {
-            out.printf("%s%n", prefix);
-
-            for (ClassInfo info: path.getTopLevelClasses(prefix)) {
-              String name = info.getSimpleName();
-
-              if (name.equals("package-info")) {
-                continue;
-              }
-
-              Class<?> type = Class.forName(info.getName());
-              int modifiers = type.getModifiers();
-
-              if (Function.class.isAssignableFrom(type) && !isAbstract(modifiers) && isPublic(modifiers)) {
-                out.printf("  %s%n", name);
-              }
-            }
-          }
-        } catch (IOException e) {
-          throw new ParseException("unable to list functions");
-        }
-
-        System.exit(0);
+        return null;
       }
 
       List<String> result = newArrayList(line.getArgs());
@@ -183,18 +214,16 @@ public final class Main {
       return result.toArray(new String[result.size()]);
     } catch (UnrecognizedOptionException e) {
       throw new ParseException("invalid option: " + e.getOption());
-    } catch (ParseException e) {
-      throw new ParseException("unable to parse options");
     }
   }
 
-  private static void reportFailure(final String message, final Exception failure) {
-    err.printf("%s: %s%n", PROGRAM, message);
+  private static void reportFailure(@Nullable final String program, final String message, final Exception failure) {
+    err.printf("%s: %s%n", !program.equals(PROGRAM) ? format("%s %s", PROGRAM, program) : program, message);
 
     if (!(failure instanceof ParseException)) {
       err.printf("%n%s", getStackTraceAsString(failure));
     }
 
-    System.exit(1);
+    exit(1);
   }
 }

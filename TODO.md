@@ -1,5 +1,7 @@
 # TODO
 
+*   replace "native" Extise HTTP server with REST API
+
 *   add `--log[=<level>]` option for all import and measure scripts to automatically and thread-safely log `inform`, `warn`, `abort` and exceptions via exit hook to `./log/SCRIPT_NAME/%Y%m%d-%H%M%S-%L.log`, also write script name with ARGV and time on first log file line, see batch measure script for inspiration
 
 *   support parametrized metrics, parameters should be included in the unique key for expertise records 

@@ -35,8 +35,6 @@ include Extisimo::Naming
 # TODO implement similar name search via Naming.pack_names
 
 def persist_user(u, o = {})
-  raise unless User.respond_to? :fetch
-
   user_name = filter_names(u.user_name, AMBIGUOUS_USER_NAME_PATTERN).first
   real_name = filter_names(u.real_name, AMBIGUOUS_REAL_NAME_PATTERN).first
 

@@ -23,8 +23,6 @@ AutoColor.disable on: self unless c
 include Extisimo::Naming
 
 def fetch_user(u)
-  raise unless User.respond_to? :fetch
-
   l = filter_names(u.login_name, AMBIGUOUS_USER_NAME_PATTERN).first
   r = filter_names(u.realname, AMBIGUOUS_REAL_NAME_PATTERN).first
   n = compose_names l, r

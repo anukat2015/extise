@@ -30,8 +30,6 @@ AutoColor.disable on: self unless c
 include Extisimo::Naming
 
 def fetch_user(u)
-  raise unless User.respond_to? :fetch
-
   users = User.fetch(compose_names(nil, u[:name]), compose_names(u[:name], nil), u[:name]).to_a
   abort "#{User}:? ambiguous name #{u[:name]}" if users.count >= 2
   users.first

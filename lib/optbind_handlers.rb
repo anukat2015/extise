@@ -15,7 +15,7 @@ module OptionBinder::Handlers
   end
 
   def as_time_with(special = {})
-    lambda do |v|
+    -> (v) do
       return unless v
       s = special[v.to_s.to_sym]
       return s.arity == 1 ? s.call(v) : s.call if s

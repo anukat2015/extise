@@ -51,7 +51,7 @@ def process(items, options = {}, &block)
     options[:total] ||= items.count
     progress = Progresso.build options
     after_each = options[:before_each]
-    options[:after_each] = lambda do |item, index, result|
+    options[:after_each] = -> (item, index, result) do
       after_each.call item, index, result if after_each
       progress.increment
     end
@@ -70,6 +70,12 @@ def load_extise!
   load File.expand_path '../../Extisefile', __FILE__
 
   $LOAD_PATH.uniq!
+
+  # NOTE: ensure that models are eagerly loaded since otherwise in a multi-threaded environment they may be observed
+  # as only partially loaded and hence may miss some method definitions, also ensure that references from original-data
+  # to custom models are present without explicit custom model requirement
+
+  Dir[File.expand_path '../../lib/extisimo/models/*.rb', __FILE__].each { |f| require_relative f }
 
   def dump_attribute(k, v = nil, i = 0, o = options.bound)
     return if o[:q]
@@ -109,7 +115,7 @@ def load_extise!
   def process(items, options = {}, &block)
     after_batch = options[:after_batch]
     options[:after_batch] = -> (batch, index, results) do
-      ActiveRecord::Base.connection_pool.with_connection { after_batch.call batch, index, results } if after_batch
+      after_batch.call batch, index, results if after_batch
       ActiveRecord::Base.connection.reconnect!
     end
     process_without_active_record items, options do |item|

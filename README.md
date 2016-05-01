@@ -299,9 +299,9 @@ Calculate correlation coefficient
 Calculate correlation coefficient between expertises
 
     rcor session:edits session:lines_of_code_delta
-    rcor -e 'Extisimo::Expertise.fetch(on: :session, by: :edits).pluck :value' 'Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck :value'
+    rcor -e 'Extisimo::Expertise.by(Extisimo::Metric.find_by target: :session, name: :edits).pluck :value' 'Extisimo::Expertise.by(Extisimo::Metric.find_by target: :session, name: :lines_of_code_delta).pluck :value'
 
-    echo 'Extisimo::Expertise.fetch(on: :session, by: :edits).pluck(:value) + Extisimo::Expertise.fetch(on: :session, by: :lines_of_code_delta).pluck(:value)' | rcor -e 
+    echo 'Extisimo::Expertise.by(Extisimo::Metric.find_by target: :session, name: :edits).pluck(:value) + Extisimo::Expertise.by(Extisimo::Metric.find_by target: :session, name: :lines_of_code_delta).pluck(:value)' | rcor -e 
 
 #### `ucor`
 

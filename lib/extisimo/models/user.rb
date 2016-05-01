@@ -22,10 +22,11 @@ class Extisimo::User < ActiveRecord::Base
   scope :ambiguous, -> { where 'name LIKE ?', "%#{Extisimo::Naming::UNKNOWN_NAME}%" }
   scope :unambiguous, -> { where 'name NOT LIKE ?', "%#{Extisimo::Naming::UNKNOWN_NAME}%" }
 
-  def self.fetch(*n)
-    names = n.compact
+  def self.fetch(*args)
+    args = args.flatten.compact
 
-    return Extisimo::User if names.empty?
-    Extisimo::User.where 'name IN (?) OR eclipse_org_user_names && ?', names, "{#{names * ','}}"
+    return Extisimo::User.all if args.empty?
+    return Extisimo::User.where id: args if findable? args
+    Extisimo::User.where 'name IN (?) OR eclipse_org_user_names && ?', args, "{#{args * ','}}"
   end
 end

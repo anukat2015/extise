@@ -26,6 +26,7 @@ module AutoColor
           define_method method do |*args|
             send "uncolored_#{method}", *enrich(args)
           end
+          send private_method_defined?(method) ? :private : :public, method
         end
       end
     end

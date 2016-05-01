@@ -30,14 +30,14 @@ metrics = Hash[metrics.map { |metric| [metric, (Dyna.load_and_create!(file: metr
 # NOTE: measure on subjects somehow related to tasks submitted prior to the desired time
 
 subjects = case g.to_sym
-when :concept
-  Concept.joins conceptualities: [element: [commit: [repository: [project: :tasks]]]]
 when :element
   Element.joins commit: [repository: [project: :tasks]]
 when :session
   Session.joins interactions: [attachment: :task]
 when :project
   Project.joins :tasks
+when :concept
+  Concept.joins conceptualities: [element: [commit: [repository: [project: :tasks]]]]
 end
 
 inform "fetch subjects through tasks submitted until #{options.assigned?(:u) ? u : 'now'}" if v unless q
@@ -46,20 +46,20 @@ subjects = subjects.where("#{Task.table_name}.submitted_at <= ?", u).order(creat
 
 warn "no subjects fetched until #{options.assigned?(:u) ? u : 'now'}" unless subjects.any?
 
-# NOTE: measure for users associated with a concept via element's commit, such users may not have assigned tasks
 # NOTE: measure for users who modified elements with same node path, such users may not have assigned tasks
 # NOTE: measure for session user only, such user has assigned at least one task
 # NOTE: measure for users who contributed commits to a project, such users may not have assigned tasks
+# NOTE: measure for users associated with a concept via element's commit, such users may not have assigned tasks
 
 users_fetcher = case g.to_sym
-when :concept
-  -> (concept) { User.joins(commits: [elements: :conceptualities]).where(Conceptuality.table_name => { concept_id: concept.id }).distinct }
 when :element
   -> (element) { User.joins(commits: :elements).where(Element.table_name => { path: element.path }).distinct }
 when :session
   -> (session) { [session.user] }
 when :project
   -> (project) { User.joins(commits: :repository).where(Repository.table_name => { project_id: project.id }).distinct }
+when :concept
+  -> (concept) { User.joins(commits: [elements: :conceptualities]).where(Conceptuality.table_name => { concept_id: concept.id }).distinct }
 end
 
 # NOTE: set handle context so the measure setup will be available to the metric's handle object

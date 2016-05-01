@@ -8,6 +8,7 @@ class Extisimo::Attachment < ActiveRecord::Base
   belongs_to :author, class_name: :User
 
   has_many :interactions, dependent: :destroy
+  has_many :sessions, -> { distinct }, through: :interactions
 
   scope :submitted_by, -> (user) { where author: user }
 

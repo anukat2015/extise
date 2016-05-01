@@ -12,11 +12,11 @@ class Extisimo::Task < ActiveRecord::Base
 
   has_many :posts, dependent: :destroy
   has_many :attachments, dependent: :destroy
-
   has_many :interactions, through: :attachments
+  has_many :sessions, -> { distinct }, through: :interactions
 
   def collaborators
-    Extisimo::User.where(id: [reporter_id, assignee_id] + posts.pluck(:author_id) + attachments.pluck(:author_id)).distinct
+    Extisimo::User.find [reporter_id, assignee_id] + posts.pluck(:author_id) + attachments.pluck(:author_id)
   end
 
   scope :reported_by, -> (user) { where reporter: user }

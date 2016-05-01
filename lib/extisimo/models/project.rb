@@ -6,9 +6,10 @@ class Extisimo::Project < ActiveRecord::Base
   has_many :posts, through: :tasks
   has_many :attachments, through: :tasks
   has_many :interactions, through: :attachments
+  has_many :sessions, -> { distinct }, through: :interactions
 
   def collaborators
-    tasks.flat_map(&:collaborators).distinct
+    (tasks.flat_map(&:collaborators) + repositories.flat_map(&:collaborators)).uniq
   end
 
   has_many :repositories, dependent: :destroy

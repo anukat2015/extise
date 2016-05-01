@@ -6,7 +6,7 @@ class Extisimo::Expertise < ActiveRecord::Base
   belongs_to :user
 
   SUBJECT_TYPES.each do |type|
-    belongs_to type.demodulize.underscore.to_sym, -> { where subject_type: type }, foreign_key: :subject_id
+    belongs_to type.demodulize.underscore.to_sym, -> { where Extisimo::Expertise.table_name => { subject_type: type }}, foreign_key: :subject_id
   end
 
   scope :by, -> (metric) { where metric: metric }

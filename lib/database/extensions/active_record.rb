@@ -9,9 +9,9 @@ class ActiveRecord::Base
 
   def self.findable?(object, options = {})
     return true if object.is_a? ActiveRecord::Base
-    primary_key_class = options[:primary_key_class] || Integer
+    primary_key_class = options.fetch :primary_key_class, Integer
     return true if object.is_a? primary_key_class
-    return false unless options[:accept_enumerables]
+    return false unless options.fetch :accept_enumerables, true
     return true if object.is_a? ActiveRecord::Relation
     return false unless object.is_a? Enumerable
     object.each { |item| return false unless item.is_a?(ActiveRecord::Base) && item.is_a?(primary_key_class) }

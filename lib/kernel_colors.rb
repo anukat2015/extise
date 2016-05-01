@@ -2,7 +2,9 @@ require 'colored'
 require 'core_ext/object/command_line_arguments'
 
 module KernelColors
-  alias_method :inform, :puts
+  def inform(*args)
+    puts *args
+  end
 
   { abort: :red, inform: :cyan, warn: :magenta }.each do |method, color|
     original_method = "kernel_#{method}".to_sym

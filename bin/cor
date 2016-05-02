@@ -15,7 +15,8 @@ ARGV.bind_and_parse! to: :locals do
 end
 
 AutoColor.enable on: self, colored: c, colorings: {
-  /\A\w: .+/ => -> (s) { s.sub(/\A(\w): (.+)/, "#{'\1'.blue}: #{'\2'.yellow}") }
+  /\A\w:/ => -> (s) { s.sub(/\A(\w): ([^\[ ]+) ?(.*)?/, "#{'\1'.blue}: #{'\2'.yellow} #{'\3'.black}") },
+  /\A\d/ => -> (s) { s.sub(/\A(\d+ \d+) (\w+) ([^ ]+) (.+)/, ['\1'.black, '\2'.blue, '\3'.yellow, '\4'.black] * ' ') }
 }
 
 require 'statsample'

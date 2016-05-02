@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-m, c, s, t, v, x, y = :spearman, true, true, 80, true, nil, nil
+m, p, c, s, t, v, x, y = :spearman, nil, true, true, 80, true, nil, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <target:name> <target:name>'
   opt 'm -m --method=(pearson|spearman)'
+  opt 'p    --project=<id>'
   opt 'c -c --[no-]color'
   opt 's -s --[no-]sort'
   opt 't -t --trim[=<length:Integer>]'
@@ -18,38 +19,54 @@ AutoColor.disable on: self unless c
 
 require 'statsample'
 
-def calculate_correlation(x, y, s = nil, u = nil, o = options.bound)
-  args = [x, y] + { method: o[:m], subject: s, user: u }.map { |k, v| "--#{k}=#{v}" if v }.compact + %w(--no-color --no-verbose)
+def calculate_correlation(x, y, u = nil, p = nil, o = options.bound)
+  args = [x, y] + { method: o[:m], user: u, 'subjects-by-project': p }.map { |k, v| "--#{k}=#{v}" if v }.compact + %w(--no-color --no-verbose)
   command = "rcor #{args * ' '}"
   inform "#{command}" if o[:v] unless o[:q]
   Open3.popen3(File.expand_path command, __dir__) do |input, output, error, status|
-    v, e = *[output, error].map { |s| s.read.strip.downcase.presence }
+    r, e = *[output, error].map { |s| s.read.strip.presence }
     [input, output, error].each &:close
-    { subject: s, user: u, value: v.blank? || v =~ /nan/i ? Float::NAN : Float(v), status: status.value.to_i, message: e }
+    r = Hash[%i(x y m r t p).zip r.split(/\s+/, 6)] if r
+    %i(x y).each { |k| r[k] = Integer(r[k]) } if r
+    %i(r t p).each { |k| r[k] = r[k] =~ /nan/i ? Float::NAN : Float(r[k]) } if r
+    { user: u, project: p, status: status.value.to_i, correlation: r, message: e.try(:downcase) }
   end
 end
 
 def compare_correlation(a, b)
-  c, v, u = a[:status] <=> b[:status], a[:value], b[:value]
+  c, v, u = a[:status] <=> b[:status], a[:correlation].try(:[], :r), b[:correlation].try(:[], :r)
   return c unless c.zero?
-  c = (v.nan? ? Float::INFINITY : v) <=> (u.nan? ? Float::INFINITY : u)
+  c = (!v || v.nan? ? Float::INFINITY : v) <=> (!u || u.nan? ? Float::INFINITY : u)
   !c.zero? ? c : a[:name] <=> b[:name]
 end
 
 users = User.joins(:expertises).order(:name).distinct
-correlations = Hash[users.pluck(:id, :name).map { |id, name| [name, calculate_correlation(x, y, nil, id)] }]
-correlations = Hash[correlations.sort { |*a| compare_correlation *a.map { |p| p[1].merge name: p[0]}}] if s
+users = users.where(id: Project.find(p).collaborators.pluck(:id)) if p
+correlations = Hash[users.pluck(:id, :name).map { |id, name| [name, calculate_correlation(x, y, id, p)] }]
+correlations = Hash[correlations.sort { |*a| compare_correlation *a.map { |d| d[1].merge name: d[0] }}] if s
 
 if v
   correlations.each do |name, data|
-    dump_record class: 'Extisimo::Correlation', value: data[:value], status: data[:status] == 0 ? 'success' : 'failure', message: data[:message]
+    correlation = data[:correlation] ? { samples: :x, method: :m, coefficient: :r, t_test: :t, p_value: :p }.transform_values { |v| data[:correlation][v] } : {}
+    dump_record correlation.reverse_merge class: 'Extisimo::Correlation', status: data[:status] == 0 ? 'success' : 'failure', message: data[:message]
     dump_record({ class: User.name, id: data[:user], name: name }, :user, 1)
   end
 else
   correlations = correlations.transform_keys { |n| n.split(Extisimo::Naming::NAME_SEPARATOR).first }
-  padding = correlations.keys.max_by(&:length).length
-
+  table = Text::Table.new horizontal_padding: 0, horizontal_boundary: '', vertical_boundary: '', boundary_intersection: ' '
+  table.head = ['user ', 'name ', 'samples ', 'coefficient ', 't-test ', 'p-value'].map { |h| { align: :left, value: h.black }}
   correlations.each do |name, data|
-    dump_attribute name.rjust(padding), "#{'%+.12f' % data[:value]}#{" (#{data[:message]})" unless data[:status].zero?}"
+    color = -> (x) { x.nan? ? :black : (x.zero? ? :yellow : (x.positive? ? :green : :red)) }
+    row = [data[:user].to_s.black, "#{name.blue} "]
+    if data[:correlation]
+      row << '%d '.black % data[:correlation][:x]
+      row << ('%+.8f ' % data[:correlation][:r]).send(color.call data[:correlation][:r])
+      row << '%+.8f '.black % data[:correlation][:t]
+      row << '%.8f'.black % data[:correlation][:p]
+    else
+      row << { colspan: 4, value: data[:message].red }
+    end
+    table.rows << row
   end
+  puts table
 end

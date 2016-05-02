@@ -17,9 +17,17 @@ module Expric
     autoload :DfDlocDr
     autoload :DfDlocMs
 
+    autoload :DfRdloc
+    autoload :DfRdlocDr
+    autoload :DfRdlocMs
+
     autoload :DfRloc
     autoload :DfRlocDr
     autoload :DfRlocMs
+
+    autoload :DfRrloc
+    autoload :DfRrlocDr
+    autoload :DfRrlocMs
 
     autoload :DpCcC
     autoload :DpCcT

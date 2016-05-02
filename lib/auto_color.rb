@@ -4,7 +4,7 @@ module AutoColor
   def self.enable(options = {})
     target = options[:on].extend Base
     target.colored = options[:colored] != nil ? !!options[:colored] : true
-    target.colorings = options[:colorings].to_h || {}
+    target.colorings = options[:colorings].is_a?(Enumerable) ? options[:colorings].to_h : { /.+/ => options[:colorings] }
     target
   end
 
@@ -43,7 +43,7 @@ module AutoColor
       return s.gsub(/\e\[(\d+)m/, '') unless colored
       (colorings || {}).each do |regexp, x|
         next if s !~ regexp
-        (s = x.call s, regexp) and next if x.respond_to? :call
+        (s = x.arity == 1 ? x.call(s) : x.call(s, regexp)) and next if x.respond_to? :call
         [x].flatten.each { |m| s = s.send m }
       end
       s

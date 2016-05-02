@@ -60,6 +60,8 @@ module Extric
     autoload :LogicalLinesOfCode
     autoload :MethodCount
     autoload :RecentLinesOfCode
+    autoload :RelativeDefaultLinesOfCode
+    autoload :RelativeRecentLinesOfCode
     autoload :Selections
     autoload :SourceLinesOfCode
     autoload :SubsequentEdits

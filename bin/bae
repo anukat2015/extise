@@ -5,7 +5,7 @@ u, n, w, g, p = :now, 4, :thread, nil, [STDIN]
 c, s, t, v, q = true, false, 80, true, false
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>] [<path>...]'
+  use '[<options>] [<file>...]'
   opt 'u    --until=<time>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'

@@ -116,6 +116,7 @@ DEPENDENCIES
   ruby-progressbar (~> 1.7.5)
   rugged (~> 0.23.3)
   statsample (~> 2.0.2)
+  text-table (~> 1.2.4)
   upsert (~> 2.1.1)
 
 BUNDLED WITH

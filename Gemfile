@@ -27,6 +27,7 @@ gem 'optbind', '~> 0.3.2'
 gem 'nokogiri', '~> 1.6.6'
 gem 'ruby-progressbar', '~> 1.7.5'
 gem 'rugged', '~> 0.23.3'
+gem 'text-table', '~> 1.2.4'
 
 # statistics
 

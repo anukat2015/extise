@@ -40,7 +40,7 @@ module AutoColor
     end
 
     def colorize(s)
-      return s.gsub(/\e\[(\d+)m/, '') unless colored
+      return s.gsub(/\e\[\d+m/, '') unless colored
       (colorings || {}).each do |regexp, x|
         next if s !~ regexp
         (s = x.arity == 1 ? x.call(s) : x.call(s, regexp)) and next if x.respond_to? :call

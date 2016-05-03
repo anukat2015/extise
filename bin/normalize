@@ -26,7 +26,7 @@ AutoColor.disable on: self unless c
 require 'daru'
 
 metric = Metric.on(g).where(name: r).first || abort("#{Metric}:? not found by #{r} on #{g}")
-target, name, file, type, factory = Extnorm.resolve_normalization! target: g, name: r, method: m
+target, name, file, type, factory = Extnorm.resolve_normalization! target: g, name: r, method: m.to_s.sub(/-/, '_')
 normalization = Metric.find_or_create_by! target: target, name: name, file: file, type: type
 
 inform "fetch expertises for #{g}:#{r} to normalize" if v unless q

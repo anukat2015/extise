@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-u, n, w, g, p = :now, 4, :thread, nil, [STDIN]
-c, s, t, v, q = true, false, 80, true, false
+u, n, w, p = :now, 4, :thread, [STDIN]
+c, v, q = true, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
@@ -17,26 +17,102 @@ end
 
 AutoColor.disable on: self unless c
 
-def run(*a)
-  c, o = (a.flatten << '--no-color') * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L')
-  l = File.expand_path File.join(%W(.. .. log #{a[0]} #{o}.log)), __FILE__
-  FileUtils.mkpath File.dirname l
-  File.write l, "#{o}\n\n#{c}\n\n"
-  puts "#{a[0..3] * ' '}".cyan
-  r = system "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l}"
-  puts r ? 'success'.green : 'failure'.red
+require 'active_support/all'
+
+module Syntax
+  attr_accessor :measure_until
+
+  def correlation(x, y, options = {})
+    c = [x, y]
+    c = c << "--method=#{options[:method]}" if options[:method]
+    o = %i(subject subjects_by_project user users_by_project)
+    raise 'project given with no effect' if options[:project] && !o.select { |k| options[k] }.empty?
+    raise 'subject already given' if options[:subject] && options[:user]
+    raise 'subject already scoped' if options[:subject] && options[:subjects_by_project]
+    raise 'user already scoped' if options[:user] && options[:users_by_project]
+    if options[:project]
+      run 'ucor', *c, "--project=#{project}", '--no-verbose', parallel: true
+    else
+      run 'rcor', *c, *o.map { |k| "--#{k}=#{options[k]}" }, '--no-verbose'
+    end
+  end
+
+  alias_method :correlate, :correlation
+
+  def histogram(*args)
+    run 'rhist', *(args.size == 1 ? ['--eval', args.first] : args).map(&:to_s)
+  end
+
+  def measure(options = {})
+    fetch_values(options, :targets).each do |target|
+      fetch_values(options, :metrics).each do |metric|
+        run 'measure', target, metric, "--until=#{options[:until] || measure_until || :now}", parallel: true
+        fetch_values(options, :normalizations).each do |normalization|
+          run 'normalize', target, metric, "--method=#{normalization}", parallel: true
+        end
+      end
+    end
+  end
+
+  def normalize(options = {})
+    fetch_values(options, :targets).each do |target|
+      fetch_values(options, :metrics).each do |metric|
+        fetch_values(options, :methods).each do |method|
+          run 'normalize', target, metric, "--method=#{method}", parallel: true
+        end
+      end
+    end
+  end
+
+  private
+
+  def fetch_values(options, key)
+    multiple, single = key.to_s.pluralize.to_sym, key.to_s.singularize.to_sym
+    raise("#{single} already given") if options.key?(multiple) && options.key?(single)
+    values = Array.wrap options.fetch(multiple, [])
+    values = [options[single]] if options.key?(single) && values.empty?
+    !values.empty? ? values : raise("no #{single} given")
+  end
 end
 
-h = Set[]
+class Round
+  attr_accessor :file, :options
+
+  def initialize(file, options = {})
+    self.file, self.options = file.dup, options.dup
+    AutoColor.disable on: self unless options[:color]
+  end
+
+  def load!
+    space, round = Object.new, self
+    space.define_singleton_method(:run) { |*a| round.run *a }
+    space.singleton_class.include Syntax
+    space.measure_until = options[:until]
+    SafeEval::IO.read_and_safe_eval File.open_or(file), context: space
+  end
+
+  def run(*a)
+    a = a.flatten.compact
+    a, o = *(a.last.is_a?(Hash) ? [a[0..-2], a.last] : [a, {}])
+    a += %W(--parallel=#{options[:parallel]} --parallel-worker=#{options[:parallel_worker]}) if o[:parallel]
+    a << "--#{'no-' unless options[:color]}color"
+    c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
+    @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
+    FileUtils.mkpath @log_directory
+    l = File.join @log_directory, "#{t}_#{a[0]}.log"
+    File.write l, "#{t}\n\n#{c}\n\n"
+    p = a.reject { |x| x =~ /--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
+    p << '…' if p.size != a.size
+    r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l}"
+    puts "#{p * ' '}".cyan unless options[:quiet]
+    options[:verbose] && !options[:quiet] ? system(r) : `#{r}`
+    puts $? ? 'success'.green : 'failure'.red if options[:verbose] unless options[:quiet]
+  end
+end
+
+o = Hash[%i(until parallel parallel_worker color verbose quiet).zip [u, n, w, c, v, q]]
 
 p.each do |f|
-  File.open_or(f).each_line.reject { |l| l =~ /\A\s*#|\A\s*\z/ }.map(&:strip).each do |d|
-    d = d.match(/\A\s*#|\A(?<t>\w+)\s+(?<m>\w+)(:(?<n>\w+))?\z/)
-    p = %W(--parallel=#{n} --parallel-worker=#{w})
-
-    next unless d
-
-    run 'measure', d[:t], d[:m], "--until=#{u}", p if h.add? d.to_a[1..2]
-    run 'normalize', d[:t], d[:m], "--method=#{d[:n]}", p if d[:n] && h.add?(d.to_a[1..3])
-  end
+  inform f if v && !q && !f.is_a?(IO)
+  Round.new(f, o).load!
 end

@@ -81,7 +81,6 @@ class Round
   def initialize(file, options = {})
     self.file, self.options = file.dup, options.dup
     AutoColor.disable on: self unless self.options[:color]
-    self.options[:color] = false
   end
 
   def load!
@@ -96,7 +95,7 @@ class Round
     a = a.flatten.compact
     a, o = *(a.last.is_a?(Hash) ? [a[0..-2], a.last] : [a, {}])
     a += %W(--parallel=#{options[:parallel]} --parallel-worker=#{options[:parallel_worker]}) if o[:parallel]
-    a << "--#{'no-' unless options[:color]}color"
+    a << '--color'
     c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
     @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
     FileUtils.mkpath @log_directory
@@ -108,6 +107,29 @@ class Round
     puts "#{p * ' '}".cyan unless options[:quiet]
     options[:verbose] && !options[:quiet] ? system(r) : `#{r}`
     puts $?.success? ? 'success'.green : 'failure'.red if options[:verbose] unless options[:quiet]
+    fix t, c, l
+  end
+
+  private
+
+  def fix(t, c, l)
+    s = File.read l
+    File.write l, Colored.decolorize(s)
+    return unless options[:color]
+    File.write "#{l}.html", <<-HTML.strip_heredoc
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <title>#{t} #{c}</title>
+        </head>
+        <body>
+          <pre style="background: #000; color: #555">
+            #{Colored.decolorize s, escape: Colored::HTML}
+          </pre>
+        </body>
+      </html>
+    HTML
   end
 end
 

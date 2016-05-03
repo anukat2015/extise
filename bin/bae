@@ -114,7 +114,6 @@ end
 o = Hash[%i(until parallel parallel_worker color verbose quiet).zip [u, n, w, c, v, q]]
 
 p.each do |f|
-  next if File.directory? f
   inform f if v && !q && !f.is_a?(IO)
   Round.new(f, o).load!
 end

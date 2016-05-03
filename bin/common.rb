@@ -5,7 +5,7 @@ $LOAD_PATH.unshift File.expand_path '../../lib', __FILE__
 
 require 'auto_color'
 require 'butcher'
-require 'colored_defaults'
+require 'colored_ext'
 require 'core_ext'
 require 'csv'
 require 'fileutils'

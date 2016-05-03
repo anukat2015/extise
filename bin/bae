@@ -31,16 +31,16 @@ module Syntax
     raise 'subject already scoped' if options[:subject] && options[:subjects_by_project]
     raise 'user already scoped' if options[:user] && options[:users_by_project]
     if options[:project]
-      run 'ucor', *c, "--project=#{project}", '--no-verbose', parallel: true
+      run 'ucor', *c, "--project=#{project}", '--no-verbose', parallel: true, silent: true
     else
-      run 'rcor', *c, *o.map { |k| "--#{k}=#{options[k]}" }, '--no-verbose'
+      run 'rcor', *c, *o.map { |k| "--#{k}=#{options[k]}" }, '--no-verbose', silent: true
     end
   end
 
   alias_method :correlate, :correlation
 
   def histogram(*args)
-    run 'rhist', *(args.size == 1 ? ['--eval', args.first] : args).map(&:to_s)
+    run 'rhist', *(args.size == 1 ? ['--eval', args.first] : args).map(&:to_s), silent: true
   end
 
   def measure(options = {})
@@ -88,6 +88,7 @@ class Round
     space.define_singleton_method(:run) { |*a| round.run *a }
     space.singleton_class.include Syntax
     space.measure_until = options[:until]
+    space.instance_eval { load File.expand_path '../../Extisefile', __FILE__ }
     SafeEval::IO.read_and_safe_eval File.open_or(file), context: space
   end
 
@@ -99,15 +100,26 @@ class Round
     c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
     @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
     FileUtils.mkpath @log_directory
-    l = File.join @log_directory, "#{t}_#{a[0]}.log"
-    File.write l, "#{t}\n\n#{c}\n\n"
-    p = a.reject { |x| x =~ /--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
-    p << '…' if p.size != a.size
-    r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l}"
-    puts "#{p * ' '}".cyan unless options[:quiet]
-    options[:verbose] && !options[:quiet] ? system(r) : `#{r}`
-    puts $?.success? ? 'success'.green : 'failure'.red if options[:verbose] unless options[:quiet]
-    fix t, c, l
+    begin
+      l = File.join @log_directory, "#{t}_#{a[0]}.log"
+      log = File.open l, 'a'
+      File.write l, "#{t.black}\n\n#{c.white}\n\n"
+      p = a.reject { |x| x =~ /--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
+      p << '…' if p.size != a.size
+      puts "#{p * ' '}".cyan unless options[:quiet]
+      s = Open3.popen3(File.expand_path File.join(%W(.. #{c})), __FILE__) do |input, output, error, status|
+        outputs, errors = [(self if !o[:silent] && options[:verbose] && !options[:quiet]), log].compact, [log]
+        threads = [Thread.new { output.each { |l| outputs.each { |s| s.print l }}}]
+        threads << Thread.new { error.each { |l| errors.each { |s| s.print l }}}
+        threads.each &:join
+        [input, output, error].each &:close
+        status.value
+      end
+      puts s.success? ? 'success'.green : 'failure'.red if options[:verbose] unless options[:quiet]
+    ensure
+      log.close if log
+      fix t, c, l
+    end
   end
 
   private
@@ -116,20 +128,21 @@ class Round
     s = File.read l
     File.write l, Colored.decolorize(s)
     return unless options[:color]
-    File.write "#{l}.html", <<-HTML.strip_heredoc
+    o = <<-HTML.strip_heredoc
       <!DOCTYPE html>
       <html lang="en">
         <head>
           <meta charset="utf-8">
-          <title>#{t} #{c}</title>
+          <title><% title %></title>
         </head>
-        <body>
-          <pre style="background: #000; color: #555">
-            #{Colored.decolorize s, escape: Colored::HTML}
-          </pre>
+        <body style="margin: 1rem; font-size: 14px">
+          <pre style="display: inline-block; margin: 0; padding: 1rem; background: #000; color: #bbb"><% content %></pre>
         </body>
       </html>
     HTML
+    o = o.gsub(/<%\s*title\s*%>/, "#{t} #{c}").gsub(/<%\s*content\s*%>/, Colored.decolorize(s, escape: Colored::HTML))
+    d = File.join(File.dirname(l), 'screenshots').tap { |d| FileUtils.mkpath d }
+    File.write File.join(d, "#{File.basename(l)}.html"), o
   end
 end
 

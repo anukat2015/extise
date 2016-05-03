@@ -257,7 +257,7 @@ Normalize expertises measured by metric, fill `extisimo_{expertises}` tables
 
 Run measure or normalize batch, fill `extisimo_{expertises}` 
 
-    bae ../data/extise.fiit.stuba.sk/metric-batches/session-*
+    bae ../data/extise.fiit.stuba.sk/measurements/session-*
 
     echo measure target: :session, metric: :duration, normalization: :rescale | bae
 

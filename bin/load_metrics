@@ -42,7 +42,7 @@ def unload_metric(metric, force = false)
   metric.destroy! rescue abort "#{Metric}:#{metric.id} has #{count} expertises -> restrict"
 end
 
-if options.assigned?(:u) && (p.none? || Metric::TARGETS.include?(p.first.to_s))
+if options.assigned?(:u) && (!l && (p.none? || Metric::TARGETS.include?(p.first.to_s)))
   target, names = p[0], p[1..-1] || []
   metrics = Metric.order(:target, :name)
   metrics = metrics.where(target: target) if target
@@ -52,6 +52,7 @@ if options.assigned?(:u) && (p.none? || Metric::TARGETS.include?(p.first.to_s))
 else
   l = File.expand_path File.join(%w(.. ..) + (l ? [l] : %w(lib extric))), __FILE__
   p = Dir[File.join(%W(#{l} {#{Metric::TARGETS.map(&:pluralize) * ','}} *.rb))] if p.empty?
+  p = p.flat_map { |f| Dir[File.join l, f] } if options.assigned? :l
   d = p.map { |f| File.absolute_path f }.sort.map { |f| Extric.resolve_metric! file: f, library: l rescue abort $! }
 
   if !options.assigned? :u

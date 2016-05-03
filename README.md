@@ -154,6 +154,7 @@ Load expertise metrics, fill `extisimo_{metrics}` tables
     load_metrics
     load_metrics lib/extric/elements/*
     load_metrics --library=lib/extric
+    load_metrics --library=lib/extric elements/\*
 
 Unloads expertise metrics, deplete `extisimo_{metrics}` tables
 
@@ -162,6 +163,7 @@ Unloads expertise metrics, deplete `extisimo_{metrics}` tables
     load_metrics --unload session recent_lines_of_code
     load_metrics --unload lib/extric/elements/*
     load_metrics --unload --library=lib/extric
+    load_metrics --unload --library=lib/extric elements/\*
 
 Unloads expertise metrics along with corresponding expertises, deplete `extisimo_{metrics,expertises}` tables
 

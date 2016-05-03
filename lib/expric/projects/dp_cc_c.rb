@@ -9,11 +9,11 @@ class Expric::Projects::DpCcC
   def measure(user, project)
     t = { interactions: [attachment: :task] }
     r = user.sessions.joins(t).where(Extisimo::Task.table_name => { project_id: project.id }).distinct.to_a
+    r = r.map { |session| fetch_value via: @p, of: user, on: session }.compact
 
-    return unless r.any?
+    return if r.empty?
 
-    v = r.map { |session| fetch_value via: @p, of: user, on: session }
-    v = Daru::Vector[*v].mean
+    v = Daru::Vector[*r].mean
 
     { value: v }
   end

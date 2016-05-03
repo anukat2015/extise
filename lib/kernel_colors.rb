@@ -3,15 +3,15 @@ require 'core_ext/object/command_line_arguments'
 
 module KernelColors
   def inform(*args)
-    puts *args
+    print *args.map { |a| a.to_s << $/ }.join
   end
 
   { abort: :red, inform: :cyan, warn: :magenta }.each do |method, color|
-    original_method = "kernel_#{method}".to_sym
+    original_method = "kernel_uncolored_#{method}".to_sym
     alias_method original_method, method
     define_method(method) do |*args|
       return __send__ original_method if args.empty?
-      __send__ original_method, colorize_arguments(color, *args).join($\)
+      __send__ original_method, colorize_arguments(color, *args).join($/)
     end
     private original_method
   end

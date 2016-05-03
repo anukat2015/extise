@@ -41,6 +41,7 @@
 
 *   see & add to readme:
   
+    - http://jgibblda.sourceforge.net/
     - https://wiki.eclipse.org/Mylyn/Integrator_Reference#Interaction_events
     - https://www.bugzilla.org/docs/2.16/html/dbschema.html
     - http://www.ravenbrook.com/tool/bugzilla-schema/?action=single&version=3.4.2&view=View+schema

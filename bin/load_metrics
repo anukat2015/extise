@@ -17,6 +17,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
+options.binder.abort OptionParser::NeedlessArgument::Reason if l && !p.empty?
+
 AutoColor.disable on: self unless c
 
 def fetch_metric(target, name)
@@ -52,7 +54,6 @@ if options.assigned?(:u) && (!l && (p.none? || Metric::TARGETS.include?(p.first.
 else
   l = File.expand_path File.join(%w(.. ..) + (l ? [l] : %w(lib extric))), __FILE__
   p = Dir[File.join(%W(#{l} {#{Metric::TARGETS.map(&:pluralize) * ','}} *.rb))] if p.empty?
-  p = p.flat_map { |f| Dir[File.join l, f] } if options.assigned? :l
   d = p.map { |f| File.absolute_path f }.sort.map { |f| Extric.resolve_metric! file: f, library: l rescue abort $! }
 
   if !options.assigned? :u

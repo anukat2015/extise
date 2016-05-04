@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-e, m, s, u, p, r, c, v, x, y = false, :spearman, nil, nil, nil, nil, true, true, nil, nil
+e, m, s, u, p, r, c, v, x, y = false, :spearman, [], [], [], [], true, true, nil, nil
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <target:name> <target:name>'
   use '[<options>] -e [<command>] [<command>]'
   opt 'e -e --eval'
   opt 'm -m --method=(pearson|spearman)'
-  opt 's    --subject=<id:Integer>'
-  opt 'p    --subjects-by-project=<id:Integer>'
-  opt 'u    --user=<id:Integer>'
-  opt 'r    --users-by-project=<id:Integer>'
+  opt 's    --subject=<id:Array>'
+  opt 'p    --subjects-by-project=<id:Array>'
+  opt 'u    --user=<id:Array>'
+  opt 'r    --users-by-project=<id:Array>'
   opt 'c -c --[no-]color'
   opt 'v -v --[no-]verbose'
   arg 'x [<x>]'
@@ -27,8 +27,8 @@ def fetch_expertise_values(q, s = nil, u = nil, p = nil, r = nil)
   metric = Metric.find_by(target: t, name: n) || abort("#{Metric}:? not found by #{n} on #{t}")
   type = Expertise::SUBJECT_TYPES[Metric::TARGETS.index metric.target].constantize
   relation = Expertise.by(metric)
-  relation = relation.on(type.find s) if s
-  relation = relation.of(u) if u
+  relation = relation.on(type.find s) if s.any?
+  relation = relation.of(u) if u.any?
   relation = case metric.target.to_sym
   when :element
     relation.joins(element: [commit: :repository]).where(Repository.table_name => { project_id: p })
@@ -40,8 +40,8 @@ def fetch_expertise_values(q, s = nil, u = nil, p = nil, r = nil)
     relation.joins(conceptualities: [element: [commit: :repository]]).where(Repository.table_name => { project_id: p })
   else
     raise
-  end if p
-  relation = relation.of(Project.find(r).collaborators) if r
+  end if p.any?
+  relation = relation.of(Project.find(r).map(&:collaborators).uniq) if r.any?
   Hash[relation.distinct.pluck(:user_id, :subject_id, :value).map { |d| [d[0..1], d[2]] }]
 end
 

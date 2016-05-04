@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-m, p, n, w, x, y = :spearman, [], 4, :thread, nil, nil
+m, p, r, n, w, x, y = :spearman, [], [], 4, :thread, nil, nil
 c, s, t, v = true, true, 80, true
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <target:name> <target:name>'
   opt 'm -m --method=(pearson|spearman)'
   opt 'p    --project=<id:Array>'
+  opt 'r    --projects-by-product=<id:Array>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -20,12 +21,14 @@ end
 
 n = 0 unless options.assigned? :n
 
+options.binder.abort "needless option: --projects-by-product=#{r * ','}" if p.any? && r.any?
+
 AutoColor.disable on: self unless c
 
 require 'statsample'
 
 def calculate_correlation(x, y, u = nil, p = nil, o = options.bound)
-  args = [x, y] + { method: o[:m], user: u, 'subjects-by-project': p }.map { |k, v| "--#{k}=#{v}" if v }.compact + %w(--no-color --no-verbose)
+  args = [x, y] + { method: o[:m], user: u, 'subjects-by-project': p * ',' }.map { |k, v| "--#{k}=#{v}" if v }.compact + %w(--no-color --no-verbose)
   command = "rcor #{args * ' '}"
   inform "#{command}" if o[:v] unless o[:q]
   Open3.popen3(File.expand_path command, __dir__) do |input, output, error, status|
@@ -44,6 +47,8 @@ def compare_correlation(a, b)
   c = (!v || v.nan? ? Float::INFINITY : v) <=> (!u || u.nan? ? Float::INFINITY : u)
   !c.zero? ? c : a[:name] <=> b[:name]
 end
+
+p = Project.where(product: r).pluck :id if r.any?
 
 users = User.joins(:expertises).order(:name).distinct
 users = users.where(id: Project.find(p).flat_map(&:collaborators).pluck(:id).uniq) if p.any?

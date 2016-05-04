@@ -20,7 +20,7 @@ options.binder.abort OptionParser::MissingArgument::Reason unless m && a.any? un
 
 AutoColor.disable on: self unless c
 
-data = Class.const_get(m).pluck(*a).map { |*v| v * ' ' } rescue abort("Unable to #{m}.pluck #{a * ', '}") unless e
+data = Class.const_get(m).pluck(*a).map { |*v| v * ', ' } rescue abort("Unable to #{m}.pluck #{a * ', '}") unless e
 args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
 args = args.insert(-2, "-t#{t}").tap { |a| a.insert -3, "-n#{n}" if n }
 

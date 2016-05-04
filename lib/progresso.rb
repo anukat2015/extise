@@ -1,4 +1,10 @@
+require 'active_support/core_ext/kernel/reporting'
 require 'ruby-progressbar'
+
+# NOTE: always force desired progress bar output on TTY,
+# any output to non-TTYs needs to be fixed manually
+
+silence_warnings { ProgressBar::Outputs::NonTty = ProgressBar::Outputs::Tty }
 
 module Progresso
   extend self

@@ -29,9 +29,11 @@ module Syntax
     m = fetch_values options, :method, optional: true
     n = fetch_values options, :normalization, optional: true
 
-    o = %i(subject subjects_by_project user users_by_project)
-    raise 'project given with no effect' if options[:project] && !o.select { |k| options[k] }.empty?
-    raise 'subject already given' if options[:subject] && options[:user]
+    u = %i(project projects_by_product)
+    r = %i(subject subjects_by_project user users_by_project)
+    raise 'both project and subject or user given' if u.select { |k| options[k] }.any? && r.select { |k| options[k] }.any?
+    raise 'both subject and user given' if options[:subject] && options[:user]
+    raise 'project already scoped' if options[:project] && options[:projects_by_product]
     raise 'subject already scoped' if options[:subject] && options[:subjects_by_project]
     raise 'user already scoped' if options[:user] && options[:users_by_project]
 

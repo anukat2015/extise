@@ -23,7 +23,8 @@ require 'active_support/testing/stream'
 module Syntax
   attr_accessor :measure_until
 
-  def correlation(x, y, options = {})
+  def correlation(t, x, y, options = {})
+    x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
     m = fetch_values options, :method, optional: true
     o = %i(subject subjects_by_project user users_by_project)
     raise 'project given with no effect' if options[:project] && !o.select { |k| options[k] }.empty?
@@ -32,17 +33,21 @@ module Syntax
     raise 'user already scoped' if options[:user] && options[:users_by_project]
 
     if options[:project]
-      a = ['ucor', x, y, "--project=#{options[:project]}", '--no-verbose']
+      c = ['ucor', "--project=#{options[:project]}", '--no-verbose']
       o = { parallel: true, silent: true }
     else
-      a = ['rcor', x, y, *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose']
+      c = ['rcor', *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose']
       o = { silent: true }
     end
 
-    if m.any?
-      m.each { |method| run *a.dup.insert(3, "--method=#{method}"), o }
-    else
-      run *a, o
+    x.each do |a|
+      y.each do |b|
+        if m.any?
+          m.each { |method| run *c.dup.insert(1, a, b).insert(3, "--method=#{method}"), o }
+        else
+          run *c.dup.insert(1, a, b), o
+        end
+      end
     end
   end
 
@@ -159,7 +164,7 @@ class Round
   end
 
   def take_screenshot(t, c, l, s)
-    c, o = c.gsub(/\s--(no-)?color(\s|\z)/, ''), File.read(l)
+    c, o = c.gsub(/\s--(no-)?color(\s|\z)/, ' ').strip, File.read(l)
     File.write l, Colored.decolorize(o)
     return unless options[:color]
     @screenshot_directory ||= File.join(File.dirname(l), 'screenshots')

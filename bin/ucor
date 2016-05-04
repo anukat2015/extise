@@ -86,7 +86,7 @@ else
     row << ('%+.8f' % d[:correlation][:r])[0..10].send(coefficient_color.call d[:correlation][:r])
     row << ('%+.8f' % d[:correlation][:t])[0..10].send(t_test_color.call d[:correlation][:t])
     row << ('%.8f' % d[:correlation][:p])[0..9].send(p_value_color.call d[:correlation][:p])
-    table.rows << row.map { "#{c} " }
+    table.rows << row.map { |c| "#{c} " }
   end
 
   puts table if table.rows.any?

@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-m, p, n, w, x, y = :spearman, nil, 4, :thread, nil, nil
+m, p, n, w, x, y = :spearman, [], 4, :thread, nil, nil
 c, s, t, v = true, true, 80, true
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <target:name> <target:name>'
   opt 'm -m --method=(pearson|spearman)'
-  opt 'p    --project=<id>'
+  opt 'p    --project=<id:Array>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -46,7 +46,7 @@ def compare_correlation(a, b)
 end
 
 users = User.joins(:expertises).order(:name).distinct
-users = users.where(id: Project.find(p).collaborators.pluck(:id)) if p
+users = users.where(id: Project.find(p).flat_map(&:collaborators).pluck(:id).uniq) if p.any?
 
 correlations = []
 
@@ -81,7 +81,7 @@ else
       row << ('%+.8f' % data[:correlation][:t])[0..10].send(t_test_color.call data[:correlation][:t])
       row << ('%.8f' % data[:correlation][:p])[0..9].send(p_value_color.call data[:correlation][:p])
     else
-      row << { colspan: 4, value: data[:message].red }
+      row << { colspan: 4, value: data[:message].strip.red }
     end
     table.rows << row.map { |c| c.is_a?(Hash) ? c.merge(value: "#{c[:value]} ") : "#{c} " }
   end

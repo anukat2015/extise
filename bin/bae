@@ -18,6 +18,7 @@ end
 AutoColor.disable on: self unless c
 
 require 'active_support/all'
+require 'active_support/testing/stream'
 
 module Syntax
   attr_accessor :measure_until
@@ -48,7 +49,7 @@ module Syntax
   alias_method :correlate, :correlation
 
   def histogram(*args)
-    run 'rhist', *(args.size == 1 ? ['--eval', args.first] : args).map(&:to_s), silent: true
+    run 'rhist', *(args.size == 1 ? ['--eval', args.first] : args.flatten).map(&:to_s), silent: true
   end
 
   def measure(options = {})
@@ -84,6 +85,8 @@ module Syntax
 end
 
 class Round
+  include ActiveSupport::Testing::Stream
+
   attr_accessor :file, :options
 
   def initialize(file, options = {})
@@ -116,9 +119,11 @@ class Round
     p << '…' if p.size != a.size
     begin
       puts "#{p * ' '}".cyan unless options[:quiet]
-      r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>&1 | tee -a #{l}"
-      !o.fetch(:silent, true) && !options[:quiet] && options[:verbose] ? system(r) : `#{r}`
-      s = $?.success?.tap { |s| puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose] }
+      r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>&1 | tee -a #{l}; exit ${PIPESTATUS[0]}"
+      q = o.fetch(:silent, true) || options[:quiet] || !options[:verbose]
+      s = (q ? quietly { system(r) } : system(r)).tap do |s|
+        puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose]
+      end
     ensure
       File.write l, File.read(l).gsub(/\n\s*\r.+\r\s*/, $/ * 2)
       take_screenshot t, c, l, s

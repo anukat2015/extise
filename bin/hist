@@ -15,7 +15,7 @@ ARGV.bind_and_parse! to: :locals do
   arg 'm [<mix>...]'
 end
 
-AutoColor.enable on: self, colored: c, colorings: -> (s) { s.sub(/\A([^ ]+) (.+)\z/, "#{'\1'.yellow} #{'\2'.black}") }
+AutoColor.disable on: self unless c
 
 begin
   a = m.inject([]) { |_, f| _ += SafeEval::IO.read_with_safe_eval f, eval: e, as: Array }
@@ -37,6 +37,6 @@ n = h.count + n if n.to_i < 0
 h.each do |k, x|
   break if n && (n -= 1) < 0
   r = x.to_f / sum
-  p = "%#{pad_k}s#{" %#{pad_x}s" % x if v}#{' %6.2f' % (100 * r) if v} %s"
+  p = "%#{pad_k}s".yellow << "#{" %#{pad_x}s" % x if v}#{' %6.2f' % (100 * r) if v} %s".black
   puts p % [k[0..(pad_k - 1)], '-' * (max_b * r).to_i]
 end

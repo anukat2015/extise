@@ -81,5 +81,5 @@ Open3.popen3(File.expand_path "cor #{args * ' '}", __dir__) do |input, output, e
   input.close
   threads.each &:join
   [output, error].each &:close
-  abort unless status.value.to_i.zero?
+  abort unless status.value.success?
 end

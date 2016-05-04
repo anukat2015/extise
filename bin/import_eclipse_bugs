@@ -70,7 +70,7 @@ def import_mylyn_context(a, i = 0, o = options.bound)
     threads << Thread.new { output.each { |l| print "#{'  ' * i}#{l}" }} unless o[:q]
     threads.each &:join
     [input, output, error].each &:close
-    abort unless status.value.to_i.zero?
+    abort unless status.value.success?
   end
 end
 

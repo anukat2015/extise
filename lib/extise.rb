@@ -66,7 +66,7 @@ module Extise
         r = o.read.tap { o.close }
         return false if r =~ /\Aextise server: unknown failure/
         yield(StringIO.new(r), e, s).tap { e.close }
-        warn "#{Client}:#{object_id} no response from server at #{host}:#{port}" unless s.value.to_i.zero?
+        warn "#{Client}:#{object_id} no response from server at #{host}:#{port}" unless s.value.success?
       end
     end
   end

@@ -19,6 +19,12 @@ ARGV.bind_and_parse! to: :locals do
 end
 
 options.binder.abort OptionParser::MissingArgument::Reason unless x && y unless e
+{ subject: s, 'subjects-by-project': p, user: u, 'users-by-project': r }.each do |n, o|
+  options.binder.abort "needless option: --#{n}=#{o * ','}" if o.any?
+end if e
+
+options.binder.abort "needless option: --subjects-by-project=#{p * ','}" if s.any? && p.any?
+options.binder.abort "needless option: --users-by-project=#{r * ','}" if u.any? && r.any?
 
 AutoColor.disable on: self unless c
 

@@ -6,6 +6,7 @@ class Extisimo::User < ActiveRecord::Base
   has_many :assigned_tasks, class_name: :Task, foreign_key: :assignee_id, dependent: :destroy
   has_many :posts, foreign_key: :author_id, dependent: :destroy
   has_many :attachments, foreign_key: :author_id, dependent: :destroy
+  has_many :interactions, through: :attachments
   has_many :commits, foreign_key: :author_id, dependent: :destroy
   has_many :sessions, dependent: :destroy
   has_many :expertises, dependent: :destroy

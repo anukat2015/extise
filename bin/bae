@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-u, n, w, p = :now, 4, :thread, [STDIN]
+u, n, w, p = :now, 8, :thread, [STDIN]
 c, v, q = true, true, false
 
 ARGV.bind_and_parse! to: :locals do

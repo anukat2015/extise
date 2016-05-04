@@ -25,7 +25,10 @@ module Syntax
 
   def correlation(t, x, y, options = {})
     x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
+
     m = fetch_values options, :method, optional: true
+    n = fetch_values options, :normalization, optional: true
+
     o = %i(subject subjects_by_project user users_by_project)
     raise 'project given with no effect' if options[:project] && !o.select { |k| options[k] }.empty?
     raise 'subject already given' if options[:subject] && options[:user]
@@ -33,19 +36,21 @@ module Syntax
     raise 'user already scoped' if options[:user] && options[:users_by_project]
 
     if options[:project]
-      c = ['ucor', "--project=#{options[:project]}", '--no-verbose']
+      p = ['ucor', "--project=#{options[:project]}", '--no-verbose']
       o = { parallel: true, silent: true }
     else
-      c = ['rcor', *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose']
+      p = ['rcor', *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose']
       o = { silent: true }
     end
 
-    x.each do |a|
-      y.each do |b|
-        if m.any?
-          m.each { |method| run *c.dup.insert(1, a, b).insert(3, "--method=#{method}"), o }
-        else
-          run *c.dup.insert(1, a, b), o
+    (m.any? ? m : [nil]).each do |method|
+      x.each do |a|
+        y.each do |b|
+          (n.any? ? n : %w(raw)).each do |normalization|
+            c = p.dup.insert 1, *[a, b].map { |i| normalization.to_s == 'raw' ? i : "#{i}:#{normalization}" }
+            c.insert 3, "--method=#{method}" if method
+            run *c, o
+          end
         end
       end
     end
@@ -85,7 +90,7 @@ module Syntax
     raise("#{single} already given") if options.key?(multiple) && options.key?(single)
     values = Array.wrap options.fetch(multiple, [])
     values = [options[single]] if options.key?(single) && values.empty?
-    optional || values.any? ? values : raise("no #{single} given")
+    optional || values.flatten.compact.any? ? values.flatten : raise("no #{single} given")
   end
 end
 

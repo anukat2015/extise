@@ -84,7 +84,7 @@ module Colored
 
     def to_color(e = [])
       k = e.last >= 40 ? e.last - 10 : e.last
-      k = e.select { |x| x == 7 }.size.odd? ? 37 - k : k
+      k = e.select { |x| x == 7 }.size.odd? ? 37 - (k % 10) : k
       (e.include?(1) ? BRIGHT_COLORS : NORMAL_COLORS)[k]
     end
   end

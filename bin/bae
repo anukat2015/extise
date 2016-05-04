@@ -79,7 +79,7 @@ module Syntax
     raise("#{single} already given") if options.key?(multiple) && options.key?(single)
     values = Array.wrap options.fetch(multiple, [])
     values = [options[single]] if options.key?(single) && values.empty?
-    optional || !values.empty? ? values : raise("no #{single} given")
+    optional || values.any? ? values : raise("no #{single} given")
   end
 end
 

@@ -17,7 +17,7 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
-options.binder.abort OptionParser::NeedlessArgument::Reason if l && !p.empty?
+options.binder.abort OptionParser::NeedlessArgument::Reason if l && p.any?
 
 AutoColor.disable on: self unless c
 

@@ -46,9 +46,9 @@ module Syntax
   def measure(options = {})
     fetch_values(options, :targets).each do |target|
       fetch_values(options, :metrics).each do |metric|
-        run 'measure', target, metric, "--until=#{options[:until] || measure_until || :now}", parallel: true
+        run 'measure', target, metric, "--until=#{options[:until] || measure_until || :now}", parallel: true, silent: false
         fetch_values(options, :normalizations, optional: true).each do |normalization|
-          run 'normalize', target, metric, "--method=#{normalization}", parallel: true
+          run 'normalize', target, metric, "--method=#{normalization}", parallel: true, silent: false
         end
       end
     end
@@ -58,7 +58,7 @@ module Syntax
     fetch_values(options, :targets).each do |target|
       fetch_values(options, :metrics).each do |metric|
         fetch_values(options, :methods).each do |method|
-          run 'normalize', target, metric, "--method=#{method}", parallel: true
+          run 'normalize', target, metric, "--method=#{method}", parallel: true, silent: false
         end
       end
     end
@@ -102,14 +102,14 @@ class Round
     c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
     @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
     FileUtils.mkpath @log_directory
-    l = File.join @log_directory, "#{t}_#{a[0]}.log"
+    l = File.join @log_directory, "#{t}_#{a[0].split(/\s+/, 2)[0]}.log"
     File.write l, "#{t.black}\n\n#{c.white}\n\n"
     p = a.reject { |x| x =~ /--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
     p << '…' if p.size != a.size
     begin
       puts "#{p * ' '}".cyan unless options[:quiet]
       r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>&1 | tee -a #{l}"
-      !o[:silent] && !options[:quiet] && options[:verbose] ? system(r) : `#{r}`
+      !o.fetch(:silent, true) && !options[:quiet] && options[:verbose] ? system(r) : `#{r}`
       s = $?.success?.tap { |s| puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose] }
     ensure
       File.write l, File.read(l).gsub(/\n\s*\r.+\r\s*/, $/ * 2)
@@ -146,7 +146,7 @@ class Round
   end
 
   def take_screenshot(t, c, l, s)
-    o = File.read l
+    c, o = c.gsub(/\s--(no-)color\s/, ''), File.read(l)
     File.write l, Colored.decolorize(o)
     return unless options[:color]
     @screenshot_directory ||= File.join(File.dirname(l), 'screenshots')

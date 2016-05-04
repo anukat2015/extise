@@ -4,6 +4,7 @@ A collection of tools to estimate developers' expertise
 
 ## Requirements
 
+- Bash 4.3.42
 - Ruby 2.2.3
 - PostgreSQL 9.5.1
 - Java 1.7

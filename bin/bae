@@ -49,7 +49,7 @@ module Syntax
   alias_method :correlate, :correlation
 
   def histogram(*args)
-    run 'rhist', *(args.size == 1 ? ['--eval', args.first] : args.flatten).map(&:to_s), silent: true
+    run 'rhist', *(args.size == 1 ? ['--eval', "'#{args.first}'"] : args.flatten).map(&:to_s), silent: true
   end
 
   def measure(options = {})
@@ -159,7 +159,7 @@ class Round
   end
 
   def take_screenshot(t, c, l, s)
-    c, o = c.gsub(/\s--(no-)color\s/, ''), File.read(l)
+    c, o = c.gsub(/\s--(no-)?color(\s|\z)/, ''), File.read(l)
     File.write l, Colored.decolorize(o)
     return unless options[:color]
     @screenshot_directory ||= File.join(File.dirname(l), 'screenshots')

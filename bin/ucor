@@ -1,14 +1,15 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise! { include Extisimo }
 
-m, p, r, n, w, x, y = :spearman, [], [], 4, :thread, nil, nil
+m, p, f, r, n, w, x, y = :spearman, [], [], [], 4, :thread, nil, nil
 c, s, t, v = true, true, 80, true
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] <target:name> <target:name>'
   opt 'm -m --method=(pearson|spearman)'
   opt 'p    --project=<id:Array>'
-  opt 'r    --projects-by-product=<id:Array>'
+  opt 'f    --projects-by-classification=<value:Array>'
+  opt 'r    --projects-by-product=<value:Array>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
   opt 'c -c --[no-]color'
@@ -21,6 +22,7 @@ end
 
 n = 0 unless options.assigned? :n
 
+options.binder.abort "needless option: --projects-by-classification=#{f * ','}" if p.any? && f.any?
 options.binder.abort "needless option: --projects-by-product=#{r * ','}" if p.any? && r.any?
 
 AutoColor.disable on: self unless c
@@ -28,8 +30,8 @@ AutoColor.disable on: self unless c
 require 'statsample'
 
 def calculate_correlation(x, y, u = nil, p = nil, o = options.bound)
-  args = [x, y] + { method: o[:m], user: u, 'subjects-by-project': p * ',' }.map { |k, v| "--#{k}=#{v}" if v }.compact + %w(--no-color --no-verbose)
-  command = "rcor #{args * ' '}"
+  args = [x, y] + { method: o[:m], user: u, 'subjects-by-project': p * ',' }.map { |k, v| "--#{k}=#{v}" if v }.compact
+  command = "rcor #{args * ' '} --no-color --no-verbose"
   inform "#{command}" if o[:v] unless o[:q]
   Open3.popen3(File.expand_path command, __dir__) do |input, output, error, status|
     r, e = *[output, error].map { |s| s.read.strip.presence }
@@ -48,7 +50,8 @@ def compare_correlation(a, b)
   !c.zero? ? c : a[:name] <=> b[:name]
 end
 
-p = Project.where(product: r).pluck :id if r.any?
+p += Project.joins(:tasks).where(Task.table_name => { classification: f }).pluck :id if f.any?
+p += Project.where(product: r).pluck :id if r.any?
 
 users = User.joins(:expertises).order(:name).distinct
 users = users.where(id: Project.find(p).flat_map(&:collaborators).pluck(:id).uniq) if p.any?
@@ -72,27 +75,29 @@ else
   # NOTE: colorize results with significant difference between population means greater or equal to 2.0
   # NOTE: colorize results with statistical significance lower or equal to 0.05
 
-  samples_color = -> (x) { x >= 5 ? :white : :black }
+  samples_color = -> (x) { x >= 10 ? :white : :black }
   coefficient_color = -> (x) { x.nan? ? :black : (x.zero? ? :yellow : (x.positive? ? :green : :red)) }
   t_test_color = -> (x) { x >= 2.0 ? :cyan : :black }
   p_value_color = -> (x) { x <= 0.05 ? :cyan : :black }
 
   table = Text::Table.new horizontal_padding: 0, horizontal_boundary: '', vertical_boundary: '', boundary_intersection: ' '
   table.head = %w(user name samples coefficient t-test p-value).map { |h| { align: :left, value: h.black << ' ' }}
-  correlations.each { |d| d[:name] = d[:name].split(Extisimo::Naming::NAME_SEPARATOR).first }
-  correlations.select { |d| d[:correlation] }.each do |d|
-    row = [d[:user].to_s.black, d[:name].blue]
-    row << ('%d' % d[:correlation][:x]).send(samples_color.call d[:correlation][:x])
-    row << ('%+.8f' % d[:correlation][:r])[0..10].send(coefficient_color.call d[:correlation][:r])
-    row << ('%+.8f' % d[:correlation][:t])[0..10].send(t_test_color.call d[:correlation][:t])
-    row << ('%.8f' % d[:correlation][:p])[0..9].send(p_value_color.call d[:correlation][:p])
-    table.rows << row.map { |c| "#{c} " }
+  correlations.each do |d|
+    row = [d[:user].to_s.black, d[:name].split(Extisimo::Naming::NAME_SEPARATOR).first.blue]
+    if d[:correlation]
+      row << ('%d' % d[:correlation][:x]).send(samples_color.call d[:correlation][:x])
+      row << ('%+.8f' % d[:correlation][:r])[0..10].send(coefficient_color.call d[:correlation][:r])
+      row << ('%+.8f' % d[:correlation][:t])[0..10].send(t_test_color.call d[:correlation][:t])
+      row << ('%.8f' % d[:correlation][:p])[0..9].send(p_value_color.call d[:correlation][:p])
+    else
+      row << { colspan: 4, value: d[:message].black }
+    end
+    table.rows << row.map { |c| c.is_a?(Hash) ? c.merge(value: "#{c[:value]} ") : "#{c} " }
+  end
+
+  def table.to_s
+    ([separator, text_table_head.to_s, separator] + text_table_rows.map { |row| row.to_s.rstrip << $/ }).join
   end
 
   puts table if table.rows.any?
-
-  pad_u, pad_n = correlations.map { |d| d[:user].to_s.length }.max, correlations.map { |d| d[:name].length }.max
-  correlations.reject { |d| d[:correlation] }.each do |d|
-    puts (["%#{pad_u}s".black, "%#{pad_n}s".blue, '%s'.red] * ' ') % [d[:user], d[:name], d[:message]]
-  end
 end

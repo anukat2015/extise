@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require_relative 'common' and load_extise!
 
-e, c, s, n, t, v, m, a = false, true, true, nil, 80, true, nil, nil
+e, c, s, n, t, v, m, a = false, true, true, nil, 80, true, nil, []
 
 ARGV.bind_and_parse! to: :locals do
-  use '[<options>] <model> <attribute>'
+  use '[<options>] <model> <attribute>...'
   use '[<options>] -e [<command>...]'
   opt 'e -e --eval'
   opt 'c -c --[no-]color'
@@ -13,14 +13,14 @@ ARGV.bind_and_parse! to: :locals do
   opt 't -t --trim[=<length:Integer>]'
   opt 'v -v --[no-]verbose'
   arg 'm [<model>]'
-  arg 'a [<attribute>]'
+  arg 'a [<attribute>...]'
 end
 
-options.binder.abort OptionParser::MissingArgument::Reason unless m && a unless e
+options.binder.abort OptionParser::MissingArgument::Reason unless m && a.any? unless e
 
 AutoColor.disable on: self unless c
 
-data = Class.const_get(m).pluck(a) rescue abort("Unable to #{m}.pluck #{a}") unless e
+data = Class.const_get(m).pluck(*a).map { |*v| v * ' ' } rescue abort("Unable to #{m}.pluck #{a * ', '}") unless e
 args = %w(color sort verbose).map { |o| options.bound[o[0].to_sym] ? "-#{o[0]}" : "--no-#{o}" }
 args = args.insert(-2, "-t#{t}").tap { |a| a.insert -3, "-n#{n}" if n }
 

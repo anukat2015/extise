@@ -23,17 +23,25 @@ module Syntax
   attr_accessor :measure_until
 
   def correlation(x, y, options = {})
-    c = [x, y]
-    c = c << "--method=#{options[:method]}" if options[:method]
+    m = fetch_values options, :method, optional: true
     o = %i(subject subjects_by_project user users_by_project)
     raise 'project given with no effect' if options[:project] && !o.select { |k| options[k] }.empty?
     raise 'subject already given' if options[:subject] && options[:user]
     raise 'subject already scoped' if options[:subject] && options[:subjects_by_project]
     raise 'user already scoped' if options[:user] && options[:users_by_project]
+
     if options[:project]
-      run 'ucor', *c, "--project=#{options[:project]}", '--no-verbose', parallel: true, silent: true
+      a = ['ucor', x, y, "--project=#{options[:project]}", '--no-verbose']
+      o = { parallel: true, silent: true }
     else
-      run 'rcor', *c, *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose', silent: true
+      a = ['rcor', x, y, *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose']
+      o = { silent: true }
+    end
+
+    if m.any?
+      m.each { |method| run *a.dup.insert(3, "--method=#{method}"), o }
+    else
+      run *a, o
     end
   end
 
@@ -98,13 +106,13 @@ class Round
     a = a.flatten.compact
     a, o = *(a.last.is_a?(Hash) ? [a[0..-2], a.last] : [a, {}])
     a += %W(--parallel=#{options[:parallel]} --parallel-worker=#{options[:parallel_worker]}) if o[:parallel]
-    a << '--color'
+    a.insert a[-1] =~ /\A--(no-)verbose/ ? -2 : -1, '--color'
     c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
     @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
     FileUtils.mkpath @log_directory
     l = File.join @log_directory, "#{t}_#{a[0].split(/\s+/, 2)[0]}.log"
     File.write l, "#{t.black}\n\n#{c.white}\n\n"
-    p = a.reject { |x| x =~ /--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
+    p = a.reject { |x| x =~ /\A--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
     p << '…' if p.size != a.size
     begin
       puts "#{p * ' '}".cyan unless options[:quiet]

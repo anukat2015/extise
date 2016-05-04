@@ -62,33 +62,37 @@ end
 correlations = correlations.sort { |a, b| compare_correlation a, b } if s
 
 if v
-  correlations.each do |data|
-    correlation = data[:correlation] ? { samples: :x, method: :m, coefficient: :r, t_test: :t, p_value: :p }.transform_values { |v| data[:correlation][v] } : {}
-    dump_record correlation.reverse_merge class: 'Extisimo::Correlation', status: data[:status] == 0 ? 'success' : 'failure', message: data[:message]
-    dump_record({ class: User.name, id: data[:user], name: data[:name] }, :user, 1)
+  correlations.each do |d|
+    correlation = d[:correlation] ? { samples: :x, method: :m, coefficient: :r, t_test: :t, p_value: :p }.transform_values { |v| d[:correlation][v] } : {}
+    dump_record correlation.reverse_merge class: 'Extisimo::Correlation', status: d[:status] == 0 ? 'success' : 'failure', message: d[:message]
+    dump_record({ class: User.name, id: d[:user], name: d[:name] }, :user, 1)
   end
 else
+
+  # NOTE: colorize results with significant difference between population means greater or equal to 2.0
+  # NOTE: colorize results with statistical significance lower or equal to 0.05
+
+  samples_color = -> (x) { x >= 5 ? :white : :black }
+  coefficient_color = -> (x) { x.nan? ? :black : (x.zero? ? :yellow : (x.positive? ? :green : :red)) }
+  t_test_color = -> (x) { x >= 2.0 ? :cyan : :black }
+  p_value_color = -> (x) { x <= 0.05 ? :cyan : :black }
+
   table = Text::Table.new horizontal_padding: 0, horizontal_boundary: '', vertical_boundary: '', boundary_intersection: ' '
   table.head = %w(user name samples coefficient t-test p-value).map { |h| { align: :left, value: h.black << ' ' }}
-  correlations.each do |data|
-
-    # NOTE: colorize results with significant difference between population means greater or equal to 2.0
-    # NOTE: colorize results with statistical significance lower or equal to 0.05
-
-    samples_color = -> (x) { x >= 5 ? :white : :black }
-    coefficient_color = -> (x) { x.nan? ? :black : (x.zero? ? :yellow : (x.positive? ? :green : :red)) }
-    t_test_color = -> (x) { x >= 2.0 ? :cyan : :black }
-    p_value_color = -> (x) { x <= 0.05 ? :cyan : :black }
-    row = [data[:user].to_s.black, data[:name].split(Extisimo::Naming::NAME_SEPARATOR).first.blue]
-    if data[:correlation]
-      row << ('%d' % data[:correlation][:x]).send(samples_color.call data[:correlation][:x])
-      row << ('%+.8f' % data[:correlation][:r])[0..10].send(coefficient_color.call data[:correlation][:r])
-      row << ('%+.8f' % data[:correlation][:t])[0..10].send(t_test_color.call data[:correlation][:t])
-      row << ('%.8f' % data[:correlation][:p])[0..9].send(p_value_color.call data[:correlation][:p])
-    else
-      row << { colspan: 4, value: data[:message].strip.red }
-    end
-    table.rows << row.map { |c| c.is_a?(Hash) ? c.merge(value: "#{c[:value]} ") : "#{c} " }
+  correlations.each { |d| d[:name] = d[:name].split(Extisimo::Naming::NAME_SEPARATOR).first }
+  correlations.select { |d| d[:correlation] }.each do |d|
+    row = [d[:user].to_s.black, d[:name].blue]
+    row << ('%d' % d[:correlation][:x]).send(samples_color.call d[:correlation][:x])
+    row << ('%+.8f' % d[:correlation][:r])[0..10].send(coefficient_color.call d[:correlation][:r])
+    row << ('%+.8f' % d[:correlation][:t])[0..10].send(t_test_color.call d[:correlation][:t])
+    row << ('%.8f' % d[:correlation][:p])[0..9].send(p_value_color.call d[:correlation][:p])
+    table.rows << row.map { "#{c} " }
   end
-  puts table
+
+  puts table if table.rows.any?
+
+  pad_u, pad_n = correlations.map { |d| d[:user].to_s.length }.max, correlations.map { |d| d[:name].length }.max
+  correlations.reject { |d| d[:correlation] }.each do |d|
+    puts (["%#{pad_u}s".black, "%#{pad_n}s".blue, '%s'.red] * ' ') % [d[:user], d[:name], d[:message]]
+  end
 end

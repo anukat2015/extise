@@ -24,24 +24,30 @@ module Syntax
   attr_accessor :measure_until
 
   def correlation(t, x, y, options = {})
+    options = options.dup
+
     x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
 
     m = fetch_values options, :method, optional: true
     n = fetch_values options, :normalization, optional: true
 
-    u = %i(project projects_by_product)
+    u = %i(project projects_by_classification projects_by_product)
     r = %i(subject subjects_by_project user users_by_project)
-    raise 'both project and subject or user given' if u.select { |k| options[k] }.any? && r.select { |k| options[k] }.any?
-    raise 'both subject and user given' if options[:subject] && options[:user]
-    raise 'project already scoped' if options[:project] && options[:projects_by_product]
-    raise 'subject already scoped' if options[:subject] && options[:subjects_by_project]
-    raise 'user already scoped' if options[:user] && options[:users_by_project]
 
-    if options[:project]
-      p = ['ucor', "--project=#{options[:project]}", '--no-verbose']
+    [u + r].flatten.each { |k| options[k] = fetch_values options, k, optional: true }
+
+    raise 'both project and subject or user given' if u.select { |k| options[k].present? }.any? && r.select { |k| options[k].present? }.any?
+    raise 'project already scoped' if options[:project].present? && options[:projects_by_classification].present?
+    raise 'project already scoped' if options[:project].present? && options[:projects_by_product].present?
+    raise 'both subject and user given' if options[:subject].present? && options[:user].present?
+    raise 'subject already scoped' if options[:subject].present? && options[:subjects_by_project].present?
+    raise 'user already scoped' if options[:user].present? && options[:users_by_project].present?
+
+    if u.select { |k| options[k].any? }.any?
+      p = ['ucor', *pack_values(options, keys: u), '--no-verbose']
       o = { parallel: true, silent: true }
     else
-      p = ['rcor', *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose']
+      p = ['rcor', *pack_values(options, keys: r), '--no-verbose']
       o = { silent: true }
     end
 
@@ -93,6 +99,13 @@ module Syntax
     values = Array.wrap options.fetch(multiple, [])
     values = [options[single]] if options.key?(single) && values.empty?
     optional || values.flatten.compact.any? ? values.flatten : raise("no #{single} given")
+  end
+
+  def pack_values(options, keys: options.keys)
+    keys.select { |k| options[k].present? }.map do |k|
+      v = options[k] * ','
+      "--#{k.to_s.tr '_', '-'}=#{v =~ /\s/ ? "'#{v}'" : v}"
+    end
   end
 end
 
@@ -150,7 +163,7 @@ class Round
     t = "#{File.dirname @screenshot_directory}"
     i = @screenshots.map { |s|
       l = "#{s[:time].black} #{s[:command].ljust(m).white} #{s[:status] ? 'success'.green : 'failure'.red }"
-      "<a style=\"text-decoration: none\" href=\"#{File.basename s[:screenshot]}\">#{Colored.decolorize l, escape: Colored::HTML}</a>"
+      "<a href=\"#{File.basename s[:screenshot]}\" style=\"text-decoration: none\">#{Colored.decolorize l, escape: Colored::HTML}</a>"
     } * $/
     File.write File.join(@screenshot_directory, 'index.html'), build_screenshot(t, i)
   end
@@ -186,5 +199,6 @@ o = Hash[%i(until parallel parallel_worker color verbose quiet).zip [u, n, w, c,
 
 p.each do |f|
   inform f if v && !q && !f.is_a?(IO)
+
   Round.new(f, o).load!
 end

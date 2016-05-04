@@ -30,7 +30,8 @@ AutoColor.disable on: self unless c
 require 'statsample'
 
 def calculate_correlation(x, y, u = nil, p = nil, o = options.bound)
-  args = [x, y] + { method: o[:m], user: u, 'subjects-by-project': p * ',' }.map { |k, v| "--#{k}=#{v}" if v }.compact
+  args = [x, y] + { method: o[:m], user: u }.map { |k, v| "--#{k}=#{v}" if v }.compact
+  args << "--subjects-by-project=#{p * ','}" if p.present?
   command = "rcor #{args * ' '} --no-color --no-verbose"
   inform "#{command}" if o[:v] unless o[:q]
   Open3.popen3(File.expand_path command, __dir__) do |input, output, error, status|

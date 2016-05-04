@@ -31,9 +31,9 @@ module Syntax
     raise 'subject already scoped' if options[:subject] && options[:subjects_by_project]
     raise 'user already scoped' if options[:user] && options[:users_by_project]
     if options[:project]
-      run 'ucor', *c, "--project=#{project}", '--no-verbose', parallel: true, silent: true
+      run 'ucor', *c, "--project=#{options[:project]}", '--no-verbose', parallel: true, silent: true
     else
-      run 'rcor', *c, *o.map { |k| "--#{k}=#{options[k]}" }, '--no-verbose', silent: true
+      run 'rcor', *c, *o.map { |k| "--#{k}=#{options[k]}" if options[k] }, '--no-verbose', silent: true
     end
   end
 
@@ -90,6 +90,8 @@ class Round
     space.measure_until = options[:until]
     space.instance_eval { load File.expand_path '../../Extisefile', __FILE__ }
     SafeEval::IO.read_and_safe_eval File.open_or(file), context: space
+    index_screenshots
+    true
   end
 
   def run(*a)
@@ -100,35 +102,36 @@ class Round
     c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
     @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
     FileUtils.mkpath @log_directory
+    l = File.join @log_directory, "#{t}_#{a[0]}.log"
+    File.write l, "#{t.black}\n\n#{c.white}\n\n"
+    p = a.reject { |x| x =~ /--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
+    p << '…' if p.size != a.size
     begin
-      l = File.join @log_directory, "#{t}_#{a[0]}.log"
-      log = File.open l, 'a'
-      File.write l, "#{t.black}\n\n#{c.white}\n\n"
-      p = a.reject { |x| x =~ /--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
-      p << '…' if p.size != a.size
       puts "#{p * ' '}".cyan unless options[:quiet]
-      s = Open3.popen3(File.expand_path File.join(%W(.. #{c})), __FILE__) do |input, output, error, status|
-        outputs, errors = [(self if !o[:silent] && options[:verbose] && !options[:quiet]), log].compact, [log]
-        threads = [Thread.new { output.each { |l| outputs.each { |s| s.print l }}}]
-        threads << Thread.new { error.each { |l| errors.each { |s| s.print l }}}
-        threads.each &:join
-        [input, output, error].each &:close
-        status.value
-      end
-      puts s.success? ? 'success'.green : 'failure'.red if options[:verbose] unless options[:quiet]
+      r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>&1 | tee -a #{l}"
+      !o[:silent] && !options[:quiet] && options[:verbose] ? system(r) : `#{r}`
+      s = $?.success?.tap { |s| puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose] }
     ensure
-      log.close if log
-      fix t, c, l
+      File.write l, File.read(l).gsub(/\n\s*\r.+\r\s*/, $/ * 2)
+      take_screenshot t, c, l, s
     end
   end
 
   private
 
-  def fix(t, c, l)
-    s = File.read l
-    File.write l, Colored.decolorize(s)
-    return unless options[:color]
-    o = <<-HTML.strip_heredoc
+  def index_screenshots
+    return unless @screenshots
+    m = @screenshots.map { |s| s[:command].length }.max
+    t = "#{File.dirname @screenshot_directory}"
+    i = @screenshots.map { |s|
+      l = "#{s[:time].black} #{s[:command].ljust(m).white} #{s[:status] ? 'success'.green : 'failure'.red }"
+      "<a style=\"text-decoration: none\" href=\"#{File.basename s[:screenshot]}\">#{Colored.decolorize l, escape: Colored::HTML}</a>"
+    } * $/
+    File.write File.join(@screenshot_directory, 'index.html'), build_screenshot(t, i)
+  end
+
+  def build_screenshot(t, c)
+    <<-HTML.strip_heredoc.sub(/<%\s*title\s*%>/, t).sub(/<%\s*content\s*%>/, c)
       <!DOCTYPE html>
       <html lang="en">
         <head>
@@ -140,9 +143,17 @@ class Round
         </body>
       </html>
     HTML
-    o = o.gsub(/<%\s*title\s*%>/, "#{t} #{c}").gsub(/<%\s*content\s*%>/, Colored.decolorize(s, escape: Colored::HTML))
-    d = File.join(File.dirname(l), 'screenshots').tap { |d| FileUtils.mkpath d }
-    File.write File.join(d, "#{File.basename(l)}.html"), o
+  end
+
+  def take_screenshot(t, c, l, s)
+    o = File.read l
+    File.write l, Colored.decolorize(o)
+    return unless options[:color]
+    @screenshot_directory ||= File.join(File.dirname(l), 'screenshots')
+    FileUtils.mkpath @screenshot_directory
+    h = File.join @screenshot_directory, "#{File.basename(l)}.html"
+    (@screenshots ||= []) << { time: t, command: c, log: l, status: s, screenshot: h }
+    File.write h, build_screenshot("#{t} #{c}", Colored.decolorize(o, escape: Colored::HTML))
   end
 end
 

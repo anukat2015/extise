@@ -6,8 +6,11 @@ class CreateInteractions < ActiveRecord::Migration[5.0]
 
       t.string :kind, null: false
 
-      t.string :file, null: false, limit: 2048
-      t.string :path, null: false, limit: 2048
+      t.string :origin, null: false
+      t.string :resource, null: false
+
+      t.string :file, null: true, limit: 2048
+      t.string :path, null: true, limit: 2048
 
       t.timestamps null: false
 
@@ -19,6 +22,9 @@ class CreateInteractions < ActiveRecord::Migration[5.0]
     # pose significant ambiguity and hence its impossible to specify a unique index here
 
     add_index :extisimo_interactions, :kind
+
+    add_index :extisimo_interactions, :origin
+    add_index :extisimo_interactions, :resource
 
     add_index :extisimo_interactions, :file
     add_index :extisimo_interactions, :path

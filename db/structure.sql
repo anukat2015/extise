@@ -540,8 +540,10 @@ CREATE TABLE extisimo_interactions (
     attachment_id integer NOT NULL,
     session_id integer NOT NULL,
     kind character varying NOT NULL,
-    file character varying(2048) NOT NULL,
-    path character varying(2048) NOT NULL,
+    origin character varying NOT NULL,
+    resource character varying NOT NULL,
+    file character varying(2048),
+    path character varying(2048),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     started_at timestamp without time zone NOT NULL,
@@ -755,8 +757,8 @@ CREATE TABLE extisimo_tasks (
     description text NOT NULL,
     status character varying NOT NULL,
     resolution character varying,
-    severity character varying NOT NULL,
     priority character varying NOT NULL,
+    severity character varying NOT NULL,
     platform character varying NOT NULL,
     operating_system character varying NOT NULL,
     project_version character varying,
@@ -2138,10 +2140,24 @@ CREATE INDEX index_extisimo_interactions_on_kind ON extisimo_interactions USING 
 
 
 --
+-- Name: index_extisimo_interactions_on_origin; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_interactions_on_origin ON extisimo_interactions USING btree (origin);
+
+
+--
 -- Name: index_extisimo_interactions_on_path; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_extisimo_interactions_on_path ON extisimo_interactions USING btree (path);
+
+
+--
+-- Name: index_extisimo_interactions_on_resource; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_extisimo_interactions_on_resource ON extisimo_interactions USING btree (resource);
 
 
 --

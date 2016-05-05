@@ -9,8 +9,8 @@ class CreateTasks < ActiveRecord::Migration[5.0]
       t.text :description, null: false
       t.string :status, null: false
       t.string :resolution, null: true
-      t.string :severity, null: false
       t.string :priority, null: false
+      t.string :severity, null: false
       t.string :platform, null: false
       t.string :operating_system, null: false
       t.string :project_version, null: true

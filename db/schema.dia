@@ -4440,7 +4440,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:point val="69,18"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="68.95,17.95;78.405,27.45"/>
+        <dia:rectangle val="68.95,17.95;78.405,29.05"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="69,18"/>
@@ -4449,7 +4449,7 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:real val="9.3550000000000004"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="9.3999999999999986"/>
+        <dia:real val="11"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#extisimo::interactions#</dia:string>
@@ -4611,6 +4611,52 @@ session.finished_at = session.revision_commit.submitted_at #</dia:string>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
             <dia:string>#kind#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#string#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#origin#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#string#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#resource#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#string#</dia:string>

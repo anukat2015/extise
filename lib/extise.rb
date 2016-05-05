@@ -65,8 +65,10 @@ module Extise
         i.tap { input.each_line { |l| i.write l } if files.empty? }.close
         r = o.read.tap { o.close }
         return false if r =~ /\Aextise server: unknown failure/
-        yield(StringIO.new(r), e, s).tap { e.close }
-        warn "#{Client}:#{object_id} no response from server at #{host}:#{port}" unless s.value.success?
+        yield(o = StringIO.new(r), e, s).tap do
+          [o, e].each &:close
+          warn "#{Client}:#{object_id} no response from server at #{host}:#{port}" unless s.value.success?
+        end
       end
     end
   end

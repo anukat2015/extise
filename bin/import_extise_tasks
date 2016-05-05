@@ -64,14 +64,14 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
   task = persist(Task, submitted_at: fix_timestamp(b.creation_ts, b.bugid), reporter_id: reporter.id) do |r|
     r.assignee_id = assignee.id
     r.project_id = project.id
-    r.classification = b.classification.downcase.gsub(/[\-\s]+/, '_')
+    r.classification = b.classification.presence
     r.description = b.short_desc
-    r.status = b.bug_status.downcase.gsub(/[\-\s]+/, '_')
-    r.resolution = b.resolution.try! { downcase.gsub(/[\-\s]+/, '_') }
-    r.severity = b.bug_severity.downcase
-    r.priority = b.priority.downcase
-    r.platform = b.rep_platform
-    r.operating_system = b.op_sys.sub(/\s*\(unsup(\.|ported)\)\z/i, '')
+    r.status = b.bug_status.downcase.gsub(/[\-\s]+/, '_').presence
+    r.resolution = b.resolution.try! { downcase.gsub(/[\-\s]+/, '_').presence }
+    r.severity = b.bug_severity.downcase.presence
+    r.priority = b.priority.downcase.presence
+    r.platform = b.rep_platform.presence
+    r.operating_system = b.op_sys.sub(/\s*\(unsup(\.|ported)\)\z/i, '').presence
     r.project_version = b.version.try! { sub(/(unspecified|\-+)/i, '').presence }
     r.project_milestone = b.target_milestone.try! { sub(/(unspecified|\-+)/i, '').presence }
     r.cc = b.cc
@@ -109,8 +109,8 @@ process bugs, count: n, worker: w, progress: !n.zero? do |b|
     author = fetch_user a.submitter
 
     attachment = persist(Attachment, submitted_at: fix_timestamp(a.date, a.attachid), author_id: author.id, task_id: task.id) do |r|
-      r.file = a.filename
-      r.type = a.type
+      r.file = a.filename.presence
+      r.type = a.type.presence
       r.description = a.desc
       r.modified_at = fix_timestamp a.delta_ts, a.attachid
       r.bugs_eclipse_org_attachment_id = a.id

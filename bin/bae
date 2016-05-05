@@ -25,40 +25,46 @@ module Syntax
   attr_accessor :measure_until
 
   def correlation(t, x, y, options = {})
-    options = options.dup
+    u = %i(project projects_by_classification projects_by_product)
+    r = %i(subject subjects_by_project user users_by_project)
+
+    options = grab_keys options, [:method, :normalization, :scope, u, r].flatten
 
     x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
 
     m = fetch_values options, :method, optional: true
     n = fetch_values options, :normalization, optional: true
+    s = fetch_values options, :scope, optional: true
 
-    u = %i(project projects_by_classification projects_by_product)
-    r = %i(subject subjects_by_project user users_by_project)
+    s = [options] if s.empty?
+    s = s.inject([]) { |a, k, v| a << { k => v }} if s.is_a? Hash
 
-    [u + r].flatten.each { |k| options[k] = fetch_values options, k, optional: true }
+    s.each do |o|
+      o = grab_keys o.key?(:global) ? options : o, [u, r].flatten
 
-    raise 'both project and subject or user given' if u.select { |k| options[k].present? }.any? && r.select { |k| options[k].present? }.any?
-    raise 'project already scoped' if options[:project].present? && options[:projects_by_classification].present?
-    raise 'project already scoped' if options[:project].present? && options[:projects_by_product].present?
-    raise 'both subject and user given' if options[:subject].present? && options[:user].present?
-    raise 'subject already scoped' if options[:subject].present? && options[:subjects_by_project].present?
-    raise 'user already scoped' if options[:user].present? && options[:users_by_project].present?
+      [u + r].flatten.each { |k| o[k] = fetch_values o, k, optional: true }
 
-    if u.select { |k| options[k].any? }.any?
-      p = ['ucor', *pack_values(options, keys: u), '--no-verbose']
-      o = { parallel: true, silent: true }
-    else
-      p = ['rcor', *pack_values(options, keys: r), '--no-verbose']
-      o = { silent: true }
-    end
+      raise 'both project and subject or user given' if u.select { |k| o[k].present? }.any? && r.select { |k| o[k].present? }.any?
+      raise 'project already scoped' if o[:project].present? && o[:projects_by_classification].present?
+      raise 'project already scoped' if o[:project].present? && o[:projects_by_product].present?
+      raise 'both subject and user given' if o[:subject].present? && o[:user].present?
+      raise 'subject already scoped' if o[:subject].present? && o[:subjects_by_project].present?
+      raise 'user already scoped' if o[:user].present? && o[:users_by_project].present?
 
-    (m.any? ? m : [nil]).each do |method|
-      x.each do |a|
-        y.each do |b|
-          (n.any? ? n : %w(raw)).each do |normalization|
-            c = p.dup.insert 1, *[a, b].map { |i| normalization.to_s == 'raw' ? i : "#{i}:#{normalization}" }
-            c.insert 3, "--method=#{method}" if method
-            run *c, o
+      if u.select { |k| o[k].any? }.any?
+        p = ['ucor', *pack_values(o, u), '--no-verbose', { parallel: true, silent: true }]
+      else
+        p = ['rcor', *pack_values(o, r), '--no-verbose', { silent: true }]
+      end
+
+      (m.any? ? m : [nil]).each do |method|
+        x.each do |a|
+          y.each do |b|
+            (n.any? ? n : %w(raw)).each do |normalization|
+              p = p.dup.insert 1, *[a, b].map { |i| normalization.to_s == 'raw' ? i : "#{i}:#{normalization}" }
+              p.insert 3, pack_value(method: method) if method
+              run *p
+            end
           end
         end
       end
@@ -68,25 +74,30 @@ module Syntax
   alias_method :correlate, :correlation
 
   def histogram(*args)
+    args.select { |a| a =~ /\A\s*--/ }.tap { |u| raise 'direct options not allowed' if u.any? }
     run 'rhist', *(args.size == 1 ? ['--eval', "'#{args.first}'"] : args.flatten).map(&:to_s), silent: true
   end
 
   def measure(options = {})
+    options = grab_keys options, duals: %i(targets metrics normalizations), keys: %i(until)
+
     fetch_values(options, :targets).each do |target|
       fetch_values(options, :metrics).each do |metric|
-        run 'measure', target, metric, "--until=#{options[:until] || measure_until || :now}", parallel: true, silent: false
+        run 'measure', target, metric, pack_value(until: options[:until] || measure_until || :now), parallel: true, silent: false
         fetch_values(options, :normalizations, optional: true).each do |normalization|
-          run 'normalize', target, metric, "--method=#{normalization}", parallel: true, silent: false
+          run 'normalize', target, metric, pack_value(method: normalization), parallel: true, silent: false
         end
       end
     end
   end
 
   def normalize(options = {})
+    options = grab_keys options, duals: %i(targets metrics methods)
+
     fetch_values(options, :targets).each do |target|
       fetch_values(options, :metrics).each do |metric|
         fetch_values(options, :methods).each do |method|
-          run 'normalize', target, metric, "--method=#{method}", parallel: true, silent: false
+          run 'normalize', target, metric, pack_value(method: method), parallel: true, silent: false
         end
       end
     end
@@ -94,20 +105,30 @@ module Syntax
 
   private
 
-  def fetch_values(options, key, optional: false)
-    multiple, single = key.to_s.pluralize.to_sym, key.to_s.singularize.to_sym
-    raise("#{single} already given") if options.key?(multiple) && options.key?(single)
-    values = Array.wrap options.fetch(multiple, [])
-    values = [options[single]] if options.key?(single) && values.empty?
-    optional || values.flatten.compact.any? ? values.flatten : raise("no #{single} given")
+  def grab_keys(options, keys: nil, duals: nil)
+    options, keys = options.dup, keys + duals.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] }
+    unknown = (keys - options.keys)
+    raise "unrecognized option#{'s' if unknown.size > 1} #{unknown * ', '}" unless unknown.size.zero?
+    options
   end
 
-  def pack_values(options, keys: options.keys)
-    keys.select { |k| options[k].present? }.map do |k|
+  def fetch_values(options, key, optional: false)
+    multiple, single = key.to_s.pluralize.to_sym, key.to_s.singularize.to_sym
+    raise("#{single} already given") if options.key?(single) && options.key?(multiple)
+    values = Array.wrap options.fetch(multiple, options.fetch(single), [])
+    optional || values.any? ? values : raise("no #{single} given")
+  end
+
+  alias_method :fetch_value, :fetch_values
+
+  def pack_values(options, keys = options.keys)
+    keys.select { |k| options[k].present? }.map.shelljoin do |k|
       v = options[k] * ','
-      "--#{k.to_s.tr '_', '-'}=#{v =~ /\s/ ? "'#{v}'" : v}"
+      "--#{k.to_s.tr '_', '-'}=#{v =~ /[\w\s\-:.,]/ ? "'#{v}'" : v.shellescape}"
     end
   end
+
+  alias_method :pack_value, :pack_values
 end
 
 class Round

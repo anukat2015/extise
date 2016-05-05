@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-u, n, w, p = :now, 8, :thread, [STDIN]
+o, u, n, w, p = nil, :now, 8, :thread, [STDIN]
 c, v, q = true, true, false
 
 ARGV.bind_and_parse! to: :locals do
   use '[<options>] [<file>...]'
+  opt 'o    --open[=<application>]'
   opt 'u    --until=<time>'
   opt 'n    --parallel[=<count:Integer>]'
   opt 'w    --parallel-worker=(process|thread)'
@@ -165,7 +166,9 @@ class Round
       l = "#{s[:time].black} #{s[:command].ljust(m).white} #{s[:status] ? 'success'.green : 'failure'.red }"
       "<a href=\"#{File.basename s[:screenshot]}\" style=\"text-decoration: none\">#{Colored.decolorize l, escape: Colored::HTML}</a>"
     } * $/
-    File.write File.join(@screenshot_directory, 'index.html'), build_screenshot(t, i)
+    h = File.join(@screenshot_directory, 'index.html')
+    File.write h, build_screenshot(t, i)
+    `open #{"-a #{options[:open]}" if options[:open].is_a? String} -g #{h}` if options[:open]
   end
 
   def build_screenshot(t, c)
@@ -195,10 +198,18 @@ class Round
   end
 end
 
-o = Hash[%i(until parallel parallel_worker color verbose quiet).zip [u, n, w, c, v, q]]
+h = {
+  open: o,
+  until: u,
+  parallel: n,
+  parallel_worker: w,
+  color: c,
+  verbose: v,
+  quiet: q
+}
 
 p.each do |f|
   inform f if v && !q && !f.is_a?(IO)
 
-  Round.new(f, o).load!
+  Round.new(f, h).load!
 end

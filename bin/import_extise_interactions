@@ -35,11 +35,20 @@ AutoColor.disable on: self unless c
 # NOTE: strip method parameters
 
 def parse_structure_handle(h)
-  d, p, n, e = *h[1..-1].split(/&lt;|\{|\[/)
-  return unless n
-  f = File.join d, p.split(/\./), n
-  e = e ? File.join(e.sub(/\^.*\z/, '').sub(/~[^;]+;.*\z/, '').split(/~/)) : File.basename(f, '.java')
-  { directory: d, package: p, name: n, file: f, element: e }
+  case h.to_s[0]
+  when '/'
+    f = h[1..-1].sub(/;.*\z/, '')
+    { file: f }
+  when '='
+    d, p, n, e = *h[1..-1].split(/&lt;|\{|\[/)
+    return nil unless n
+    f = File.join d, p.split(/\./), n
+    e = e ? File.join(e.sub(/\^.*\z/, '').sub(/~[^;]+;.*\z/, '').split(/~/)) : nil
+    e ||= File.basename(f, '.java') if f.ends_with? '.java'
+    { file: f, directory: d, package: p, name: n, element: e }
+  else
+    nil
+  end
 end
 
 repository = Repository.find_by name: r
@@ -51,22 +60,37 @@ dump_record repository, :repository
 # NOTE: command, preference, and attention kinds are completely missing from original data
 # NOTE: navigation does not hold any information value in original data and can be ignored
 # NOTE: interaction delta in original data is always blank and therefore can be ignored
-# NOTE: select only interactions with non empty structure handle
 
 interactions = BugsEclipseOrg::Interaction.joins(attachment: [extisimo_attachment: [task: [project: :repositories]]]).where(
   Repository.table_name => { id: repository },
-  kind: %w(command edit selection),
-  structure_kind: %w(java),
+  kind: %w(edit selection),
+  structure_kind: %w(java resource build.xml plugin.xml),
   originid: %w(
-    org.eclipse.ui.navigator.ProjectExplorer
-    org.eclipse.ui.views.ContentOutline
-    org.eclipse.ui.views.ResourceNavigator
+    org.eclipse.jdt.callhierarchy.view
     org.eclipse.jdt.ui.ClassFileEditor
     org.eclipse.jdt.ui.CompilationUnitEditor
     org.eclipse.jdt.ui.PackageExplorer
+    org.eclipse.jdt.ui.PropertiesFileEditor
     org.eclipse.jdt.ui.TypeHierarchy
+
+    org.eclipse.pde.ui.buildEditor
+    org.eclipse.pde.ui.featureEditor
+    org.eclipse.pde.ui.manifestEditor
+
+    org.eclipse.ui.DefaultTextEditor
+    org.eclipse.ui.navigator.ProjectExplorer
+    org.eclipse.ui.views.ContentOutline
+    org.eclipse.ui.views.ResourceNavigator
+
+    org.eclipse.mylar.ide.resource.interest.updater
+    org.eclipse.mylyn.ide.resource.interest.updater
+    org.eclipse.mylyn.resources.ui.interest.updater
+    org.eclipse.mylyn.tasks.ui.editors.task
+
+    org.eclipse.search.ui.views.SearchView
+    org.eclipse.team.sync.views.SynchronizeView
   )
-).where.not(structure_handle: nil).order(start_date: :asc)
+).order(start_date: :asc)
 
 shown_session = nil
 
@@ -102,24 +126,16 @@ process interactions, count: n, worker: w, progress: !n.zero? do |i|
 
   handle = parse_structure_handle i.structure_handle
 
-  # NOTE: skip interactions with missing data in structure handle (hence sessions with zero interactions may exist)
-
-  next unless handle
-
-  # NOTE: crop node paths to match top level Java type declarations
-
-  p = handle[:element].sub(/\/.*\z/, '')
-
-  # NOTE: skip possible top level package-private classes (should not affect rename refactorings)
-
-  next if File.basename(handle[:file], '.java') != p
+  # NOTE: crop node paths to match top level Java type declarations only
 
   interaction = persist(Interaction, bugs_eclipse_org_interaction_id: i.id) do |r|
     r.attachment = attachment
     r.session = session
-    r.kind = i.kind
-    r.file = handle[:file]
-    r.path = p
+    r.kind = i.kind.presence
+    r.origin = i.originid.presence
+    r.resource = i.structure_kind.presence
+    r.file = handle[:file].presence if handle
+    r.path = handle[:element].try! { sub(/\/.*\z/, '').presence } if handle
     r.started_at = i.start_date
     r.finished_at = i.end_date
   end

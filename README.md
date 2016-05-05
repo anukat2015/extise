@@ -34,6 +34,10 @@ A collection of tools to estimate developers' expertise
     spec                    Test suites
     tmp                     Temporary files
 
+## Data
+
+Data repository is expected at `../data` by default, see [Extise Data](https://github.com/pavolzbell/extise-data)
+
 ## Commands
 
 Every executable command responds to:

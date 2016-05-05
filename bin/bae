@@ -79,7 +79,7 @@ module Syntax
   end
 
   def measure(options = {})
-    options = grab_keys options, duals: %i(targets metrics normalizations), keys: %i(until)
+    options = grab_keys options, duals: %i(targets metrics normalizations), others: %i(until)
 
     fetch_values(options, :targets).each do |target|
       fetch_values(options, :metrics).each do |metric|
@@ -105,9 +105,9 @@ module Syntax
 
   private
 
-  def grab_keys(options, keys: nil, duals: nil)
-    options, keys = options.dup, keys + duals.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] }
-    unknown = (keys - options.keys)
+  def grab_keys(options, duals: nil, others: nil)
+    options, keys = options.dup, duals.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] } + others
+    unknown = (options.keys - keys)
     raise "unrecognized option#{'s' if unknown.size > 1} #{unknown * ', '}" unless unknown.size.zero?
     options
   end
@@ -115,16 +115,17 @@ module Syntax
   def fetch_values(options, key, optional: false)
     multiple, single = key.to_s.pluralize.to_sym, key.to_s.singularize.to_sym
     raise("#{single} already given") if options.key?(single) && options.key?(multiple)
-    values = Array.wrap options.fetch(multiple, options.fetch(single), [])
+    values = Array.wrap options.fetch(multiple, options.fetch(single, []))
     optional || values.any? ? values : raise("no #{single} given")
   end
 
   alias_method :fetch_value, :fetch_values
 
   def pack_values(options, keys = options.keys)
-    keys.select { |k| options[k].present? }.map.shelljoin do |k|
-      v = options[k] * ','
-      "--#{k.to_s.tr '_', '-'}=#{v =~ /[\w\s\-:.,]/ ? "'#{v}'" : v.shellescape}"
+    keys.select { |k| options[k].present? }.map do |k|
+      r = Array.wrap(options[k]) * ','
+      v = r =~ /\s/ && r =~ /[\w\s\-:.,]/ ? "'#{r}'" : r.shellescape
+      "--#{k.to_s.tr '_', '-'}=#{v}"
     end
   end
 

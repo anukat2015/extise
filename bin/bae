@@ -107,8 +107,10 @@ module Syntax
   private
 
   def dual_keys(keys)
-    keys.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] }
+    Array.wrap(keys).flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] }
   end
+
+  alias_method :dual_key, :dual_keys
 
   def grab_keys(options, duals: nil, others: nil)
     options, duals, others = options.dup, duals || [], others || []
@@ -119,7 +121,7 @@ module Syntax
   end
 
   def fetch_values(options, key, default: nil, optional: false)
-    multiple, single = *dual_keys([key])
+    multiple, single = *dual_key(key)
     raise "#{single} already given" if options.key?(single) && options.key?(multiple)
     values = Array.wrap options.fetch(multiple, options.fetch(single, []))
     return default != nil ? Array.wrap(default) : [] if values.empty? && (default || optional)

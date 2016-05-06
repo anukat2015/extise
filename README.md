@@ -258,15 +258,6 @@ Normalize expertises measured by metric, fill `extisimo_{expertises}` tables
     normalize session recent_lines_of_code
     normalize session recent_lines_of_code --method=tanh
 
-#### `bae`
-
-Run measure or normalize batch, fill `extisimo_{expertises}` 
-
-    bae ../data/extise.fiit.stuba.sk/measurements/basic/session-*
-    bae ../data/extise.fiit.stuba.sk/measurements/basic/session-* --open
-
-    echo measure target: :session, metric: :duration, normalization: :rescale | bae
-
 ## Statistical analysis
 
 #### `hist`
@@ -314,6 +305,17 @@ Calculate correlation coefficient between expertises
 Calculate correlation coefficient between expertises for each user
 
     ucor session:edits session:lines_of_code_delta
+
+## Batch commands
+
+#### `bae`
+
+Run command batches 
+
+    bae ../data/extise.fiit.stuba.sk/measurements/basic/session-*
+    bae ../data/extise.fiit.stuba.sk/measurements/basic/session-* --open
+
+    echo measure target: :session, metric: :duration, normalization: :rescale | bae
 
 ## Utilities
 

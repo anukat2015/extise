@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'common'
 
-o, n, w, z, p = nil, 8, :thread, false, [STDIN]
+o, n, w, z, p = nil, 4, :thread, false, [STDIN]
 c, v, q = true, true, false
 
 ARGV.bind_and_parse! to: :locals do
@@ -25,23 +25,23 @@ module Syntax
   attr_accessor :measure_until
 
   def correlation(t, x, y, options = {})
+    c = %i(method normalization scope)
     u = %i(project projects_by_classification projects_by_product)
     r = %i(subject subjects_by_project user users_by_project)
 
-    options = grab_keys options, duals: [:method, :normalization, :scope, u, r].flatten
+    options = grab_keys options, duals: [c, u, r].flatten, others: %i(global)
 
     x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
 
     m = fetch_values options, :method, optional: true
     n = fetch_values options, :normalization, default: 'raw'
-    s = fetch_values options, :scope, default: options
+    s = fetch_values options, :scope, default: options.except(*dual_keys(c))
 
     s = [s] if s.is_a? Hash
     s = s.map do |o|
       raise 'global already given' if o.key?(:global) && o.keys.count > 1
 
-      g = o[:global].to_s
-      o = g.present? ? options : grab_keys(o, duals: [u, r].flatten)
+      o = grab_keys(o, duals: [u, r].flatten) unless o.key? :global
 
       [u + r].flatten.each { |k| o[k] = fetch_values o, k, optional: true }
 
@@ -52,12 +52,12 @@ module Syntax
       raise 'subject already scoped' if o[:subject].present? && o[:subjects_by_project].present?
       raise 'user already scoped' if o[:user].present? && o[:users_by_project].present?
 
-      if g.in?(%w(true per-user)) || u.select { |k| o[k].present? }.any?
+      if o[:global].to_s == 'per-user' || u.select { |k| o[k].present? }.any?
         ['ucor', *pack_values(o, u), '--no-verbose', { parallel: true, silent: true }]
-      elsif g.in?(%w(overall)) || r.select { |k| o[k].present? }.any?
+      elsif !o.key?(:global) || o[:global].to_s == 'overall' || r.select { |k| o[k].present? }.any?
         ['rcor', *pack_values(o, r), '--no-verbose', { silent: true }]
       else
-        raise 'unable to resolve'<<o.to_s
+        raise 'unable to resolve'
       end
     end
 
@@ -106,19 +106,23 @@ module Syntax
 
   private
 
+  def dual_keys(keys)
+    keys.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] }
+  end
+
   def grab_keys(options, duals: nil, others: nil)
     options, duals, others = options.dup, duals || [], others || []
-    keys = duals.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] } + others
+    keys = dual_keys(duals) + others
     unknown = (options.keys - keys)
-    raise "unrecognized option#{'s' if unknown.size > 1} #{unknown * ', '}" unless unknown.size.zero?
+    raise "unrecognized option#{'s' if unknown.size > 1} #{unknown.to_sentence}" unless unknown.size.zero?
     options
   end
 
   def fetch_values(options, key, default: nil, optional: false)
-    multiple, single = key.to_s.pluralize.to_sym, key.to_s.singularize.to_sym
+    multiple, single = *dual_keys([key])
     raise "#{single} already given" if options.key?(single) && options.key?(multiple)
     values = Array.wrap options.fetch(multiple, options.fetch(single, []))
-    return Array.wrap default if values.empty? && (default || optional)
+    return default != nil ? Array.wrap(default) : [] if values.empty? && (default || optional)
     values.any? ? values : raise("no #{single} given")
   end
 
@@ -161,18 +165,18 @@ class Round
     a += %W(--parallel=#{options[:parallel]} --parallel-worker=#{options[:parallel_worker]}) if o[:parallel]
     a.dup.map { |n| a.delete(n).tap { |d| a << d if d } if n =~ /\A--((no-)?(color|sort|verbose)|trim|quiet)/ }
     c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
+    puts "#{filter_uninteresting(a) * ' '}".cyan unless options[:quiet]
+    return if options[:stat]
     @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
     FileUtils.mkpath @log_directory
     l = File.join @log_directory, "#{t}_#{a[0].split(/\s+/, 2)[0]}.log"
     File.write l, "#{t.black}\n\n#{c.white}\n\n"
     begin
-      puts "#{filter_uninteresting(a) * ' '}".cyan unless options[:quiet]
-      return if options[:stat]
       r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l} | tee -a #{l}; exit ${PIPESTATUS[0]}"
       q = o.fetch(:silent, true) || options[:quiet] || !options[:verbose]
-      s = (q ? quietly { system(r) } : system(r)).tap do |s|
+      s = (q ? quietly { system(r) } : system(r)).tap { |s|
         puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose]
-      end
+      }
     ensure
       fix_log(l) and take_screenshot(t, a, s, l) unless options[:stat]
     end

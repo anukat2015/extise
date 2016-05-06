@@ -40,7 +40,10 @@ module Syntax
     s = [s] if s.is_a? Hash
 
     s.each do |o|
-      o = o.key?(:global) ? options : grab_keys(o, duals: [u, r].flatten)
+      raise 'global already given' if o.key?(:global) && o.keys.count > 1
+
+      g = o[:global].to_s
+      o = g.present? ? options : grab_keys(o, duals: [u, r].flatten)
 
       [u + r].flatten.each { |k| o[k] = fetch_values o, k, optional: true }
 
@@ -51,10 +54,12 @@ module Syntax
       raise 'subject already scoped' if o[:subject].present? && o[:subjects_by_project].present?
       raise 'user already scoped' if o[:user].present? && o[:users_by_project].present?
 
-      if u.select { |k| o[k].any? }.any?
+      if g.in?(%w(true per-user)) || u.select { |k| o[k].present? }.any?
         p = ['ucor', *pack_values(o, u), '--no-verbose', { parallel: true, silent: true }]
-      else
+      elsif g.in?(%w(overall)) || r.select { |k| o[k].present? }.any?
         p = ['rcor', *pack_values(o, r), '--no-verbose', { silent: true }]
+      else
+        raise 'unable to resolve'<<o.to_s
       end
 
       (m.any? ? m : [nil]).each do |method|
@@ -185,7 +190,8 @@ class Round
 
   def fix_log(f)
     s = File.read(f).gsub(/\s*ETA:[^%]+%\r/, "\r").gsub(/\r\s*/, $/)
-    File.write f, s.split(/\n/, 4).tap { |x| x[2] << $/ }.join($/).sub(/\s*Time:/) { |x| ($/ * 2) << x.lstrip }
+    s = s.split(/\n/, 4).tap { |x| x[2] << $/ }.join($/).sub(/\s*Time:/) { |x| ($/ * 2) << x.lstrip }
+    File.write f, s.gsub(/[\n]{3,}/, $/ * 2)
   end
 
   def build_screenshot(t, c)

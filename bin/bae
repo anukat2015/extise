@@ -37,7 +37,7 @@ module Syntax
     s = fetch_values options, :scope, optional: true
 
     s = [options] if s.empty?
-    s = s.inject([]) { |a, k, v| a << { k => v }} if s.is_a? Hash
+    s = [s] if s.is_a? Hash
 
     s.each do |o|
       o = o.key?(:global) ? options : grab_keys(o, duals: [u, r].flatten)
@@ -106,7 +106,8 @@ module Syntax
   private
 
   def grab_keys(options, duals: nil, others: nil)
-    options, keys = options.dup, duals.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] } + others
+    options, duals, others = options.dup, duals || [], others || []
+    keys = duals.flat_map { |k| [k.to_s.singularize.to_sym, k.to_s.pluralize.to_sym] } + others
     unknown = (options.keys - keys)
     raise "unrecognized option#{'s' if unknown.size > 1} #{unknown * ', '}" unless unknown.size.zero?
     options

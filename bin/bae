@@ -163,35 +163,28 @@ class Round
     FileUtils.mkpath @log_directory
     l = File.join @log_directory, "#{t}_#{a[0].split(/\s+/, 2)[0]}.log"
     File.write l, "#{t.black}\n\n#{c.white}\n\n"
-    p = a.reject { |x| x =~ /\A--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
-    p << '…' if p.size != a.size
     begin
-      puts "#{p * ' '}".cyan unless options[:quiet]
+      puts "#{filter_uninteresting(a) * ' '}".cyan unless options[:quiet]
       r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l} | tee -a #{l}; exit ${PIPESTATUS[0]}"
       q = o.fetch(:silent, true) || options[:quiet] || !options[:verbose]
       s = (q ? quietly { system(r) } : system(r)).tap do |s|
         puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose]
       end
     ensure
-      s = File.read(l).gsub(/\s*ETA:[^%]+%\r/, "\r").gsub(/\r\s*/, $/)
-      File.write l, s.split(/\n/, 4).tap { |x| x[2] << $/ }.join($/).sub(/\s*Time:/) { |x| ($/ * 2) << x.lstrip }
-      take_screenshot t, c, l, s
+      fix_log(l) and take_screenshot(t, a, s, l)
     end
   end
 
   private
 
-  def index_screenshots
-    return unless @screenshots
-    m = @screenshots.map { |s| s[:command].length }.max
-    t = "#{File.dirname @screenshot_directory}"
-    i = @screenshots.map { |s|
-      l = "#{s[:time].black} #{s[:command].ljust(m).white} #{s[:status] ? 'success'.green : 'failure'.red }"
-      "<a href=\"#{File.basename s[:screenshot]}\" style=\"text-decoration: none\">#{Colored.decolorize l, escape: Colored::HTML}</a>"
-    } * $/
-    h = File.join(@screenshot_directory, 'index.html')
-    File.write h, build_screenshot(t, i)
-    `open #{"-a #{options[:open]}" if options[:open].is_a? String} -g #{h}` if options[:open]
+  def filter_uninteresting(a)
+    p = a.reject { |x| x =~ /\A--(parallel|(no-)?(color|sort|verbose)|trim|quiet)/ }
+    p.size != a.size ? p << '…' : p
+  end
+
+  def fix_log(f)
+    s = File.read(f).gsub(/\s*ETA:[^%]+%\r/, "\r").gsub(/\r\s*/, $/)
+    File.write f, s.split(/\n/, 4).tap { |x| x[2] << $/ }.join($/).sub(/\s*Time:/) { |x| ($/ * 2) << x.lstrip }
   end
 
   def build_screenshot(t, c)
@@ -209,15 +202,28 @@ class Round
     HTML
   end
 
-  def take_screenshot(t, c, l, s)
-    c, o = c.gsub(/\s--(no-)?color(\s|\z)/, ' ').strip, File.read(l)
+  def index_screenshots
+    return unless @screenshots
+    m = @screenshots.map { |s| filter_uninteresting(s[:arguments]).join(' ').length }.max
+    t = "#{File.dirname @screenshot_directory}"
+    i = @screenshots.map { |s|
+      l = "#{s[:time].black} #{filter_uninteresting(s[:arguments]).join(' ').ljust(m).white} #{s[:status] ? 'success'.green : 'failure'.red }"
+      "<a href=\"#{File.basename s[:screenshot]}\" style=\"text-decoration: none\">#{Colored.decolorize l, escape: Colored::HTML}</a>"
+    } * $/
+    h = File.join(@screenshot_directory, 'index.html')
+    File.write h, build_screenshot(t, i)
+    `open #{"-a #{options[:open]}" if options[:open].is_a? String} -g #{h}` if options[:open]
+  end
+
+  def take_screenshot(t, a, s, l)
+    o = File.read(l)
     File.write l, Colored.decolorize(o)
     return unless options[:color]
     @screenshot_directory ||= File.join(File.dirname(l), 'screenshots')
     FileUtils.mkpath @screenshot_directory
     h = File.join @screenshot_directory, "#{File.basename(l)}.html"
-    (@screenshots ||= []) << { time: t, command: c, log: l, status: s, screenshot: h }
-    File.write h, build_screenshot("#{t} #{c}", Colored.decolorize(o, escape: Colored::HTML))
+    (@screenshots ||= []) << { time: t, arguments: a, status: s, log: l, screenshot: h }
+    File.write h, build_screenshot("#{t} #{filter_uninteresting a}", Colored.decolorize(o, escape: Colored::HTML))
   end
 end
 

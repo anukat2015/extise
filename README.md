@@ -253,7 +253,7 @@ Measure expertises by metric, fill `extisimo_{expertises}` tables
 
 #### `normalize`
 
-Normalize expertises measured by metric, fill `extisimo_{expertises}` tables
+Normalize expertises measured by metric, fill `extisimo_{metrics,expertises}` tables
 
     normalize session recent_lines_of_code
     normalize session recent_lines_of_code --method=tanh

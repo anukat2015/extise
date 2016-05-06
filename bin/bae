@@ -163,7 +163,7 @@ class Round
     a = a.flatten.compact
     a, o = *(a.last.is_a?(Hash) ? [a[0..-2], a.last] : [a, {}])
     a += %W(--parallel=#{options[:parallel]} --parallel-worker=#{options[:parallel_worker]}) if o[:parallel]
-    a.insert a[-1] =~ /\A--(no-)verbose/ ? -2 : -1, '--color'
+    a.dup.map { |n| a.delete(n).tap { |d| a << d if d } if n =~ /\A--((no-)?(color|sort|verbose)|trim|quiet)/ }
     c, t, f = a * ' ', Time.now.strftime('%Y%m%d-%H%M%S-%L'), file.is_a?(IO) ? nil : File.basename(file, '.rb')
     @log_directory ||= File.expand_path File.join(%W(.. .. log #{t}#{'_' + f if f})), __FILE__
     FileUtils.mkpath @log_directory

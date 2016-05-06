@@ -28,7 +28,7 @@ module Syntax
     u = %i(project projects_by_classification projects_by_product)
     r = %i(subject subjects_by_project user users_by_project)
 
-    options = grab_keys options, [:method, :normalization, :scope, u, r].flatten
+    options = grab_keys options, duals: [:method, :normalization, :scope, u, r].flatten
 
     x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
 
@@ -40,7 +40,7 @@ module Syntax
     s = s.inject([]) { |a, k, v| a << { k => v }} if s.is_a? Hash
 
     s.each do |o|
-      o = grab_keys o.key?(:global) ? options : o, [u, r].flatten
+      o = o.key?(:global) ? options : grab_keys(o, duals: [u, r].flatten)
 
       [u + r].flatten.each { |k| o[k] = fetch_values o, k, optional: true }
 
@@ -167,13 +167,14 @@ class Round
     p << '…' if p.size != a.size
     begin
       puts "#{p * ' '}".cyan unless options[:quiet]
-      r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>&1 | tee -a #{l}; exit ${PIPESTATUS[0]}"
+      r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l} | tee -a #{l}; exit ${PIPESTATUS[0]}"
       q = o.fetch(:silent, true) || options[:quiet] || !options[:verbose]
       s = (q ? quietly { system(r) } : system(r)).tap do |s|
         puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose]
       end
     ensure
-      File.write l, File.read(l).gsub(/\n\s*\r.+\r\s*/, $/ * 2)
+      s = File.read(l).gsub(/\s*ETA:[^%]+%\r/, "\r").gsub(/\r\s*/, $/)
+      File.write l, s.split(/\n/, 4).tap { |x| x[2] << $/ }.join($/).sub(/\s*Time:/) { |x| ($/ * 2) << x.lstrip }
       take_screenshot t, c, l, s
     end
   end

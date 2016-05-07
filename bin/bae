@@ -84,7 +84,7 @@ module Syntax
     runs.each do |run|
       d = File.read(run[:log]).split(/\n+/)
       d[0..1] = d[0].black, d[1].sub(/\s+--(no-)?(color|verbose)\s*/, ' ').strip.split(/\s+/, 4).map(&:white)
-      d[2] = %i(x y m r t p).zip(d[2].split(' ')).map { |v, x| Statsample::Colored.send("colorize_#{v}", x) } * ' '
+      d[2] = %i(x y m r t p).zip(d[2].split(' ')).map { |v, x| Statsample::Colored.send("colorize_#{v}", x) }
       table.rows << d.flatten.map { |c| "#{c} " }
     end
 
@@ -92,7 +92,7 @@ module Syntax
 
     begin
       FileUtils.mkpath File.dirname summary
-      File.write summary, table.text_table_rows.map(&:to_s).join
+      File.write summary, table.text_table_rows.map{ |r| r.to_s.rstrip << $/ }.join
       Dir.chdir(File.dirname summary) { run "cat < #{File.basename summary}", expand_command: false }
     ensure
       FileUtils.rm_r File.dirname summary
@@ -230,7 +230,7 @@ class Round
   def build_screenshot(t, c)
     <<-HTML.strip_heredoc.sub(/<%\s*title\s*%>/, t).sub(/<%\s*content\s*%>/, c)
       <!DOCTYPE html>
-      <html lang="en">
+      <html lang="en" style="position: absolute">
         <head>
           <meta charset="utf-8">
           <title><% title %></title>

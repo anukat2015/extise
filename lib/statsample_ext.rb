@@ -13,7 +13,7 @@ module Statsample::Colored
   extend self
 
   def colorize_samples(x, t = nil, &b)
-    colorize x, t && x >= t ? :white : :black, &b
+    colorize x, t && Integer(x) >= t ? :white : :black, &b
   end
 
   alias_method :colorize_x, :colorize_samples
@@ -28,7 +28,8 @@ module Statsample::Colored
   # NOTE: colorize correlation coefficient according to its sign
 
   def colorize_coefficient(x, t = 0.0, &b)
-    colorize x, x.nan? ? :black : (x == t ? :yellow : (x > t ? :green : :red)), &b
+    f = Float x
+    colorize x, f.nan? ? :black : (f == t ? :yellow : (f > t ? :green : :red)), &b
   end
 
   alias_method :colorize_r, :colorize_coefficient
@@ -36,7 +37,7 @@ module Statsample::Colored
   # NOTE: colorize significant difference between population means greater or equal to 2.0
 
   def colorize_t_test(x, t = 2.0, &b)
-    colorize x, x >= t ? :cyan : :black, &b
+    colorize x, Float(x) >= t ? :cyan : :black, &b
   end
 
   alias_method :colorize_t, :colorize_t_test
@@ -44,7 +45,7 @@ module Statsample::Colored
   # NOTE: colorize statistical significance lower or equal to 0.05
 
   def colorize_p_value(x, t = 0.05, &b)
-    colorize x, x <= t ? :cyan : :black, &b
+    colorize x, Float(x) <= t ? :cyan : :black, &b
   end
 
   alias_method :colorize_p, :colorize_p_value
@@ -52,6 +53,6 @@ module Statsample::Colored
   private
 
   def colorize(x, c, &b)
-    public_send b ? (b.call x).to_s : x.to_s, c
+    (b ? (b.call x).to_s : x.to_s).public_send c
   end
 end

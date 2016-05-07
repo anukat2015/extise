@@ -17,11 +17,9 @@ end
 require 'statsample'
 require 'statsample_ext'
 
-include Statsample::Colored
-
 AutoColor.enable on: self, colored: c, colorings: {
   /\A\w:/ => -> (s) { s.sub(/\A(\w): ([^\[ ]+) ?(.*)?/, "#{'\1'.blue}: #{'\2'.yellow} #{'\3'.black}") },
-  /\A\d/ => -> (s) { %i(x y m r t p).zip(s.split(/\s+/)).map { |n, q| public_send("colorize_#{n}", q) } * ' ' }
+  /\A\d/ => -> (s) { %i(x y m r t p).zip(s.split(' ')).map { |n, q| Statsample::Colored.send("colorize_#{n}", q) } * ' ' }
 }
 
 begin

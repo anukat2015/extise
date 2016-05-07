@@ -3,28 +3,37 @@ abort 'common: internals only' if $0 == __FILE__
 
 $LOAD_PATH.unshift File.expand_path '../../lib', __FILE__
 
-require 'auto_color'
-require 'butcher'
-require 'colored_ext'
-require 'core_ext'
+# standard library
+
 require 'csv'
 require 'fileutils'
-require 'hashugar'
 require 'io/console'
-require 'kernel_colors'
-require 'kernel_sync'
 require 'open3'
-require 'optbind'
-require 'optbind_auto_describe'
-require 'optbind_handlers'
-require 'nokogiri'
-require 'parallen'
-require 'progresso'
-require 'rugged'
-require 'safe_eval'
 require 'set'
 require 'shellwords'
 require 'yaml'
+
+# custom utilities
+
+require 'butcher'
+require 'colored_ext'
+require 'core_ext'
+require 'hashugar'
+require 'parallen'
+require 'progresso'
+require 'safe_eval'
+
+# command line
+
+require 'optbind'
+require 'optbind_auto_describe'
+require 'optbind_handlers'
+
+# internal fixes
+
+require 'auto_color'
+require 'kernel_colors'
+require 'kernel_sync'
 
 Colored.colorize_defaults = { extra: :bold }
 

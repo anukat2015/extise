@@ -27,8 +27,6 @@ options.binder.abort "needless option: --projects-by-product=#{r * ','}" if p.an
 
 AutoColor.disable on: self unless c
 
-require 'statsample'
-
 def calculate_correlation(x, y, u = nil, p = nil, o = options.bound)
   args = [x, y] + { method: o[:m], user: u }.map { |k, v| "--#{k}=#{v}" if v }.compact
   args << "--subjects-by-project=#{p * ','}" if p.present?

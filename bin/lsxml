@@ -12,6 +12,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
+require 'nokogiri'
+
 AutoColor.disable on: self unless c
 
 def text(e, s, i = 0, o = options.bound)

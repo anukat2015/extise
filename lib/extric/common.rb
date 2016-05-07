@@ -1,3 +1,5 @@
+require 'daru'
+
 module Extric::Common
   extend ActiveSupport::Concern
 

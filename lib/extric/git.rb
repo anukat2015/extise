@@ -1,3 +1,5 @@
+require 'rugged'
+
 module Extric::Git
 
   # NOTE: possible copies tracking options:

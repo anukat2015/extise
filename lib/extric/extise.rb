@@ -1,3 +1,5 @@
+require 'extise'
+
 module Extric::Extise
   def read_blocks(function: nil, input: nil, &block)
     input = Extise::Data.pack_files input

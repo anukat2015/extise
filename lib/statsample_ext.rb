@@ -1,0 +1,2 @@
+require 'colored'
+require 'statsample'

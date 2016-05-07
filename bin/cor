@@ -14,12 +14,13 @@ ARGV.bind_and_parse! to: :locals do
   arg 'y [<y>]'
 end
 
+require 'statsample'
+require 'statsample_ext'
+
 AutoColor.enable on: self, colored: c, colorings: {
   /\A\w:/ => -> (s) { s.sub(/\A(\w): ([^\[ ]+) ?(.*)?/, "#{'\1'.blue}: #{'\2'.yellow} #{'\3'.black}") },
   /\A\d/ => -> (s) { s.sub(/\A(\d+ \d+) (\w+) ([^ ]+) (.+)/, ['\1'.black, '\2'.blue, '\3'.yellow, '\4'.black] * ' ') }
 }
-
-require 'statsample'
 
 begin
   x = SafeEval::IO.read_with_safe_eval x, eval: e, as: Array

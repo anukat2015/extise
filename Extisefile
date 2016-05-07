@@ -1,9 +1,9 @@
 $LOAD_PATH.unshift File.expand_path '../lib', __FILE__
 
-# NOTE: excluded files should be required manually since
-# libraries behind them significantly alter global scope
+# NOTE: excluded files should be required manually since libraries behind them significantly alter global object
+# space or represent extensions pertaining to third-party gems which are not always necessary to be required
 
-exclusions = %w(auto_color kernel_colors kernel_sync)
+exclusions = %w(auto_color kernel_colors kernel_sync statsample_ext)
 
 Dir[File.expand_path '../lib/*.rb', __FILE__].each { |f| require_relative f if f !~ /(#{exclusions * '|'})\.rb\z/ }
 

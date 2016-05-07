@@ -19,6 +19,8 @@ ARGV.bind_and_parse! to: :locals do
   arg 'p [<path>...]'
 end
 
+require 'nokogiri'
+
 n = 0 unless options.assigned? :n
 v, q = false, true unless n.zero?
 

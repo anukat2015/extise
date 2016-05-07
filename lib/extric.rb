@@ -59,6 +59,7 @@ module Extric
     autoload :LinesOfCodeDelta
     autoload :LinesOfCodeDeltaCombination
     autoload :LogicalLinesOfCode
+    autoload :MeanTime
     autoload :MethodCount
     autoload :RecentLinesOfCode
     autoload :RelativeDefaultLinesOfCode

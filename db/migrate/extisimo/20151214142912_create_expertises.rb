@@ -7,7 +7,7 @@ class CreateExpertises < ActiveRecord::Migration[5.0]
 
       t.json :metric_data, null: false
 
-      t.decimal :value, null: false, precision: 17, scale: 8
+      t.decimal :value, null: false, precision: 24, scale: 12
 
       t.timestamps null: false
     end

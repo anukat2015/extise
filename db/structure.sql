@@ -400,7 +400,7 @@ CREATE TABLE extisimo_conceptualities (
     subject_id integer NOT NULL,
     concept_id integer NOT NULL,
     inferencer_data json NOT NULL,
-    probability numeric(9,8) NOT NULL,
+    probability numeric(13,12) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -472,7 +472,7 @@ CREATE TABLE extisimo_expertises (
     subject_id integer NOT NULL,
     user_id integer NOT NULL,
     metric_data json NOT NULL,
-    value numeric(17,8) NOT NULL,
+    value numeric(24,12) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

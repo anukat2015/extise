@@ -7,7 +7,7 @@ class CreateConceptualities < ActiveRecord::Migration[5.0]
 
       t.json :inferencer_data, null: false
 
-      t.decimal :probability, null: false, precision: 9, scale: 8
+      t.decimal :probability, null: false, precision: 13, scale: 12
 
       t.timestamps null: false
     end

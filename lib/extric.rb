@@ -32,6 +32,8 @@ module Extric
     autoload :LogicalLinesOfCode
     autoload :MethodCount
     autoload :RecentLinesOfCode
+    autoload :RelativeDefaultLinesOfCode
+    autoload :RelativeRecentLinesOfCode
     autoload :SourceLinesOfCode
     autoload :StatementCount
     autoload :TypeCount

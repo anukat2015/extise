@@ -53,9 +53,9 @@ module Syntax
       raise 'subject already scoped' if o[:subject].present? && o[:subjects_by_project].present?
       raise 'user already scoped' if o[:user].present? && o[:users_by_project].present?
 
-      if o[:global].to_s == 'per-user' || u.select { |k| o[k].present? }.any?
+      if o[:global].to_s =~ /per[-_]user/ || u.select { |k| o[k].present? }.any?
         ['ucor', *pack_values(o, u), '--no-verbose', { parallel: true, silent: true }]
-      elsif !o.key?(:global) || o[:global].to_s == 'overall' || r.select { |k| o[k].present? }.any?
+      elsif !o.key?(:global) || o[:global].to_s =~ /overall/ || r.select { |k| o[k].present? }.any?
         ['rcor', *pack_values(o, r), '--no-verbose', { silent: true }]
       else
         raise 'unable to resolve'

@@ -5,6 +5,6 @@ class Extric::Sessions::MeanTime
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: (session.started_at.to_f + session.finished_at.to_s) / 2 }
+    { value: ((session.started_at.to_f + session.finished_at.to_f) / 2) / 1.second }
   end
 end

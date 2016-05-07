@@ -5,6 +5,6 @@ class Extric::Sessions::Duration
 
   def measure(user, session)
     return unless user_matches? session, user
-    { value: session.duration }
+    { value: session.duration.to_f / 1.second }
   end
 end

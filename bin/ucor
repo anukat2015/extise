@@ -70,24 +70,17 @@ if v
     dump_record({ class: User.name, id: d[:user], name: d[:name] }, :user, 1)
   end
 else
-
-  # NOTE: colorize results with significant difference between population means greater or equal to 2.0
-  # NOTE: colorize results with statistical significance lower or equal to 0.05
-
-  samples_color = -> (x) { x >= 10 ? :white : :black }
-  coefficient_color = -> (x) { x.nan? ? :black : (x.zero? ? :yellow : (x.positive? ? :green : :red)) }
-  t_test_color = -> (x) { x >= 2.0 ? :cyan : :black }
-  p_value_color = -> (x) { x <= 0.05 ? :cyan : :black }
+  require 'statsample_ext'
 
   table = Text::Table.new horizontal_padding: 0, horizontal_boundary: '', vertical_boundary: '', boundary_intersection: ' '
   table.head = %w(user name samples coefficient t-test p-value).map { |h| { align: :left, value: h.black << ' ' }}
   correlations.each do |d|
     row = [d[:user].to_s.black, d[:name].split(Extisimo::Naming::NAME_SEPARATOR).first.blue]
     if d[:correlation]
-      row << ('%d' % d[:correlation][:x]).send(samples_color.call d[:correlation][:x])
-      row << ('%+.8f' % d[:correlation][:r])[0..10].send(coefficient_color.call d[:correlation][:r])
-      row << ('%+.8f' % d[:correlation][:t])[0..10].send(t_test_color.call d[:correlation][:t])
-      row << ('%.8f' % d[:correlation][:p])[0..9].send(p_value_color.call d[:correlation][:p])
+      row << Statsample::Colored.colorize_x(d[:correlation][:x], 10) { |q| '%d' % q }
+      row << Statsample::Colored.colorize_r(d[:correlation][:r]) { |q| ('%+.8f' % q)[0..10] }
+      row << Statsample::Colored.colorize_t(d[:correlation][:t]) { |q| ('%+.8f' % q)[0..10] }
+      row << Statsample::Colored.colorize_p(d[:correlation][:p]) { |q| ('%.8f' % q)[0..9] }
     else
       row << { colspan: 4, value: d[:message].black }
     end

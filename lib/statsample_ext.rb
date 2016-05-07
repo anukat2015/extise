@@ -12,8 +12,8 @@ end
 module Statsample::Colored
   extend self
 
-  def colorize_samples(x, t = 10, &b)
-    colorize x, x >= t ? :white : :black, &b
+  def colorize_samples(x, t = nil, &b)
+    colorize x, t && x >= t ? :white : :black, &b
   end
 
   alias_method :colorize_x, :colorize_samples

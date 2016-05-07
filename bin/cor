@@ -17,9 +17,11 @@ end
 require 'statsample'
 require 'statsample_ext'
 
+include Statsample::Colored
+
 AutoColor.enable on: self, colored: c, colorings: {
   /\A\w:/ => -> (s) { s.sub(/\A(\w): ([^\[ ]+) ?(.*)?/, "#{'\1'.blue}: #{'\2'.yellow} #{'\3'.black}") },
-  /\A\d/ => -> (s) { s.sub(/\A(\d+ \d+) (\w+) ([^ ]+) (.+)/, ['\1'.black, '\2'.blue, '\3'.yellow, '\4'.black] * ' ') }
+  /\A\d/ => -> (s) { %i(x y m r t p).zip(s.split(/\s+/)).map { |n, q| public_send("colorize_#{n}", q) } * ' ' }
 }
 
 begin
@@ -47,12 +49,6 @@ x, y = Daru::Vector[x], Daru::Vector[y]
 x, y = x.ranked, y.ranked if m.to_sym == :spearman
 
 p = Statsample::Bivariate::Pearson.new x, y
-
-def p.p
-  probability
-rescue Math::DomainError
-  Float::NAN
-end
 
 if v
   puts 'M: %s' % m

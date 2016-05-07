@@ -80,7 +80,7 @@ process subjects, count: n, worker: w, progress: !n.zero? do |subject|
       inform "measure on #{g}:#{subject.id} for #{user.name} with #{metric.name}" if v unless q
 
       # NOTE: do not catch any exceptions here since each metric is responsible for its own behavior,
-      # this ensures that any fatal failures immediately terminate execution and backtrace is shown
+      # this ensures that any fatal failures immediately terminate execution and proper backtrace is shown
 
       data = handle.measure user, subject
 
@@ -91,7 +91,7 @@ process subjects, count: n, worker: w, progress: !n.zero? do |subject|
 
       value = Float data[:value] rescue nil
 
-      unless value
+      if value.nil? || value.nan? || value.infinite?
         warn Extric::Reporting.message handle, user, subject, 'value not numeric'
         next
       end

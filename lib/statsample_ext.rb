@@ -3,7 +3,7 @@ require 'statsample'
 
 class Statsample::Bivariate::Pearson
   def p
-    probability
+    !r.nan? ? probability : Float::NAN
   rescue Math::DomainError
     Float::NAN
   end

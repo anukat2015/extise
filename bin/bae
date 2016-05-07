@@ -20,6 +20,7 @@ AutoColor.disable on: self unless c
 
 require 'active_support/all'
 require 'active_support/testing/stream'
+require 'statsample_ext'
 
 module Syntax
   attr_accessor :measure_until
@@ -61,16 +62,44 @@ module Syntax
       end
     end
 
-    x.product(y) do |a, b|
-      m.product(n).each do |method, normalization|
-        s.each do |p|
+    runs = x.product(y).each.flat_map do |a, b|
+      m.product(n).each.flat_map do |method, normalization|
+        s.map do |p|
           p = p.dup.insert 1, *[a, b].map { |i| normalization.to_s == 'raw' ? i : "#{i}:#{normalization}" }
           p.insert 3, pack_value(method: method) if method
           run *p
         end
       end
     end
+
+    correlation_summary runs
   end
+
+  def correlation_summary(runs)
+    runs = runs.compact.select { |run| run[:status] && run[:arguments].first == 'rcor' }
+    table = Text::Table.new horizontal_padding: 0, horizontal_boundary: '', vertical_boundary: '', boundary_intersection: ' '
+
+    return unless runs.any?
+
+    runs.each do |run|
+      d = File.read(run[:log]).split(/\n+/)
+      d[0..1] = d[0].black, d[1].sub(/\s+--(no-)?(color|verbose)\s*/, ' ').strip.split(/\s+/, 4).map(&:white)
+      d[2] = %i(x y m r t p).zip(d[2].split(' ')).map { |v, x| Statsample::Colored.send("colorize_#{v}", x) } * ' '
+      table.rows << d.flatten.map { |c| "#{c} " }
+    end
+
+    summary = File.expand_path File.join(%W(.. .. tmp #{File.basename(File.dirname runs.first[:log])} rcor-summary)), __FILE__
+
+    begin
+      FileUtils.mkpath File.dirname summary
+      File.write summary, table.text_table_rows.map(&:to_s).join
+      Dir.chdir(File.dirname summary) { run "cat < #{File.basename summary}", expand_command: false }
+    ensure
+      FileUtils.rm_r File.dirname summary
+    end
+  end
+
+  private :correlation_summary
 
   alias_method :correlate, :correlation
 
@@ -174,11 +203,12 @@ class Round
     l = File.join @log_directory, "#{t}_#{a[0].split(/\s+/, 2)[0]}.log"
     File.write l, "#{t.black}\n\n#{c.white}\n\n"
     begin
-      r = "#{File.expand_path File.join(%W(.. #{c})), __FILE__} 2>> #{l} | tee -a #{l}; exit ${PIPESTATUS[0]}"
+      c = File.expand_path File.join(%W(.. #{c})), __FILE__ unless o[:expand_command] === false
+      r = "#{c} 2>> #{l} | tee -a #{l}; exit ${PIPESTATUS[0]}"
       q = o.fetch(:silent, true) || options[:quiet] || !options[:verbose]
-      s = (q ? quietly { system(r) } : system(r)).tap { |s|
-        puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose]
-      }
+      s = q ? quietly { system(r) } : system(r)
+      puts s ? 'success'.green : 'failure'.red if !options[:quiet] && options[:verbose]
+      { time: t, arguments: a, status: s, log: l }
     ensure
       fix_log(l) and take_screenshot(t, a, s, l) unless options[:stat]
     end
@@ -215,7 +245,7 @@ class Round
   def index_screenshots
     return unless @screenshots
     m = @screenshots.map { |s| filter_uninteresting(s[:arguments]).join(' ').length }.max
-    t = "#{File.dirname @screenshot_directory}"
+    t = "#{File.basename(File.dirname @screenshot_directory)}"
     i = @screenshots.map { |s|
       l = "#{s[:time].black} #{filter_uninteresting(s[:arguments]).join(' ').ljust(m).white} #{s[:status] ? 'success'.green : 'failure'.red }"
       "<a href=\"#{File.basename s[:screenshot]}\" style=\"text-decoration: none\">#{Colored.decolorize l, escape: Colored::HTML}</a>"
@@ -233,7 +263,7 @@ class Round
     FileUtils.mkpath @screenshot_directory
     h = File.join @screenshot_directory, "#{File.basename(l)}.html"
     (@screenshots ||= []) << { time: t, arguments: a, status: s, log: l, screenshot: h }
-    File.write h, build_screenshot("#{t} #{filter_uninteresting a}", Colored.decolorize(o, escape: Colored::HTML))
+    File.write h, build_screenshot("#{t} #{filter_uninteresting(a) * ' '}", Colored.decolorize(o, escape: Colored::HTML))
   end
 end
 

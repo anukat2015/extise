@@ -22,6 +22,7 @@ require 'hashugar'
 require 'parallen'
 require 'progresso'
 require 'safe_eval'
+require 'text-table'
 
 # command line
 

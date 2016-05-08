@@ -2,10 +2,23 @@ require 'colored'
 require 'statsample'
 
 class Statsample::Bivariate::Pearson
-  def p
-    !r.nan? ? probability : Float::NAN
+  alias_method :p, :probability
+end
+
+class Statsample::Bivariate::SafeFetch
+  attr_reader :r, :t, :p
+
+  class << self
+    alias_method :[], :new
+  end
+
+  def initialize(b)
+    @r = b.r
+    raise Math::DomainError if @r.nan?
+    @t = b.t
+    @p = b.p
   rescue Math::DomainError
-    Float::NAN
+    @t, @p = Float::NAN, Float::NAN
   end
 end
 

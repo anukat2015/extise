@@ -46,7 +46,7 @@ end
 x, y = Daru::Vector[x], Daru::Vector[y]
 x, y = x.ranked, y.ranked if m.to_sym == :spearman
 
-p = Statsample::Bivariate::Pearson.new x, y
+p = Statsample::Bivariate::SafeFetch[Statsample::Bivariate::Pearson.new x, y]
 
 if v
   puts 'M: %s' % m

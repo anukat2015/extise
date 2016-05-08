@@ -35,12 +35,12 @@ module Syntax
     y = x if !y.is_a?(Enumerable) && y.to_s == 'with_each_other'
     x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
 
-    m = fetch_values options, :method, optional: true
+    m = fetch_values options, :method, default: [nil]
     n = fetch_values options, :normalization, default: 'raw'
     s = fetch_values options, :scope, default: options.except(*dual_keys(c))
 
     s = [s] if s.is_a? Hash
-    s = s.map do |o|
+    p = s.map do |o|
       raise 'global already given' if o.key?(:global) && o.keys.count > 1
 
       o = grab_keys(o, duals: [u, r].flatten) unless o.key? :global
@@ -63,22 +63,29 @@ module Syntax
       end
     end
 
-    k = x.product(y).select { |a, b| a != b }
-    h = k.each_with_index.inject({}) { |h, p| h.merge p.first.sort => p.last }.values
-    k = k.each_with_index.select { |_, i| !i.in? h }
+    correlation_summary correlation_run([x, y], m, n, p).tap { |runs| raise 'nothing to correlate' if runs.empty? }
+  end
 
-    runs = k.each.flat_map do |a, b|
-      m.product(n).each.flat_map do |method, normalization|
-        s.map do |p|
-          p = p.dup.insert 1, *[a, b].map { |i| normalization.to_s == 'raw' ? i : "#{i}:#{normalization}" }
-          p.insert 3, pack_value(method: method) if method
+  alias_method :correlate, :correlation
+
+  def correlation_run(metrics, methods, normalizations, parameters)
+    metrics = metrics.first.product(metrics.second).select { |a, b| a != b }
+    duplicates = metrics.each_with_index.inject({}) { |h, p| h.merge p.first.sort => p.last }.values
+    metrics = metrics.each_with_index.select { |_, i| !i.in? duplicates }.map(&:first)
+    methods = methods.product(normalizations)
+
+    metrics.flat_map do |x, y|
+      methods.flat_map do |m, n|
+        parameters.map do |p|
+          p = p.dup.insert 1, *[x, y].map { |i| n.to_s == 'raw' ? i : "#{i}:#{n}" }
+          p.insert 3, pack_value(method: m) if m
           run *p
         end
       end
     end
-
-    correlation_summary runs
   end
+
+  private :correlation_run
 
   def correlation_summary(runs)
     runs = runs.compact.select { |run| run[:status] && run[:arguments].first == 'rcor' }
@@ -105,8 +112,6 @@ module Syntax
   end
 
   private :correlation_summary
-
-  alias_method :correlate, :correlation
 
   def histogram(*args)
     args.select { |a| a =~ /\A\s*--/ }.tap { |u| raise 'direct options not allowed' if u.any? }

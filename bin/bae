@@ -32,6 +32,7 @@ module Syntax
 
     options = grab_keys options, duals: [c, u, r].flatten, others: %i(global)
 
+    y = x if !y.is_a?(Enumerable) && y.to_s == 'with_each_other'
     x, y = *[x, y].map { |a| Array.wrap(a).map { |i| "#{t}:#{i}" }}
 
     m = fetch_values options, :method, optional: true
@@ -53,16 +54,20 @@ module Syntax
       raise 'subject already scoped' if o[:subject].present? && o[:subjects_by_project].present?
       raise 'user already scoped' if o[:user].present? && o[:users_by_project].present?
 
-      if o[:global].to_s =~ /per[-_]user/ || u.select { |k| o[k].present? }.any?
+      if o[:global].to_s =~ /\Aper[-_]user\z/ || u.select { |k| o[k].present? }.any?
         ['ucor', *pack_values(o, u), '--no-verbose', { parallel: true, silent: true }]
-      elsif !o.key?(:global) || o[:global].to_s =~ /overall/ || r.select { |k| o[k].present? }.any?
+      elsif !o.key?(:global) || o[:global].to_s == 'overall' || r.select { |k| o[k].present? }.any?
         ['rcor', *pack_values(o, r), '--no-verbose', { silent: true }]
       else
         raise 'unable to resolve'
       end
     end
 
-    runs = x.product(y).each.flat_map do |a, b|
+    k = x.product(y).select { |a, b| a != b }
+    h = k.each_with_index.inject({}) { |h, p| h.merge p.first.sort => p.last }.values
+    k = k.each_with_index.select { |_, i| !i.in? h }
+
+    runs = k.each.flat_map do |a, b|
       m.product(n).each.flat_map do |method, normalization|
         s.map do |p|
           p = p.dup.insert 1, *[a, b].map { |i| normalization.to_s == 'raw' ? i : "#{i}:#{normalization}" }

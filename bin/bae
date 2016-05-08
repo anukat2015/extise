@@ -70,8 +70,8 @@ module Syntax
 
   def correlation_run(metrics, methods, normalizations, parameters)
     metrics = metrics.first.product(metrics.second).select { |a, b| a != b }
-    duplicates = metrics.each_with_index.inject({}) { |h, p| h.merge p.first.sort => p.last }.values
-    metrics = metrics.each_with_index.select { |_, i| !i.in? duplicates }.map(&:first)
+    uniques = metrics.each_with_index.inject({}) { |h, p| h.reverse_merge p.first.sort => p.last }.values
+    metrics = metrics.each_with_index.select { |_, i| i.in? uniques }.map(&:first)
     methods = methods.product(normalizations)
 
     metrics.flat_map do |x, y|

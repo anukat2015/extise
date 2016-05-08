@@ -23,6 +23,8 @@ class Statsample::Bivariate::SafeFetch
 end
 
 module Statsample::Colored
+  NAN = /\A\s*[+-]?\s*NaN\s*\z/i
+
   extend self
 
   def colorize_samples(x, t = nil, &b)
@@ -41,8 +43,7 @@ module Statsample::Colored
   # NOTE: colorize correlation coefficient according to its sign
 
   def colorize_coefficient(x, t = 0.0, &b)
-    f = Float x
-    colorize x, f.nan? ? :black : (f == t ? :yellow : (f > t ? :green : :red)), &b
+    colorize x, x.to_s =~ NAN ? :black : Float(x) == t ? :yellow : Float(x) > t ? :green : :red, &b
   end
 
   alias_method :colorize_r, :colorize_coefficient
@@ -50,7 +51,7 @@ module Statsample::Colored
   # NOTE: colorize significant difference between population means greater or equal to 2.0
 
   def colorize_t_test(x, t = 2.0, &b)
-    colorize x, Float(x) >= t ? :cyan : :black, &b
+    colorize x, x.to_s =~ NAN ? :black : Float(x) >= t ? :cyan : :black, &b
   end
 
   alias_method :colorize_t, :colorize_t_test
@@ -58,7 +59,7 @@ module Statsample::Colored
   # NOTE: colorize statistical significance lower or equal to 0.05
 
   def colorize_p_value(x, t = 0.05, &b)
-    colorize x, Float(x) <= t ? :cyan : :black, &b
+    colorize x, x.to_s =~ NAN ? :black : Float(x) <= t ? :cyan : :black, &b
   end
 
   alias_method :colorize_p, :colorize_p_value

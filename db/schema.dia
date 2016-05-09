@@ -62,7 +62,7 @@
       </dia:composite>
     </dia:attribute>
   </dia:diagramdata>
-  <dia:layer name="sk.stuba.fiit.extise" visible="true" active="true">
+  <dia:layer name="extise.fiit.stuba.sk" visible="true" active="true">
     <dia:object type="UML - Class" version="0" id="O0">
       <dia:attribute name="obj_pos">
         <dia:point val="55,18"/>

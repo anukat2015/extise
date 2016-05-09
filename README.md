@@ -36,7 +36,7 @@ A collection of tools to estimate developers' expertise
 
 ## Data
 
-Data repository is expected at `../data` by default, see [Extise Data](https://github.com/pavolzbell/extise-data)
+Data repository is expected at `../data` by default, see [Extise Data](https://github.com/perconik/extise-data)
 
 ## Commands
 
